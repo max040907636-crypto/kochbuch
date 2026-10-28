@@ -1,0 +1,17 @@
+{
+  "name": "Löffelweise – Kochbuch",
+  "short_name": "Löffelweise",
+  "description": "Interaktives Kochbuch zum Blättern: 30 Rezepte aus aller Welt.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1E3A5C",
+  "theme_color": "#1E3A5C",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
