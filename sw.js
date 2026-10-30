@@ -6,7 +6,7 @@
    - Videos werden NICHT gespeichert (zu groß), die gehen nur mit Internet.
    ===================================================================== */
 
-const VERSION = 'loeffelweise-v1';          // bei Änderungen hochzählen
+const VERSION = 'loeffelweise-v2';          // bei Änderungen hochzählen
 const APP_CACHE = VERSION + '-app';
 const FOTO_CACHE = 'loeffelweise-fotos';    // bleibt über Versionen erhalten
 
