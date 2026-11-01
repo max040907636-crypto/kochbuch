@@ -2046,7 +2046,13 @@ const us = (wer, link) => ({ wer, quelle: 'Unsplash', link, lizenz: 'Unsplash-Li
 const UNS = (id) => 'https://images.unsplash.com/' + id;
 /** Foto aus der Liste FOTOS (unten) holen. Ohne Eintrag: null → das Buch zeigt die Zeichnung.
     alt in FOTOS (optional) beschreibt, was wirklich auf dem Foto zu sehen ist. */
-const foto = (schluessel, alt) => FOTOS[schluessel] ? { src: UNS(FOTOS[schluessel].id), alt: FOTOS[schluessel].alt || alt, credit: us(FOTOS[schluessel].wer, FOTOS[schluessel].link) } : null;
+const foto = (schluessel, alt) => {
+  const f = FOTOS[schluessel];
+  if (!f) return null;
+  // Unsplash-Fotos haben eine id, andere Quellen (z. B. Wikimedia Commons) eine eigene Adresse in src
+  if (f.src) return { src: f.src, alt: f.alt || alt, credit: { wer: f.wer, quelle: f.quelle, link: f.link, lizenz: f.lizenz } };
+  return { src: UNS(f.id), alt: f.alt || alt, credit: us(f.wer, f.link) };
+};
 const G = { // häufige Farben
   hackBraun: '#7A4A2E', fleischRoh: '#C2564C', fleischBraun: '#8A4430', huhnRoh: '#F0C9B4', huhnGold: '#D9954A',
   joghurt: '#F7F5EE', tomate: '#C8352B', gurke: '#4E7A34', gurkeInnen: '#DDE8C0', oliv: '#3A2F2A', feta: '#FAF7EE',
@@ -3083,6 +3089,11 @@ const FOTOS = {
   gemuesebruehe: { id: 'photo-1741796105489-33ea406ac1b7', wer: 'Elena Leya', link: 'https://unsplash.com/photos/delicious-hearty-vegetable-soup-with-carrots-and-herbs-sIKxa702NbA', alt: 'Klare Suppe mit Möhren, Sellerie und Petersilie' },
   vinaigrette: { id: 'photo-1750943082709-59ed51f96243', wer: 'Tommaso Ubezio', link: 'https://unsplash.com/photos/chef-drizzling-dressing-onto-a-fresh-vibrant-salad-iIsSn87LKSs', alt: 'Dressing wird über einen Salat geträufelt' },
   nudelteig: { id: 'photo-1447279506476-3faec8071eee', wer: 'Jorge Zapata', link: 'https://unsplash.com/photos/person-sheeting-dough-4nXkhLCrkLo', alt: 'Nudelteig wird von Hand ausgerollt' },
+  /* Diese vier gibt es nicht frei auf Unsplash: Fotos von Wikimedia Commons (Creative-Commons-Lizenz, Urheber steht in den Bildnachweisen) */
+  saltimbocca: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Saltimbocca_cooked_%283%29.jpg/960px-Saltimbocca_cooked_%283%29.jpg', wer: 'Fanny Schertzer', quelle: 'Wikimedia Commons', lizenz: 'CC BY 3.0', link: 'https://commons.wikimedia.org/wiki/File:Saltimbocca_cooked_(3).jpg', alt: 'Kalbsschnitzel mit Salbei und Schinken auf einem Teller' },
+  bobotie: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bobotie_South_Africa.jpg/960px-Bobotie_South_Africa.jpg', wer: 'Olivier Lemoine', quelle: 'Wikimedia Commons', lizenz: 'CC BY-SA 4.0', link: 'https://commons.wikimedia.org/wiki/File:Bobotie_South_Africa.jpg', alt: 'Bobotie mit Reis und gebratenen Kochbananen' },
+  kloesse: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Kartoffelkl%C3%B6%C3%9Fe_3.jpg/960px-Kartoffelkl%C3%B6%C3%9Fe_3.jpg', wer: 'IgorCalzone1', quelle: 'Wikimedia Commons', lizenz: 'CC BY-SA 4.0', link: 'https://commons.wikimedia.org/wiki/File:Kartoffelkl%C3%B6%C3%9Fe_3.jpg', alt: 'Drei Kartoffelklöße auf einem Holzbrett' },
+  weckmann: { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Weckm%C3%A4nnerL1200172_%282%29.jpg/960px-Weckm%C3%A4nnerL1200172_%282%29.jpg', wer: 'Sol Octobris', quelle: 'Wikimedia Commons', lizenz: 'CC BY-SA 4.0', link: 'https://commons.wikimedia.org/wiki/File:Weckm%C3%A4nnerL1200172_(2).jpg', alt: 'Weckmänner mit Apfel und Nüssen auf einem Teller' },
   /* ----- ergänzt am 01.11.2026: Fotos für Rezepte, die bisher nur eine Zeichnung hatten ----- */
   adobo: { id: 'photo-1770911066463-c822907a9671', wer: 'Nguyen Mazic', link: 'https://unsplash.com/photos/braised-pork-belly-with-eggs-and-side-dishes-_luSs5lUkjA', alt: 'Geschmortes Fleisch in dunkler Soße' },
   aloogobi: { id: 'photo-1652545296893-ff9227b3512e', wer: 'Dr Muhammad Amer', link: 'https://unsplash.com/photos/a-white-bowl-filled-with-meat-and-vegetables-SE-U18vg5Hw', alt: 'Indisches Curry in einer Schale' },

@@ -6,7 +6,7 @@
    - Videos werden NICHT gespeichert (zu groß), die gehen nur mit Internet.
    ===================================================================== */
 
-const VERSION = 'loeffelweise-v5';          // bei Änderungen hochzählen
+const VERSION = 'loeffelweise-v6';          // bei Änderungen hochzählen
 const APP_CACHE = VERSION + '-app';
 const FOTO_CACHE = 'loeffelweise-fotos';    // bleibt über Versionen erhalten
 
@@ -93,7 +93,7 @@ self.addEventListener('fetch', (e) => {
     if (gespeichert) return gespeichert;
     try {
       const netz = await fetch(anfrage);
-      if (url.hostname === 'images.unsplash.com' || url.hostname === 'assets.mixkit.co') {
+      if (url.hostname === 'images.unsplash.com' || url.hostname === 'upload.wikimedia.org' || url.hostname === 'assets.mixkit.co') {
         const c = await caches.open(FOTO_CACHE);
         c.put(anfrage, netz.clone());
       }
