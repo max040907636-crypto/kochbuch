@@ -6,7 +6,7 @@
    - Videos werden NICHT gespeichert (zu groß), die gehen nur mit Internet.
    ===================================================================== */
 
-const VERSION = 'loeffelweise-v4';          // bei Änderungen hochzählen
+const VERSION = 'loeffelweise-v5';          // bei Änderungen hochzählen
 const APP_CACHE = VERSION + '-app';
 const FOTO_CACHE = 'loeffelweise-fotos';    // bleibt über Versionen erhalten
 
@@ -15,7 +15,6 @@ const APP_DATEIEN = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'page-flip.browser.js',
   'fotos.json',
   'icons/icon-180.png',
   'icons/icon-192.png',

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="Löffelweise">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head><body>
-<meta name="description" content="Interaktives Kochbuch zum Blättern: 181 Rezepte aus 36 Ländern: Kochen, Backen, Getränke und Festessen mit Zeitstrahl, Timern, Einkaufsliste, Wochenplan und Kochmodus.">
+<meta name="description" content="Interaktives Kochbuch zum Blättern: 193 Rezepte aus 37 Ländern: Kochen, Backen, Getränke und Festessen mit Zeitstrahl, Timern, Einkaufsliste, Wochenplan und Kochmodus.">
 <style>/* Schriften liegen lokal im Ordner „schriften“ (funktioniert offline) */
 @font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:100 900;src:url(schriften/fraunces-latin-ext-full-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:100 900;src:url(schriften/fraunces-latin-full-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -253,14 +253,8 @@ button svg, button img { pointer-events: none; }
 .buch-huelle {
   position: relative;
   transform: translateX(var(--versatz, 0px));
-  transition: transform .8s var(--ease);
 }
 .buch-schwebe { position: relative; }
-.buch-schwebe.schwebt { animation: schweben 6s ease-in-out infinite; }
-@keyframes schweben {
-  0%, 100% { transform: translateY(0) rotate(-.4deg); }
-  50% { transform: translateY(-9px) rotate(.2deg); }
-}
 /* Buchblock: Schatten und Papierkante unter den sichtbaren Seiten */
 .buchblock {
   position: absolute; top: 0; height: 100%;
@@ -270,41 +264,12 @@ button svg, button img { pointer-events: none; }
     0 3px 0 var(--papier-2), 0 4px 0 var(--linie),
     0 5px 0 var(--papier-2), 0 6px 0 var(--linie),
     0 26px 50px -16px var(--schatten);
-  transition: left .8s var(--ease), width .8s var(--ease);
   pointer-events: none;
 }
 .buchblock.zu { box-shadow: 4px 3px 0 -1px var(--emaille), 0 26px 50px -14px var(--schatten); }
 .book { position: relative; }
-/* StPageFlip-Ergänzungen (ohne Autosize) */
-.book.stf__parent { touch-action: pan-y; }
-.book .stf__wrapper { position: relative; width: 100%; height: 100%; }
-.book .stf__block { position: absolute; inset: 0; perspective: 2200px; }
-.book .stf__item { display: none; position: absolute; transform-style: preserve-3d; }
-.book .stf__outerShadow, .book .stf__innerShadow, .book .stf__hardShadow, .book .stf__hardInnerShadow { position: absolute; left: 0; top: 0; }
-
-/* Eigenes CSS-3D-Umblättern (Ersatz-Engine) */
-.blatt-buch { perspective: 2400px; }
-.blatt-buch .page { position: absolute; }
-.blatt {
-  position: absolute; top: 0; z-index: 20;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.blatt-seite {
-  position: absolute; inset: 0;
-  overflow: hidden;
-  background: var(--papier);
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-}
-.blatt-seite.hinten { transform: rotateY(180deg); }
-.blatt-seite > .page { left: 0 !important; top: 0 !important; }
-.blatt-seite::after {
-  content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
-  background: linear-gradient(90deg, rgba(0,0,0,.28), rgba(0,0,0,0) 45%, rgba(255,255,255,.08) 70%, rgba(0,0,0,.18));
-  opacity: 0;
-  animation: blatt-schatten .76s ease;
-}
-@keyframes blatt-schatten { 50% { opacity: 1; } }
+/* Seiten liegen übereinander, sichtbar ist nur die aufgeschlagene (Wechsel ohne Animation) */
+.book .page { position: absolute; }
 
 /* Lesebändchen */
 .band {
@@ -312,7 +277,6 @@ button svg, button img { pointer-events: none; }
   width: 15px;
   left: var(--band-x, 50%);
   pointer-events: none;
-  transition: left .6s var(--ease);
 }
 .band::before, .band::after {
   content: ""; position: absolute; left: 0; width: 100%;
@@ -322,11 +286,6 @@ button svg, button img { pointer-events: none; }
 .band::after {
   top: calc(var(--buch-h, 600px) - 2px); height: 38px;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  transform-origin: top center;
-}
-.band.schwingt::after { animation: schwingen 1.3s var(--ease); }
-@keyframes schwingen {
-  0% { transform: rotate(0); } 25% { transform: rotate(9deg); } 55% { transform: rotate(-5deg); } 80% { transform: rotate(2deg); } 100% { transform: rotate(0); }
 }
 
 /* Öffnen-Hinweis unter dem geschlossenen Buch */
@@ -359,7 +318,10 @@ button svg, button img { pointer-events: none; }
 .blaettern:hover { background: var(--papier); }
 .blaettern:disabled { opacity: .35; cursor: default; }
 .seitenanzeige {
-  min-width: 0; max-width: 46vw;
+  /* feste Breite: sonst wandern die Pfeile je nach Länge des Seitentitels hin und her */
+  width: min(340px, calc(100vw - 32px - 2 * 44px - 2 * 14px));
+  flex: none;
+  min-width: 0;
   display: grid; text-align: center; line-height: 1.2;
 }
 .seitenanzeige .nr { font-family: var(--f-display); font-style: italic; font-size: 15px; color: var(--tinte-2); font-variant-numeric: tabular-nums; }
@@ -415,15 +377,6 @@ button svg, button img { pointer-events: none; }
   display: flex; flex-direction: column; gap: 12px;
 }
 .inhalt > * { flex: none; }
-
-/* Gestaffeltes Einblenden beim Aufschlagen */
-.page.zeigt .inhalt > * { animation: auftauchen .55s var(--ease) backwards; }
-.page.zeigt .inhalt > *:nth-child(1) { animation-delay: .18s; }
-.page.zeigt .inhalt > *:nth-child(2) { animation-delay: .26s; }
-.page.zeigt .inhalt > *:nth-child(3) { animation-delay: .34s; }
-.page.zeigt .inhalt > *:nth-child(4) { animation-delay: .42s; }
-.page.zeigt .inhalt > *:nth-child(n+5) { animation-delay: .5s; }
-@keyframes auftauchen { from { opacity: 0; transform: translateY(10px); } }
 
 /* Überschriften im Buch */
 .h-seite {
@@ -644,8 +597,9 @@ kbd {
   -webkit-text-stroke: 1.6px var(--kt, var(--tinte));
   opacity: .9;
 }
-.kapitel-bild { display: grid; place-items: center; min-height: 0; }
-.kapitel-bild svg { width: 92%; max-height: 100%; height: auto; color: currentColor; overflow: visible; }
+.kapitel-bild { position: relative; min-height: 0; margin: 4% 0 6%; }
+/* absolut gesetzt, damit die Zeichnung nie größer als ihr Platz wird (vorher rutschte sie in den Kapitelnamen) */
+.kapitel-bild svg { position: absolute; inset: 0; width: 100%; height: 100%; color: currentColor; overflow: visible; }
 .kapitel-name {
   font-family: var(--f-display);
   font-style: italic;
@@ -875,6 +829,9 @@ details.notiz textarea, .linien {
 .zs-punkt.erledigt .kreis { background: var(--akzent-zart); border-color: var(--akzent); }
 .zs-punkt[aria-current="step"] { color: var(--tinte); font-weight: 600; }
 .zs-punkt[aria-current="step"] .kreis { background: var(--akzent); border-color: var(--akzent); color: var(--akzent-text); transform: scale(1.1); }
+.zs-punkt .marke { line-height: 1.15; text-align: center; }
+.book:not(.weit) .zs-punkt { font-size: 12.5px; min-width: 32px; max-width: 44px; }
+.book:not(.weit) .zs-punkt .marke { white-space: normal; }
 
 .schritt { display: grid; gap: 12px; }
 .schritt .h-klein { font-size: 20px; }
@@ -1163,7 +1120,8 @@ html, body, button, a, input, select, textarea, label { touch-action: manipulati
 }
 
 /* ---------- 16. Keine Animationen ----------
-   Seiten wechseln sofort per Antippen, nichts bewegt sich von selbst. */
+   Kein Umblättern: Seiten wechseln sofort per Antippen, Wischen oder Pfeiltaste.
+   Auch sonst bewegt sich nichts von selbst. */
 *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 .dampf path, .sz-dampf path { opacity: .5; }
 
@@ -1262,21 +1220,21 @@ const KAPITEL = [
   {
     id: 'deutschland', nr: 4, name: 'Deutschland & Österreich',
     farbe: '#5B4A3A', textFarbe: '#FFFFFF', motiv: 'topf', beigaben: ['reibe', 'kochloeffel'], dampf: true,
-    rezepte: ['schnitzel', 'rouladen', 'sauerbraten', 'klopse', 'spaetzle', 'reibekuchen', 'kartoffelsalat', 'currywurst'],
-    intro: 'Sonntagsbraten, Spätzle und Reibekuchen: Hausmannskost von Wien bis ins Rheinland.',
+    rezepte: ['schnitzel', 'rouladen', 'sauerbraten', 'klopse', 'frikadellen', 'spaetzle', 'reibekuchen', 'himmelunaeaed', 'kartoffelsalat', 'linseneintopf', 'currywurst'],
+    intro: 'Sonntagsbraten, Frikadellen, Eintopf und Reibekuchen: Hausmannskost von Wien bis ins Rheinland.',
     tipp: 'Kartoffeln für Salat und Bratkartoffeln: festkochend. Für Püree und Reibekuchen: mehligkochend.'
   },
   {
     id: 'europa', nr: 5, name: 'Europa',
     farbe: '#3E6650', textFarbe: '#FFFFFF', motiv: 'topf', beigaben: ['kelle', 'pfeffermuehle'], dampf: true,
-    rezepte: ['haehnchen', 'ratatouille', 'quiche', 'zwiebelsuppe', 'fishchips', 'shepherds', 'gulasch', 'koettbullar', 'pierogi', 'borschtsch', 'stroganoff'],
-    intro: 'Schmoren, backen, überbacken: Klassiker aus Frankreich, England, Ungarn, Schweden, Polen, der Ukraine und Russland.',
+    rezepte: ['haehnchen', 'ratatouille', 'quiche', 'zwiebelsuppe', 'fishchips', 'ofenlachs', 'shepherds', 'gulasch', 'koettbullar', 'pierogi', 'borschtsch', 'stroganoff'],
+    intro: 'Schmoren, backen, überbacken: Klassiker aus Frankreich, England, Norwegen, Ungarn, Schweden, Polen, der Ukraine und Russland.',
     tipp: 'Fleisch vor dem Braten trocken tupfen. Nur trockene Oberflächen werden braun und knusprig.'
   },
   {
     id: 'amerika', nr: 6, name: 'Amerika',
     farbe: '#B8541E', textFarbe: '#FFFFFF', motiv: 'grillpfanne', beigaben: ['messer', 'teigschaber'], dampf: true,
-    rezepte: ['burger', 'macncheese', 'pulledpork', 'wings', 'chili', 'tacos', 'enchiladas', 'quesadillas', 'ceviche', 'empanadas', 'feijoada'],
+    rezepte: ['burger', 'steak', 'macncheese', 'pulledpork', 'wings', 'caesar', 'chili', 'tacos', 'enchiladas', 'quesadillas', 'ceviche', 'empanadas', 'feijoada'],
     intro: 'Von New York über Mexiko-Stadt bis Rio und Buenos Aires: kräftig gewürzt und gut zum Teilen.',
     tipp: 'Hackfleisch für Burger nur kurz und locker formen. Je mehr du knetest, desto fester wird es.'
   },
@@ -1353,8 +1311,8 @@ const KAPITEL = [
   {
     id: 'basics', nr: 17, name: 'Basics',
     farbe: '#4D6B8A', textFarbe: '#FFFFFF', motiv: 'messbecher', beigaben: ['sieb', 'reibe'], dampf: false,
-    rezepte: [],
-    intro: 'Alles zum Umrechnen, Schneiden und Garen, das du in diesem Buch immer wieder brauchst.',
+    rezepte: ['tomatensauce', 'bechamel', 'bratensosse', 'gemuesebruehe', 'vinaigrette', 'nudelteig'],
+    intro: 'Grundrezepte, auf denen viele Gerichte aufbauen: Tomatensauce, Béchamel, Bratensoße, Brühe, Dressing und Nudelteig. Dazu alles zum Umrechnen, Schneiden und Garen.',
     tipp: 'Das Wasser für Hefeteig soll sich lauwarm anfühlen, etwa wie Badewasser. Über 45 °C schadet es der Hefe.'
   }
 ];
@@ -1366,7 +1324,7 @@ const LAENDER = {
   'Japan': '🇯🇵', 'Korea': '🇰🇷', 'Libanon': '🇱🇧', 'Marokko': '🇲🇦', 'Mexiko': '🇲🇽', 'Nigeria': '🇳🇬', 'Österreich': '🇦🇹',
   'Peru': '🇵🇪', 'Philippinen': '🇵🇭', 'Polen': '🇵🇱', 'Portugal': '🇵🇹', 'Russland': '🇷🇺', 'Schweden': '🇸🇪', 'Schweiz': '🇨🇭',
   'Spanien': '🇪🇸', 'Südafrika': '🇿🇦', 'Thailand': '🇹🇭', 'Tunesien': '🇹🇳', 'Türkei': '🇹🇷', 'Ukraine': '🇺🇦', 'Ungarn': '🇭🇺',
-  'USA': '🇺🇸', 'Vietnam': '🇻🇳', 'Malaysia': '🇲🇾', 'Jamaika': '🇯🇲', 'Belgien': '🇧🇪', 'Taiwan': '🇹🇼', 'Kuba': '🇨🇺', 'Niederlande': '🇳🇱'
+  'USA': '🇺🇸', 'Vietnam': '🇻🇳', 'Malaysia': '🇲🇾', 'Jamaika': '🇯🇲', 'Belgien': '🇧🇪', 'Taiwan': '🇹🇼', 'Kuba': '🇨🇺', 'Niederlande': '🇳🇱', 'Norwegen': '🇳🇴'
 };
 
 /* ---------- Farben für die Zeichnungen (Lebensmittel) ---------- */
@@ -1865,7 +1823,7 @@ const REZEPTE = [
     titel: 'Schoko-Lava-Küchlein',
     untertitel: 'Außen Kuchen, innen flüssige Schokolade',
     intro: 'Das Geheimnis ist die kurze Backzeit: Der Rand wird fest, die Mitte bleibt flüssig. Gute Zartbitterschokolade macht hier den größten Unterschied.',
-    zeit: { gesamt: 25, aktiv: 15 },
+    zeit: { gesamt: 30, aktiv: 15 },
     schwierigkeit: 2,
     portionen: 4,
     portionsWort: ['Küchlein', 'Küchlein'],
@@ -2086,8 +2044,9 @@ const nu = (c, r = .8, n = 34) => ({ f: 'nudeln', c, r, n });
 const li = (c, n = 3, w = 3) => ({ f: 'linie', c, n, w });
 const us = (wer, link) => ({ wer, quelle: 'Unsplash', link, lizenz: 'Unsplash-Lizenz' });
 const UNS = (id) => 'https://images.unsplash.com/' + id;
-/** Foto aus der Liste FOTOS (unten) holen. Ohne Eintrag: null → das Buch zeigt die Zeichnung. */
-const foto = (schluessel, alt) => FOTOS[schluessel] ? { src: UNS(FOTOS[schluessel].id), alt, credit: us(FOTOS[schluessel].wer, FOTOS[schluessel].link) } : null;
+/** Foto aus der Liste FOTOS (unten) holen. Ohne Eintrag: null → das Buch zeigt die Zeichnung.
+    alt in FOTOS (optional) beschreibt, was wirklich auf dem Foto zu sehen ist. */
+const foto = (schluessel, alt) => FOTOS[schluessel] ? { src: UNS(FOTOS[schluessel].id), alt: FOTOS[schluessel].alt || alt, credit: us(FOTOS[schluessel].wer, FOTOS[schluessel].link) } : null;
 const G = { // häufige Farben
   hackBraun: '#7A4A2E', fleischRoh: '#C2564C', fleischBraun: '#8A4430', huhnRoh: '#F0C9B4', huhnGold: '#D9954A',
   joghurt: '#F7F5EE', tomate: '#C8352B', gurke: '#4E7A34', gurkeInnen: '#DDE8C0', oliv: '#3A2F2A', feta: '#FAF7EE',
@@ -2293,7 +2252,7 @@ REZEPTE.push(
       { zeit: 25, titel: 'Langsam schmoren', text: 'Knoblauch, Kümmel, Majoran und etwas Brühe zugeben, Deckel drauf und etwa 2 Stunden leise schmoren. Immer nur so viel Brühe nachgießen, dass das Fleisch knapp bedeckt ist.',
         erkennen: 'Die Sauce blubbert nur leicht, das Fleisch wird mit der Zeit dunkler.', fehler: 'Zu viel Flüssigkeit auf einmal: Es wird eine Suppe statt einem sämigen Gulasch.', timer: 120,
         szene: sz('topf', [fl('#8A2E1C', .96, 'sosse'), st('wuerfel', '#6E3420', 16, 28, .85)], { hitze: 1, dampf: true }) },
-      { zeit: 120, titel: 'Paprika dazu', text: 'Paprika in Streifen schneiden und die letzten 20 Minuten mitschmoren.',
+      { zeit: 125, titel: 'Paprika dazu', text: 'Paprika in Streifen schneiden und die letzten 20 Minuten mitschmoren.',
         erkennen: 'Das Fleisch zerfällt fast, wenn du mit dem Löffel drückst. Die Sauce ist sämig.', fehler: 'Nach der Uhr statt nach Gefühl gehen. Ist das Fleisch noch zäh, einfach weiterschmoren.', timer: 20, vergleich: true,
         szene: sz('topf', [fl('#7A2618', .96, 'sosse'), st('wuerfel', '#5E2C1A', 16, 28, .85), st('stab', '#C8352B', 9, 24, .8)], { hitze: 1, dampf: true }) },
       { zeit: 145, titel: 'Abschmecken und servieren', text: 'Mit Salz und Pfeffer abschmecken. Dazu passen Nockerln, Brot oder Salzkartoffeln.',
@@ -3111,6 +3070,49 @@ REZEPTE.push(
 
 /* ---------- Fotos für die neuen Rezepte (Unsplash, freie Lizenz) ---------- */
 const FOTOS = {
+  /* ----- ergänzt am 01.11.2026 (Chefkoch-Check): Fotos für die neuen Rezepte ----- */
+  frikadellen: { id: 'photo-1780081891218-4118de81bacc', wer: 'Jonathan Majam', link: 'https://unsplash.com/photos/plate-of-mashed-potatoes-and-meatballs-on-a-wooden-table-4r-T1Hui-co', alt: 'Hackbällchen mit Kartoffelpüree und Soße' },
+  linseneintopf: { id: 'photo-1648455320791-a667c8aab7e4', wer: 'Elena Leya', link: 'https://unsplash.com/photos/two-bowls-of-soup-on-a-table-with-crackers-_jyB1ndDFQE', alt: 'Zwei Schalen Linsensuppe' },
+  himmelunaeaed: { id: 'photo-1778689949417-17815771b32a', wer: 'Adam Fathony', link: 'https://unsplash.com/photos/a-plate-with-sausages-mushrooms-and-mashed-potatoes-1vu9LPsNmrw', alt: 'Gebratene Wurst mit Kartoffelpüree' },
+  ofenlachs: { id: 'photo-1519708227418-c8fd9a32b7a2', wer: 'Caroline Attwood', link: 'https://unsplash.com/photos/grilled-fish-cooked-vegetables-and-fork-on-plate-bpPTlXWTOvg', alt: 'Gegarter Fisch mit Gemüse auf einem Teller' },
+  steak: { id: 'photo-1588168333986-5078d3ae3976', wer: 'Justus Menke', link: 'https://unsplash.com/photos/seared-steak-on-green-salad-62XLglIrTJc', alt: 'Gebratenes Steak mit rosa Kern auf Salatblättern' },
+  caesar: { id: 'photo-1746211108786-ca20c8f80ecd', wer: 'Cliffer Rebelo', link: 'https://unsplash.com/photos/delicious-caesar-salad-is-presented-on-a-table-UdLsLK_KFLw', alt: 'Caesar Salad auf einem Tisch' },
+  tomatensauce: { id: 'photo-1752627559682-9b7f0f0ded4e', wer: 'stephan de MARANTHI', link: 'https://unsplash.com/photos/tomato-sauce-being-stirred-with-a-wooden-spoon-GDn4iLAJijo', alt: 'Tomatensauce wird mit einem Holzlöffel umgerührt' },
+  bechamel: { id: 'photo-1758524151924-1be216d189a1', wer: 'Ahmet Koç', link: 'https://unsplash.com/photos/pouring-sauce-over-food-in-a-baking-dish-N8YoavBPREE', alt: 'Sauce wird über Nudeln in einer Auflaufform gegossen' },
+  bratensosse: { id: 'photo-1633436375153-d7045cb93e38', wer: 'Parnis Azimi', link: 'https://unsplash.com/photos/a-plate-of-mashed-potatoes-topped-with-gravy-qrDM1rmKgOQ', alt: 'Kartoffelpüree mit dunkler Soße' },
+  gemuesebruehe: { id: 'photo-1741796105489-33ea406ac1b7', wer: 'Elena Leya', link: 'https://unsplash.com/photos/delicious-hearty-vegetable-soup-with-carrots-and-herbs-sIKxa702NbA', alt: 'Klare Suppe mit Möhren, Sellerie und Petersilie' },
+  vinaigrette: { id: 'photo-1750943082709-59ed51f96243', wer: 'Tommaso Ubezio', link: 'https://unsplash.com/photos/chef-drizzling-dressing-onto-a-fresh-vibrant-salad-iIsSn87LKSs', alt: 'Dressing wird über einen Salat geträufelt' },
+  nudelteig: { id: 'photo-1447279506476-3faec8071eee', wer: 'Jorge Zapata', link: 'https://unsplash.com/photos/person-sheeting-dough-4nXkhLCrkLo', alt: 'Nudelteig wird von Hand ausgerollt' },
+  /* ----- ergänzt am 01.11.2026: Fotos für Rezepte, die bisher nur eine Zeichnung hatten ----- */
+  adobo: { id: 'photo-1770911066463-c822907a9671', wer: 'Nguyen Mazic', link: 'https://unsplash.com/photos/braised-pork-belly-with-eggs-and-side-dishes-_luSs5lUkjA', alt: 'Geschmortes Fleisch in dunkler Soße' },
+  aloogobi: { id: 'photo-1652545296893-ff9227b3512e', wer: 'Dr Muhammad Amer', link: 'https://unsplash.com/photos/a-white-bowl-filled-with-meat-and-vegetables-SE-U18vg5Hw', alt: 'Indisches Curry in einer Schale' },
+  ayran: { id: 'photo-1701611236809-a0617c79ff15', wer: 'Burak B', link: 'https://unsplash.com/photos/a-bowl-of-food-on-a-white-table-Aazz_KcgrMY' },
+  basmati: { id: 'photo-1536304993881-ff6e9eefa2a6', wer: 'Pille R. Priske', link: 'https://unsplash.com/photos/rice-in-bowl-xmuIgjuQG0M' },
+  currywurst: { id: 'photo-1651307445227-4aafdd2d23b3', wer: 'Mirko Fabian', link: 'https://unsplash.com/photos/a-plate-of-food-H0BirSjvsQY' },
+  gaensekeulen: { id: 'photo-1640259908934-dad961fba30d', wer: 'Stefan Schauberger', link: 'https://unsplash.com/photos/a-white-plate-topped-with-meat-covered-in-sauce-70MdVpvYkKw' },
+  greencurry: { id: 'photo-1668665772043-bdd32e348998', wer: 'Andrew Relf', link: 'https://unsplash.com/photos/a-bowl-of-food-qEzLiabQe8M' },
+  hefezopf: { id: 'photo-1620416328855-f56e4e98637b', wer: 'Megan Allen', link: 'https://unsplash.com/photos/brown-bread-on-white-and-red-textile-oQpvta3hD2g' },
+  huevos: { id: 'photo-1585975754487-25489eabf36a', wer: 'Paul Hanaoka', link: 'https://unsplash.com/photos/egg-and-vegetable-dish-on-white-ceramic-plate-mkOpQDcFrx0' },
+  imambayildi: { id: 'photo-1789977968890-11b661191e45', wer: 'Arinal Izzah', link: 'https://unsplash.com/photos/braised-eggplant-in-spicy-red-sauce-y8i5ntRg8KE', alt: 'Geschmorte Aubergine in roter Soße' },
+  klopse: { id: 'photo-1678969406319-5776d82dabab', wer: 'Haseeb Modi', link: 'https://unsplash.com/photos/a-white-plate-topped-with-meatballs-covered-in-sauce-JuUp1BxRoXg', alt: 'Fleischklößchen in Soße' },
+  kraeuterbutter: { id: 'photo-1603596310923-dbb12732f9c7', wer: 'Nathan Dumlao', link: 'https://unsplash.com/photos/a-bar-of-butter-sitting-on-top-of-a-wooden-table-qTigcoSKke8', alt: 'Butter auf einem Holzbrett' },
+  marmorkuchen: { id: 'photo-1603983712146-c6e594563c70', wer: 'Nenad Kaevik', link: 'https://unsplash.com/photos/sliced-chocolate-cake-on-brown-wooden-chopping-board-q8dTKBzBM4U' },
+  pizzaschnecken: { id: 'photo-1781722758469-975dd9e90643', wer: 'Mikey Frost', link: 'https://unsplash.com/photos/baked-rolls-with-creamy-dipping-sauce-on-a-white-plate-1igValW0Szo' },
+  raclette: { id: 'photo-1777229988046-5393c1d1ef43', wer: 'Alpha Perspective', link: 'https://unsplash.com/photos/crispy-baked-potatoes-with-melted-cheese-l-rC6Hmb0kQ', alt: 'Ofenkartoffeln mit geschmolzenem Käse' },
+  rotkohl: { id: 'photo-1570112686245-ec7e043ad444', wer: 'dimitri.photography', link: 'https://unsplash.com/photos/plate-of-food-Yv3l1TTVXAU', alt: 'Rotkohl' },
+  rouladen: { id: 'photo-1613746192032-bee1894c743e', wer: 'sofia lyu', link: 'https://unsplash.com/photos/9JNsMz9R7iQ', alt: 'Deftiges deutsches Fleischgericht mit Kartoffeln' },
+  sachertorte: { id: 'photo-1627394728092-d080498ae85d', wer: 'Luke Wang', link: 'https://unsplash.com/photos/sliced-chocolate-cake-on-white-ceramic-plate-QWEY4w0t5n4' },
+  sauerbraten: { id: 'photo-1640354998840-34a9e42469c5', wer: 'Vadim Sadovski', link: 'https://unsplash.com/photos/a-plate-of-food-with-carrots-meat-and-gravy-68ncXdBAaOY', alt: 'Braten mit Soße und Möhren' },
+  sigaraboregi: { id: 'photo-1767124664944-2df3dcb7a83d', wer: 'Murat Demir', link: 'https://unsplash.com/photos/golden-baked-pastry-with-creamy-cheese-filling-d-8fqEUZ7Eg', alt: 'Goldbraunes Börek mit Käsefüllung' },
+  spaetzle: { id: 'photo-1708184528301-b0dad28dded5', wer: 'Md Shohan Ridoy', link: 'https://unsplash.com/photos/a-black-bowl-filled-with-macaroni-and-cheese-OYqXprumKqM', alt: 'Überbackene Käsenudeln in einer Schale' },
+  spargel: { id: 'photo-1779798201345-bf48c68dc089', wer: 'Alberto Gasco', link: 'https://unsplash.com/photos/white-asparagus-spears-wrapped-in-brown-paper-9bIAzp2pfrY', alt: 'Frischer weißer Spargel' },
+  stollen: { id: 'photo-1481391243133-f96216dcb5d2', wer: 'Jennifer Pallian', link: 'https://unsplash.com/photos/sliced-bread-served-on-black-metal-tray-_Skvg1Izyxc', alt: 'Weihnachtsbrot mit Puderzucker, in Scheiben geschnitten' },
+  suesssauer: { id: 'photo-1664138788119-bd4f073259d5', wer: 'Janesca', link: 'https://unsplash.com/photos/a-bowl-of-food-CteaqWgFq3M' },
+  tartetatin: { id: 'photo-1621743478914-cc8a86d7e7b5', wer: 'Kavya P K', link: 'https://unsplash.com/photos/red-apple-beside-brown-pie-zQ4jrYelvLs', alt: 'Apfelkuchen mit einem roten Apfel daneben' },
+  tomkha: { id: 'photo-1585417791023-a5a6164b2646', wer: 'charlesdeluvio', link: 'https://unsplash.com/photos/thai-inspired-soup-wrfO9SWykdE', alt: 'Thailändische Kokossuppe' },
+  tortilla: { id: 'photo-1639669794539-952631b44515', wer: 'blackieshoot', link: 'https://unsplash.com/photos/a-close-up-of-a-piece-of-food-on-a-plate-z4CQtd07u5k' },
+  zimtsterne: { id: 'photo-1513806562344-c75007ad303f', wer: 'Lydia Norstad', link: 'https://unsplash.com/photos/star-cookies-near-acorn-9LfcAIYcl9o', alt: 'Sternplätzchen' },
+  zupfkuchen: { id: 'photo-1524351199678-941a58a3df50', wer: 'Tina Guina', link: 'https://unsplash.com/photos/sliced-of-cake-on-black-plate-s8_7AqkzCWY', alt: 'Ein Stück Käsekuchen' },
   adana: { id: 'photo-1620167790054-de54f34308bb', wer: "engin akyurt", link: 'https://unsplash.com/photos/cooked-meat-with-sliced-lemon-on-white-ceramic-plate-Giu791_4pqE' },
   aglio: { id: 'photo-1726596159143-15a840d03d3e', wer: "Maria Klichik", link: 'https://unsplash.com/photos/a-plate-of-pasta-with-garlic-parmesan-cheese-and-a-bottle-of-1wK-sWIcRRU' },
   apfelkuchen: { id: 'photo-1562007908-17c67e878c88', wer: "Diliara Garifullina", link: 'https://unsplash.com/photos/braune-wuste-auf-weisser-keramikplatte-0lqRhBh0I40' },
@@ -3230,6 +3232,460 @@ const FOTOS = {
   zimtschnecken: { id: 'photo-1764281469526-e1c378515e6f', wer: "David Eduardo Lopez Diaz", link: 'https://unsplash.com/photos/drei-susse-zimtschnecken-auf-einem-schwarzen-teller-7Qv51sxpghM' },
   zitronenkuchen: { id: 'photo-1691242720316-7bea97eb655f', wer: "The Design Lady", link: 'https://unsplash.com/photos/eine-scheibe-zitronenbrot-auf-einem-teller-mit-einer-gabel-0YZe0g5w7yA' }
 };
+
+/* =====================================================================
+   ERGÄNZT AM 01.11.2026 – nach dem „Chefkoch-Check“
+   Was gefehlt hat: Grundrezepte im Kapitel Basics, deutsche Alltagsklassiker
+   (Frikadellen, Linseneintopf, Himmel un Ääd), Fisch aus dem Ofen, ein
+   richtiges Steak und ein Salat als Hauptgericht.
+   ===================================================================== */
+REZEPTE.push(
+  /* ===================== DEUTSCHLAND & ÖSTERREICH ===================== */
+  {
+    id: 'frikadellen', kapitel: 'deutschland', land: 'Deutschland',
+    titel: 'Frikadellen', untertitel: 'Saftige Buletten mit eingeweichtem Brötchen',
+    intro: 'Ob Frikadelle, Bulette oder Fleischpflanzerl: Der Trick ist das eingeweichte Brötchen vom Vortag. Es hält die Masse locker und saftig. Warm mit Kartoffelsalat oder kalt mit Senf und Brot.',
+    zeit: { gesamt: 40, aktiv: 25 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 420,
+    badges: [],
+    bild: foto('frikadellen', 'Frikadellen mit Kartoffelpüree'),
+    zutaten: [
+      { menge: 1, einheit: 'Stk', name: ['Brötchen', 'Brötchen'], hinweis: 'vom Vortag' },
+      { menge: 500, einheit: 'g', name: 'gemischtes Hackfleisch', register: 'Hackfleisch' },
+      { menge: 1, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
+      { menge: 1, einheit: 'Stk', name: ['Ei', 'Eier'], hinweis: 'Größe M', ganz: true, register: 'Eier' },
+      { menge: 1, einheit: 'EL', name: 'Senf', hinweis: 'mittelscharf' },
+      { menge: 1, einheit: 'TL', name: 'Paprikapulver', hinweis: 'edelsüß' },
+      { menge: 0.5, einheit: 'Bund', name: 'Petersilie' },
+      { menge: 3, einheit: 'EL', name: 'Öl', hinweis: 'zum Braten' },
+      { menge: null, einheit: null, name: 'Salz und Pfeffer', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Brötchen einweichen', text: 'Brötchen in Würfel schneiden und 10 Minuten in kaltem Wasser einweichen. In der Zeit die Zwiebel fein würfeln und die Petersilie hacken.',
+        erkennen: 'Das Brötchen ist durch und durch weich.', fehler: 'Frisches Brötchen nehmen: Es wird matschig statt locker.', timer: 10,
+        szene: brett(['wuerfel', '#E8C990', 14, 18, 30], ['wuerfel', F.zwiebelRoh, 18, 9, 26], ['blatt', F.kraut, 14, 10, 22], ['hack', F.hackRoh, 1, 70, 0]) },
+      { zeit: 10, titel: 'Zwiebel dünsten', text: '1 EL Öl in der Pfanne erhitzen und die Zwiebel darin 3 Minuten glasig dünsten. Kurz abkühlen lassen.',
+        erkennen: 'Die Zwiebelwürfel sind weich und durchscheinend, aber nicht braun.', fehler: 'Rohe Zwiebel in die Masse: Sie bleibt knackig und schmeckt scharf.', timer: 3,
+        szene: sz('pfanne', [st('wuerfel', F.zwiebelGlasig, 40, 10, .8), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 13, titel: 'Masse kneten', text: 'Brötchen kräftig ausdrücken. Mit Hack, Zwiebel, Ei, Senf, Paprika, Petersilie, 1 TL Salz und Pfeffer verkneten. Mit nassen Händen 8 flache Frikadellen formen, etwa 2 cm dick.',
+        erkennen: 'Die Masse hält zusammen und klebt nicht mehr an den nassen Händen.', fehler: 'Brötchen nicht ausdrücken: Die Masse wird nass und die Frikadellen fallen in der Pfanne auseinander.', timer: null,
+        szene: sz('brett', [st('patty', F.hackRoh, 8, 58, .7)]) },
+      { zeit: 20, titel: 'Braten', text: 'Restliches Öl bei mittlerer Hitze erhitzen. Frikadellen von jeder Seite 5–6 Minuten braten.',
+        erkennen: 'Beide Seiten sind dunkelbraun und knusprig. Innen ist nichts mehr rosa (mind. 70 °C).', fehler: 'Zu heiß braten: Außen schwarz, innen noch roh.', timer: 12, vergleich: true,
+        szene: sz('pfanne', [st('patty', '#8A4E34', 6, 64, .62), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 32, titel: 'Servieren', text: 'Kurz auf Küchenpapier abtropfen lassen. Mit Kartoffelsalat, Püree und Bratensoße oder einfach mit Senf servieren.',
+        erkennen: 'Kross, saftig und gleichmäßig gebräunt.', fehler: 'Gleich nach dem Braten aufschneiden: Der Saft läuft aus.', timer: null, vergleich: true,
+        szene: sz('teller', [st('patty', '#7E4630', 3, 70, .5), st('blatt', F.kraut, 10, 9, .7)]) }
+    ],
+    tipp: 'Kalt schmecken Frikadellen am nächsten Tag fast noch besser. Im Kühlschrank halten sie 2 Tage.'
+  },
+  {
+    id: 'linseneintopf', kapitel: 'deutschland', land: 'Deutschland',
+    titel: 'Linseneintopf', untertitel: 'Mit Gemüse, Kartoffeln und Würstchen',
+    intro: 'Deftig, günstig und am zweiten Tag noch besser: Der Eintopf aus Omas Küche. Ein Schuss Essig ganz am Ende gehört dazu, er macht den Geschmack frisch.',
+    zeit: { gesamt: 60, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 480,
+    badges: [],
+    bild: foto('linseneintopf', 'Linsensuppe in Schalen'),
+    zutaten: [
+      { menge: 250, einheit: 'g', name: 'Tellerlinsen', hinweis: 'braun, getrocknet', register: 'Linsen' },
+      { menge: 1, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
+      { menge: 2, einheit: 'Stk', name: ['Möhre', 'Möhren'] },
+      { menge: 150, einheit: 'g', name: 'Knollensellerie', register: 'Sellerie' },
+      { menge: 300, einheit: 'g', name: 'Kartoffeln', hinweis: 'festkochend' },
+      { menge: 2, einheit: 'EL', name: 'Öl' },
+      { menge: 1, einheit: 'EL', name: 'Tomatenmark' },
+      { menge: 1200, einheit: 'ml', name: 'Gemüsebrühe', register: 'Brühe' },
+      { menge: 2, einheit: 'Blatt', name: 'Lorbeer' },
+      { menge: 4, einheit: 'Stk', name: ['Wiener Würstchen', 'Wiener Würstchen'], hinweis: 'oder Mettenden', ganz: true, register: 'Würstchen' },
+      { menge: 2, einheit: 'EL', name: 'Essig', hinweis: 'Rotwein- oder Apfelessig' },
+      { menge: 0.5, einheit: 'Bund', name: 'Petersilie' },
+      { menge: null, einheit: null, name: 'Salz, Pfeffer, Zucker', hinweis: 'nach Geschmack', register: 'Salz' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Gemüse schneiden', text: 'Zwiebel, Möhren, Sellerie und Kartoffeln schälen und in etwa 1 cm große Würfel schneiden. Linsen in einem Sieb abspülen.',
+        erkennen: 'Alle Würfel sind ungefähr gleich groß.', fehler: 'Kartoffeln zu groß lassen: Sie sind noch hart, wenn die Linsen schon zerfallen.', timer: null,
+        szene: brett(['wuerfel', F.zwiebelRoh, 14, 10, 26], ['wuerfel', F.moehre, 16, 11, 28], ['wuerfel', '#E9DFC2', 12, 11, 24], ['wuerfel', F.kartoffel, 14, 13, 28], ['kreis', '#8A6A44', 60, 4, 30]) },
+      { zeit: 10, titel: 'Anschwitzen', text: 'Öl im großen Topf erhitzen. Zwiebel, Möhren und Sellerie 5 Minuten anschwitzen. Tomatenmark dazugeben und 1 Minute mitrösten.',
+        erkennen: 'Das Gemüse glänzt, das Tomatenmark wird dunkler und riecht süßlich.', fehler: 'Tomatenmark nicht anrösten: Es schmeckt dann roh und sauer.', timer: 5,
+        szene: sz('topf', [st('wuerfel', F.zwiebelGlasig, 22, 10, .8), st('wuerfel', F.moehre, 20, 11, .8), st('wuerfel', '#E0D3AE', 14, 11, .8)], { hitze: 2 }) },
+      { zeit: 16, titel: 'Köcheln', text: 'Linsen, Kartoffeln, Brühe und Lorbeer dazugeben. Aufkochen und zugedeckt etwa 35 Minuten leise köcheln lassen, ab und zu umrühren.',
+        erkennen: 'Die Linsen sind weich, aber noch nicht zerfallen. Der Eintopf ist sämig.', fehler: 'Den Essig jetzt schon zugeben: Säure verhindert, dass die Linsen weich werden.', timer: 35,
+        szene: sz('topf', [fl('#8E6A3E', .96, 'bruehe'), st('kreis', '#6E5232', 60, 5, .85), st('wuerfel', F.moehre, 12, 10, .8), st('wuerfel', F.kartoffel, 10, 13, .8)], { hitze: 1, dampf: true }) },
+      { zeit: 51, titel: 'Würstchen erwärmen', text: 'Würstchen in Scheiben schneiden und 5 Minuten im Eintopf ziehen lassen. Nicht mehr kochen.',
+        erkennen: 'Die Würstchen sind heiß und noch prall.', fehler: 'Würstchen mitkochen: Sie platzen auf und werden fad.', timer: 5,
+        szene: sz('topf', [fl('#8E6A3E', .96, 'bruehe'), st('kreis', '#6E5232', 50, 5, .85), st('scheibe', '#C46A4A', 14, 20, .75, { c2: '#E3A089' })], { dampf: true }) },
+      { zeit: 56, titel: 'Abschmecken', text: 'Lorbeer herausnehmen. Mit Essig, Salz, Pfeffer und einer Prise Zucker abschmecken. Mit gehackter Petersilie servieren.',
+        erkennen: 'Würzig und leicht säuerlich. Schmeckt es flach, fehlt Salz oder Essig.', fehler: 'Lorbeer im Topf lassen: Wer draufbeißt, hat einen harten, bitteren Bissen.', timer: null, vergleich: true,
+        szene: sz('schuessel', [fl('#8E6A3E', .96, 'bruehe'), st('kreis', '#6E5232', 40, 5, .8), st('scheibe', '#C46A4A', 6, 20, .7, { c2: '#E3A089' }), st('blatt', F.kraut, 12, 8, .7)], { dampf: true }) }
+    ],
+    tipp: 'Ohne Würstchen ist der Eintopf vegetarisch. Dann am Ende ein paar geröstete Brotwürfel darüberstreuen.'
+  },
+  {
+    id: 'himmelunaeaed', kapitel: 'deutschland', land: 'Deutschland',
+    titel: 'Himmel un Ääd', untertitel: 'Rheinischer Klassiker mit Püree, Apfel, Blutwurst und Röstzwiebeln',
+    intro: 'Kölsch für „Himmel und Erde“: Die Äpfel wachsen oben am Baum, die Kartoffeln unten in der Erde. Dazu gebratene Blutwurst, im Rheinland „Flönz“ genannt, und viele Röstzwiebeln.',
+    zeit: { gesamt: 45, aktiv: 30 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 620,
+    badges: [],
+    bild: foto('himmelunaeaed', 'Gebratene Wurst mit Kartoffelpüree'),
+    zutaten: [
+      { menge: 1000, einheit: 'g', name: 'Kartoffeln', hinweis: 'mehligkochend' },
+      { menge: 3, einheit: 'Stk', name: ['Apfel', 'Äpfel'], hinweis: 'säuerlich, z. B. Boskop', register: 'Äpfel' },
+      { menge: 1, einheit: 'EL', name: 'Zucker' },
+      { menge: 1, einheit: 'EL', name: 'Zitronensaft' },
+      { menge: 2, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
+      { menge: 200, einheit: 'ml', name: 'Milch' },
+      { menge: 70, einheit: 'g', name: 'Butter', hinweis: '50 g fürs Püree, 20 g zum Braten' },
+      { menge: 1, einheit: 'Prise', name: 'Muskatnuss', hinweis: 'frisch gerieben' },
+      { menge: 400, einheit: 'g', name: 'Blutwurst', hinweis: 'am Stück, rheinisch „Flönz“' },
+      { menge: null, einheit: null, name: 'Salz', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Kartoffeln kochen', text: 'Kartoffeln schälen, vierteln und in Salzwasser etwa 20 Minuten weich kochen.',
+        erkennen: 'Ein Messer gleitet ohne Widerstand hinein.', fehler: 'Festkochende Kartoffeln nehmen: Das Püree wird klebrig.', timer: 20,
+        szene: sz('topf', [fl(F.wasser, .96, 'wasser'), st('kartoffel', F.kartoffel, 14, 34, .8)], { hitze: 2, dampf: true }) },
+      { zeit: 2, titel: 'Apfelkompott', text: 'Äpfel schälen, entkernen und würfeln. Mit Zucker, Zitronensaft und 3 EL Wasser zugedeckt 10 Minuten weich dünsten, dann grob zerdrücken.',
+        erkennen: 'Die Apfelstücke zerfallen, ein paar kleine Stücke dürfen bleiben.', fehler: 'Ohne Deckel: Das Wasser verdampft und die Äpfel brennen an.', timer: 10,
+        szene: sz('topf', [fl('#EAD9A0', .9, 'creme'), st('wuerfel', '#F2E2B0', 18, 14, .75)], { hitze: 1, dampf: true }) },
+      { zeit: 10, titel: 'Röstzwiebeln', text: 'Zwiebeln in dünne Ringe schneiden und in 1 EL Butter bei mittlerer Hitze etwa 12 Minuten goldbraun braten. Herausnehmen.',
+        erkennen: 'Goldbraune, weiche Ringe, die süß duften.', fehler: 'Zu heiß braten: Die Ränder verbrennen, bevor die Zwiebeln weich sind.', timer: 12,
+        szene: sz('pfanne', [st('zwiebelring', F.zwiebelGold, 22, 30, .82), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 22, titel: 'Püree stampfen', text: 'Kartoffeln abgießen und kurz ausdampfen lassen. Milch mit 50 g Butter erwärmen, dazugießen und alles stampfen. Mit Salz und Muskat abschmecken.',
+        erkennen: 'Cremig und locker, ohne Klümpchen.', fehler: 'Mit dem Pürierstab mixen: Das Püree wird zäh wie Kleister.', timer: null,
+        szene: sz('topf', [fl(F.kartoffel, .96, 'creme'), li(F.butter, 2, 4)]) },
+      { zeit: 28, titel: 'Blutwurst braten', text: 'Pelle von der Blutwurst abziehen und die Wurst in 1,5 cm dicke Scheiben schneiden. In der Zwiebelpfanne mit der restlichen Butter je Seite 3 Minuten braten.',
+        erkennen: 'Die Scheiben sind außen knusprig und innen weich.', fehler: 'Zu dünn schneiden oder zu oft wenden: Die Blutwurst zerfällt.', timer: 6,
+        szene: sz('pfanne', [st('scheibe', '#3A1E1C', 10, 46, .65, { c2: '#5A2A26' }), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 35, titel: 'Anrichten', text: 'Püree und Apfelkompott nebeneinander auf den Teller geben, Blutwurst daneben legen und die Röstzwiebeln darüber verteilen.',
+        erkennen: 'Weiß, goldgelb und dunkel: Püree, Apfel, Wurst und Zwiebeln.', fehler: 'Röstzwiebeln zu früh darauf: Sie werden weich.', timer: null, vergleich: true,
+        szene: sz('teller', [fl(F.kartoffel, .6, 'creme'), st('kloss', '#EAD9A0', 1, 70, .5), st('scheibe', '#3A1E1C', 4, 44, .55, { c2: '#5A2A26' }), st('zwiebelring', F.zwiebelGold, 10, 24, .6)]) }
+    ],
+    tipp: 'Wer keine Blutwurst mag, nimmt gebratene Leberwurst oder Bratwurst. Nur mit Röstzwiebeln ist es vegetarisch.'
+  },
+
+  /* ===================== EUROPA ===================== */
+  {
+    id: 'ofenlachs', kapitel: 'europa', land: 'Norwegen',
+    titel: 'Ofenlachs mit Zitrone und Dill', untertitel: 'Saftiger Lachs mit Kartoffeln und Bohnen vom Blech',
+    intro: 'Ein ganzes Abendessen auf einem Blech: Erst bekommen die Kartoffeln Vorsprung, dann kommen Lachs und Bohnen dazu. Der Lachs bleibt innen saftig, wenn er nicht zu lange im Ofen ist.',
+    zeit: { gesamt: 45, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 560,
+    badges: ['glutenfrei'],
+    bild: foto('ofenlachs', 'Gegarter Fisch mit Gemüse'),
+    zutaten: [
+      { menge: 4, einheit: 'Stk', name: ['Lachsfilet', 'Lachsfilets'], hinweis: 'à ca. 150 g, mit Haut', ganz: true, register: 'Lachs' },
+      { menge: 800, einheit: 'g', name: 'kleine Kartoffeln', hinweis: 'festkochend, z. B. Drillinge', register: 'Kartoffeln' },
+      { menge: 300, einheit: 'g', name: 'grüne Bohnen', register: 'Bohnen' },
+      { menge: 3, einheit: 'EL', name: 'Olivenöl' },
+      { menge: 1, einheit: 'Stk', name: ['Bio-Zitrone', 'Bio-Zitronen'], register: 'Zitrone' },
+      { menge: 0.5, einheit: 'Bund', name: 'Dill' },
+      { menge: 1, einheit: 'Zehe', name: 'Knoblauch' },
+      { menge: 150, einheit: 'g', name: 'Schmand', hinweis: 'oder griechischer Joghurt' },
+      { menge: null, einheit: null, name: 'Salz und Pfeffer', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Kartoffeln aufs Blech', text: 'Ofen auf 220 °C Ober-/Unterhitze vorheizen. Kartoffeln waschen, halbieren und mit 2 EL Olivenöl und Salz auf einem Blech mit Backpapier mischen.',
+        erkennen: 'Die Kartoffeln liegen mit der Schnittfläche nach unten und nicht übereinander.', fehler: 'Kartoffeln stapeln: Sie dämpfen statt zu bräunen.', timer: null,
+        szene: sz('blech', [st('kartoffel', F.kartoffel, 18, 34, .9)]) },
+      { zeit: 5, titel: 'Vorbacken', text: 'Kartoffeln 20 Minuten im Ofen backen.',
+        erkennen: 'Die Unterseite ist goldbraun, innen sind sie fast weich.', fehler: 'Lachs gleich mit aufs Blech: Er ist fertig, bevor die Kartoffeln gar sind.', timer: 20,
+        szene: sz('blech', [st('kartoffel', F.kartoffelBraun, 18, 34, .9)], { ofen: true }) },
+      { zeit: 8, titel: 'Bohnen und Dip', text: 'Bohnen waschen und die Enden abschneiden. Für den Dip Schmand mit der Hälfte des gehackten Dills, geriebenem Knoblauch, etwas Zitronenschale und Salz verrühren.',
+        erkennen: 'Ein weißer Dip mit grünen Dillspitzen.', fehler: 'Schale einer gespritzten Zitrone reiben: Dafür immer Bio-Zitronen nehmen.', timer: null,
+        szene: brett(['stab', '#5E9A3A', 20, 40, 30], ['kreis', '#F7F4EA', 1, 70, 0], ['blatt', F.kraut, 16, 8, 22], ['spalte', F.zitrone, 3, 34, 20, '#F7E8A0']) },
+      { zeit: 25, titel: 'Lachs dazulegen', text: 'Kartoffeln an den Rand schieben. Bohnen mit 1 EL Öl dazugeben. Lachs mit der Haut nach unten in die Mitte legen, salzen, pfeffern und mit Zitronenscheiben belegen.',
+        erkennen: 'Alles liegt nebeneinander, nichts überlappt.', fehler: 'Lachs direkt aus dem Kühlschrank: Er gart ungleichmäßig. Lieber 10 Minuten vorher herausnehmen.', timer: null,
+        szene: sz('blech', [st('kartoffel', F.kartoffelBraun, 12, 32, .92), st('stab', '#5E9A3A', 16, 28, .85), st('brust', '#F08A5D', 4, 80, .4, { c2: '#F7B590' }), st('scheibe', F.zitrone, 4, 24, .4, { c2: '#F7E8A0' })]) },
+      { zeit: 27, titel: 'Garen', text: 'Weitere 12–15 Minuten backen, je nach Dicke der Filets.',
+        erkennen: 'Der Lachs lässt sich mit der Gabel leicht in Lamellen teilen und ist innen noch leicht glasig (etwa 50 °C im Kern).', fehler: 'Zu lange garen: Der Lachs wird trocken und weißes Eiweiß tritt aus.', timer: 13, vergleich: true,
+        szene: sz('blech', [st('kartoffel', F.kartoffelBraun, 12, 32, .92), st('stab', '#4E8A32', 16, 28, .85), st('brust', '#E87C50', 4, 80, .4, { c2: '#F2A27A' }), st('scheibe', F.zitrone, 4, 24, .4, { c2: '#F7E8A0' })], { ofen: true }) },
+      { zeit: 40, titel: 'Servieren', text: 'Mit dem restlichen Dill bestreuen und mit dem Dip servieren.',
+        erkennen: 'Rosa Lachs, grüne Bohnen, goldene Kartoffeln.', fehler: 'Lachs mit Gewalt von der Haut lösen: Lieber mit dem Pfannenwender zwischen Haut und Fleisch fahren.', timer: null, vergleich: true,
+        szene: sz('teller', [st('brust', '#E87C50', 1, 110, .2, { c2: '#F2A27A' }), st('kartoffel', F.kartoffelBraun, 5, 30, .6), st('stab', '#4E8A32', 8, 26, .65), st('blatt', F.kraut, 10, 7, .6)]) }
+    ],
+    tipp: 'Kerntemperatur: 45–50 °C ist glasig und saftig, ab 55 °C ist der Lachs ganz durch.'
+  },
+
+  /* ===================== AMERIKA ===================== */
+  {
+    id: 'steak', kapitel: 'amerika', land: 'USA',
+    titel: 'Rindersteak aus der Pfanne', untertitel: 'Außen kross, innen rosa, mit Knoblauch-Kräuter-Butter übergossen',
+    intro: 'Für ein gutes Steak brauchst du nur drei Dinge: gutes Fleisch, eine richtig heiße Pfanne und Geduld beim Ruhen. Am sichersten triffst du die Garstufe mit einem Fleischthermometer.',
+    zeit: { gesamt: 50, aktiv: 20 }, schwierigkeit: 2, portionen: 2, portionsWort: ['Portion', 'Portionen'], kcal: 560,
+    badges: ['glutenfrei'],
+    bild: foto('steak', 'Gebratenes Steak mit rosa Kern'),
+    zutaten: [
+      { menge: 2, einheit: 'Stk', name: ['Rindersteak', 'Rindersteaks'], hinweis: 'z. B. Rumpsteak oder Ribeye, ca. 3 cm dick, à 250 g', ganz: true, register: 'Rind' },
+      { menge: 1, einheit: 'EL', name: 'Öl', hinweis: 'hoch erhitzbar, z. B. Rapsöl' },
+      { menge: 30, einheit: 'g', name: 'Butter' },
+      { menge: 2, einheit: 'Zehe', name: 'Knoblauch' },
+      { menge: 2, einheit: 'Zweig', name: 'Thymian', hinweis: 'oder Rosmarin' },
+      { menge: 1, einheit: 'TL', name: 'grobes Salz', register: 'Salz' },
+      { menge: null, einheit: null, name: 'Pfeffer', hinweis: 'frisch gemahlen' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Temperieren', text: 'Steaks 30 Minuten vor dem Braten aus dem Kühlschrank nehmen. Mit Küchenpapier trocken tupfen und den Fettrand alle 2 cm leicht einschneiden.',
+        erkennen: 'Das Fleisch fühlt sich nicht mehr kühlschrankkalt an, die Oberfläche ist trocken.', fehler: 'Nasses Fleisch braten: Es kocht im eigenen Saft und wird grau statt braun.', timer: 30,
+        szene: brett(['brust', G.fleischRoh, 1, 120, 0, '#F1D3C8'], ['brust', G.fleischRoh, 1, 120, 0, '#F1D3C8'], ['zehe', F.knoblauch, 2, 24, 12], ['zweig', F.kraut, 2, 50, 14]) },
+      { zeit: 30, titel: 'Pfanne erhitzen', text: 'Steaks rundum kräftig salzen. Eine Gusseisen- oder Edelstahlpfanne ohne Fett 3 Minuten stark erhitzen, dann das Öl hineingeben.',
+        erkennen: 'Das Öl wird dünnflüssig und bildet leichte Schlieren.', fehler: 'Beschichtete Pfanne nehmen: Sie verträgt die starke Hitze nicht.', timer: 3,
+        szene: sz('pfanne', [{ f: 'glanz' }], { hitze: 3 }) },
+      { zeit: 33, titel: 'Scharf anbraten', text: 'Steaks einlegen und nicht bewegen. Je Seite 2–3 Minuten braten. Zum Schluss den Fettrand kurz an den Pfannenboden halten.',
+        erkennen: 'Eine dunkelbraune Kruste, die sich von selbst von der Pfanne löst.', fehler: 'Zu früh wenden oder ständig drücken: Die Kruste reißt und Saft läuft aus.', timer: 6,
+        szene: sz('pfanne', [st('brust', '#6E3A26', 2, 120, .4, { c2: '#9C5A3E' }), { f: 'glanz' }], { hitze: 3 }) },
+      { zeit: 39, titel: 'Mit Butter übergießen', text: 'Hitze auf mittel stellen. Butter, angedrückten Knoblauch und Kräuter dazugeben. Pfanne schräg halten und die schäumende Butter 1 Minute lang immer wieder über die Steaks löffeln.',
+        erkennen: 'Die Butter schäumt und riecht nussig. Für rosa zeigt das Thermometer etwa 55 °C im Kern.', fehler: 'Butter gleich am Anfang in die Pfanne: Sie verbrennt bei der hohen Hitze.', timer: 1,
+        szene: sz('pfanne', [st('brust', '#6E3A26', 2, 120, .4, { c2: '#9C5A3E' }), st('zehe', '#E9D49A', 2, 22, .6), st('zweig', F.kraut, 2, 50, .6), li(F.butter, 3, 5)], { hitze: 2 }) },
+      { zeit: 40, titel: 'Ruhen lassen', text: 'Steaks auf ein Brett legen und 5 Minuten ruhen lassen. Erst jetzt pfeffern.',
+        erkennen: 'Auf dem Brett sammelt sich nur wenig Saft.', fehler: 'Sofort anschneiden: Der Saft läuft aufs Brett und das Fleisch wird trocken. Pfeffer in der heißen Pfanne verbrennt und wird bitter.', timer: 5,
+        szene: sz('brett', [st('brust', '#6E3A26', 2, 120, .4, { c2: '#9C5A3E' }), st('zweig', F.kraut, 2, 50, .6)]) },
+      { zeit: 45, titel: 'Aufschneiden', text: 'Quer zur Faser in fingerdicke Streifen schneiden und mit der Bratbutter beträufeln.',
+        erkennen: 'Innen gleichmäßig rosa, außen eine dunkle Kruste.', fehler: 'Längs zur Faser schneiden: Das Fleisch wird zäh beim Kauen.', timer: null, vergleich: true,
+        szene: sz('teller', [st('scheibe', '#6E3A26', 7, 50, .62, { c2: '#D9707A' }), st('zweig', F.kraut, 1, 50, .4)]) }
+    ],
+    tipp: 'Garstufen im Kern: blutig 50 °C, rosa 55 °C, medium 60 °C, durch ab 65 °C. Beim Ruhen steigt die Temperatur noch um 2–3 Grad.'
+  },
+  {
+    id: 'caesar', kapitel: 'amerika', land: 'Mexiko',
+    titel: 'Caesar Salad', untertitel: 'Römersalat mit Croutons, Parmesan und cremigem Dressing',
+    intro: 'Erfunden wurde er 1924 in Tijuana in Mexiko, von dem italienischen Koch Caesar Cardini. Heute steht er weltweit auf der Karte. Wichtig: knackiger, trockener Salat und frisch geröstete Croutons.',
+    zeit: { gesamt: 25, aktiv: 25 }, schwierigkeit: 1, portionen: 2, portionsWort: ['Portion', 'Portionen'], kcal: 520,
+    badges: [],
+    bild: foto('caesar', 'Caesar Salad auf einem Tisch'),
+    zutaten: [
+      { menge: 2, einheit: 'Stk', name: ['Römersalatherz', 'Römersalatherzen'], register: 'Salat' },
+      { menge: 100, einheit: 'g', name: 'Ciabatta', hinweis: 'oder Weißbrot vom Vortag', register: 'Brot' },
+      { menge: 4, einheit: 'EL', name: 'Olivenöl', hinweis: '2 EL für die Croutons, 2 EL fürs Dressing' },
+      { menge: 3, einheit: 'EL', name: 'Mayonnaise' },
+      { menge: 1, einheit: 'Zehe', name: 'Knoblauch' },
+      { menge: 2, einheit: 'Stk', name: ['Sardellenfilet', 'Sardellenfilets'], hinweis: 'nach Wunsch', register: 'Sardellen' },
+      { menge: 1, einheit: 'EL', name: 'Zitronensaft' },
+      { menge: 1, einheit: 'TL', name: 'Dijonsenf', register: 'Senf' },
+      { menge: 60, einheit: 'g', name: 'Parmesan' },
+      { menge: null, einheit: null, name: 'Salz und Pfeffer', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Croutons rösten', text: 'Brot in 2 cm große Würfel schneiden. In 2 EL Olivenöl bei mittlerer Hitze 6–8 Minuten rundum goldbraun rösten und leicht salzen.',
+        erkennen: 'Die Würfel sind rundum goldbraun und klingen hohl, wenn sie aneinanderstoßen.', fehler: 'Zu heiß rösten: Außen dunkel, innen noch weich.', timer: 7,
+        szene: sz('pfanne', [st('wuerfel', '#D9A55A', 26, 22, .8), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 8, titel: 'Dressing rühren', text: 'Knoblauch fein reiben, Sardellen nach Wunsch sehr fein hacken. Mit Mayonnaise, 2 EL Olivenöl, Zitronensaft, Senf, zwei Dritteln des fein geriebenen Parmesans und 1–2 EL Wasser cremig rühren. Pfeffern.',
+        erkennen: 'Das Dressing ist dickflüssig und läuft langsam vom Löffel.', fehler: 'Zu viel Knoblauch: Roh wird er schnell scharf. Eine Zehe reicht.', timer: null,
+        szene: sz('schuessel', [fl('#F2EBD2', .9, 'creme'), st('krume', F.parmesan, 20, 5, .7)]) },
+      { zeit: 14, titel: 'Salat vorbereiten', text: 'Blätter vom Strunk lösen, waschen und sehr gut trocken schleudern. Große Blätter in breite Stücke reißen.',
+        erkennen: 'Die Blätter sind knackig und trocken.', fehler: 'Nasser Salat: Das Dressing rutscht ab und schmeckt wässrig.', timer: null,
+        szene: brett(['salat', '#8DBF5A', 3, 70, 22], ['salat', '#A9CF6E', 3, 64, 20], ['salat', '#8DBF5A', 2, 60, 18]) },
+      { zeit: 20, titel: 'Anrichten', text: 'Salat mit dem Dressing mischen. Croutons darüberstreuen und den restlichen Parmesan mit dem Sparschäler als Späne darüberhobeln. Sofort servieren.',
+        erkennen: 'Jedes Blatt ist leicht überzogen, die Croutons sind noch knusprig.', fehler: 'Zu früh anmachen: Salat und Croutons werden weich.', timer: null, vergleich: true,
+        szene: sz('teller', [st('salat', '#8DBF5A', 5, 64, .6), li('#F2EBD2', 3, 5), st('wuerfel', '#D9A55A', 10, 20, .6), st('krume', F.parmesan, 14, 9, .65)]) }
+    ],
+    tipp: 'Mit gebratener Hähnchenbrust in Streifen wird ein sattes Hauptgericht daraus. Ohne Sardellen ist der Salat vegetarisch.'
+  },
+
+  /* ===================== BASICS: GRUNDREZEPTE ===================== */
+  {
+    id: 'tomatensauce', kapitel: 'basics', land: 'Italien', nebenbei: true,
+    titel: 'Tomatensauce', untertitel: 'Grundsauce für Pasta, Pizza und Aufläufe',
+    intro: 'Die eine Sauce, die du immer kannst: Gute Dosentomaten, Olivenöl, Knoblauch und Zeit. Sie passt pur zu Nudeln, auf Pizza und in Lasagne oder Auflauf.',
+    zeit: { gesamt: 40, aktiv: 10 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 120,
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
+    bild: foto('tomatensauce', 'Tomatensauce wird im Topf umgerührt'),
+    zutaten: [
+      { menge: 3, einheit: 'EL', name: 'Olivenöl' },
+      { menge: 1, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
+      { menge: 2, einheit: 'Zehe', name: 'Knoblauch' },
+      { menge: 800, einheit: 'g', name: 'geschälte Tomaten', hinweis: '2 Dosen, ganze Früchte', register: 'Tomaten' },
+      { menge: 0.5, einheit: 'TL', name: 'Salz' },
+      { menge: 0.5, einheit: 'Bund', name: 'Basilikum' },
+      { menge: 1, einheit: 'Prise', name: 'Zucker', hinweis: 'nur bei Bedarf' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Vorbereiten', text: 'Zwiebel fein würfeln, Knoblauch in dünne Scheiben schneiden.',
+        erkennen: 'Feine, gleich große Zwiebelwürfel.', fehler: 'Zwiebel zu grob: Die Stücke bleiben in der Sauce hart.', timer: null,
+        szene: brett(['wuerfel', F.zwiebelRoh, 20, 8, 28], ['scheibe', F.knoblauch, 10, 12, 18, '#EFE4C4'], ['dose', '#C9CED2', 1, 66, 0], ['blatt', F.basilikum, 8, 16, 20]) },
+      { zeit: 5, titel: 'Andünsten', text: 'Olivenöl bei mittlerer Hitze erwärmen. Zwiebel 5 Minuten glasig dünsten, in der letzten Minute den Knoblauch dazugeben.',
+        erkennen: 'Zwiebeln glasig, Knoblauch duftet und ist hell.', fehler: 'Knoblauch zu früh: Er wird braun und bitter.', timer: 5,
+        szene: sz('topf', [st('wuerfel', F.zwiebelGlasig, 34, 8, .8), st('scheibe', '#F0E2B8', 8, 12, .7), { f: 'glanz' }], { hitze: 2 }) },
+      { zeit: 10, titel: 'Einkochen', text: 'Tomaten in den Topf geben und mit einem Kochlöffel oder Kartoffelstampfer zerdrücken. Salz und ein paar Basilikumstiele dazu. Offen 25 Minuten leise köcheln lassen.',
+        erkennen: 'Die Sauce ist dicker geworden und das Öl glänzt am Rand.', fehler: 'Zu stark kochen lassen: Die Sauce spritzt und brennt am Boden an.', timer: 25,
+        szene: sz('topf', [fl(F.tomate, .96, 'sosse'), st('wuerfel', F.tomateDick, 14, 16, .8), st('stab', '#4E7A34', 3, 40, .5)], { hitze: 1, dampf: true }) },
+      { zeit: 35, titel: 'Abschmecken', text: 'Basilikumstiele herausnehmen, frische Blätter zupfen und einrühren. Wer es glatt mag, püriert die Sauce. Nur wenn sie zu sauer schmeckt, eine Prise Zucker dazu.',
+        erkennen: 'Rund und fruchtig, nicht mehr säuerlich-roh.', fehler: 'Gleich Zucker reingeben: Meist fehlt nur Salz oder Kochzeit.', timer: null, vergleich: true,
+        szene: sz('topf', [fl(F.tomateDick, .96, 'sosse'), st('blatt', F.basilikum, 8, 18, .6), { f: 'glanz' }], { dampf: true }) }
+    ],
+    tipp: 'Gleich die doppelte Menge kochen und portionsweise einfrieren. Hält 3 Monate.'
+  },
+  {
+    id: 'bechamel', kapitel: 'basics', land: 'Frankreich', nebenbei: true,
+    titel: 'Béchamelsauce', untertitel: 'Helle Grundsauce für Lasagne, Gratin und Moussaka',
+    intro: 'Eine der fünf Grundsaucen der französischen Küche. Butter und Mehl werden zur Mehlschwitze, dann kommt Milch dazu. Mit Käse wird daraus eine Käsesauce.',
+    zeit: { gesamt: 20, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 190,
+    badges: ['vegetarisch'],
+    bild: foto('bechamel', 'Sauce wird über Nudeln in einer Auflaufform gegossen'),
+    zutaten: [
+      { menge: 40, einheit: 'g', name: 'Butter' },
+      { menge: 40, einheit: 'g', name: 'Mehl' },
+      { menge: 500, einheit: 'ml', name: 'Milch' },
+      { menge: 0.5, einheit: 'TL', name: 'Salz' },
+      { menge: 1, einheit: 'Prise', name: 'Muskatnuss', hinweis: 'frisch gerieben' },
+      { menge: 1, einheit: 'Prise', name: 'weißer Pfeffer', register: 'Pfeffer' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Milch erwärmen', text: 'Milch in einem kleinen Topf erwärmen, aber nicht kochen lassen.',
+        erkennen: 'Die Milch dampft leicht.', fehler: 'Milch unbeaufsichtigt lassen: Sie kocht schnell über.', timer: 3,
+        szene: sz('topf', [fl('#FBF8F0', .96, 'glatt')], { hitze: 1, dampf: true }) },
+      { zeit: 3, titel: 'Mehlschwitze', text: 'Butter in einem zweiten Topf schmelzen. Mehl einrühren und 1–2 Minuten unter Rühren anschwitzen.',
+        erkennen: 'Eine hellgelbe Paste, die nach Keks riecht.', fehler: 'Braun werden lassen: Die Sauce schmeckt dann nach Röstaromen und wird dunkel.', timer: 2,
+        szene: sz('topf', [fl('#EED9A0', .7, 'blasen')], { hitze: 2 }) },
+      { zeit: 5, titel: 'Milch einrühren', text: 'Topf kurz vom Herd nehmen. Milch nach und nach mit dem Schneebesen einrühren, bis keine Klümpchen mehr da sind.',
+        erkennen: 'Glatt und flüssig, noch ganz dünn.', fehler: 'Alles auf einmal hineingießen: Dann entstehen Klümpchen.', timer: null,
+        szene: sz('topf', [fl('#F7F0DC', .96, 'creme'), { f: 'wirbel', c: '#FFFFFF' }]) },
+      { zeit: 8, titel: 'Köcheln', text: 'Unter Rühren aufkochen und 8–10 Minuten leise köcheln lassen. Dabei immer wieder über den Topfboden rühren.',
+        erkennen: 'Die Sauce ist cremig und überzieht den Löffelrücken. Der Mehlgeschmack ist weg.', fehler: 'Nicht rühren: Sie brennt am Boden an.', timer: 10,
+        szene: sz('topf', [fl('#F4EBD0', .96, 'creme'), { f: 'glanz' }], { hitze: 1, dampf: true }) },
+      { zeit: 18, titel: 'Würzen', text: 'Mit Salz, Muskat und weißem Pfeffer abschmecken. Sofort verwenden oder Frischhaltefolie direkt auf die Oberfläche legen.',
+        erkennen: 'Mild-würzig mit einem Hauch Muskat.', fehler: 'Ohne Folie stehen lassen: Es bildet sich eine Haut.', timer: null, vergleich: true,
+        szene: sz('topf', [fl('#F4EBD0', .96, 'creme'), st('kreis', '#9C7A4A', 14, 2.5, .7)], { dampf: true }) }
+    ],
+    tipp: 'Klümpchen passiert? Kurz mit dem Pürierstab durchmixen, dann ist die Sauce wieder glatt.'
+  },
+  {
+    id: 'gemuesebruehe', kapitel: 'basics', land: 'Deutschland', nebenbei: true,
+    titel: 'Gemüsebrühe', untertitel: 'Selbst gekocht als Grundlage für Suppen, Risotto und Soßen',
+    intro: 'Schmeckt viel runder als Brühwürfel und du weißt genau, was drin ist. Die angeröstete Zwiebel mit Schale gibt Farbe und Tiefe.',
+    zeit: { gesamt: 85, aktiv: 20 }, schwierigkeit: 1, portionen: 2, portionsWort: ['Liter', 'Liter'], kcal: 40,
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
+    bild: foto('gemuesebruehe', 'Klare Suppe mit Möhren, Sellerie und Petersilie'),
+    zutaten: [
+      { menge: 2, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'], hinweis: 'mit Schale' },
+      { menge: 3, einheit: 'Stk', name: ['Möhre', 'Möhren'] },
+      { menge: 200, einheit: 'g', name: 'Knollensellerie', register: 'Sellerie' },
+      { menge: 1, einheit: 'Stange', name: 'Lauch' },
+      { menge: 1, einheit: 'Bund', name: 'Petersilie', hinweis: 'vor allem die Stiele' },
+      { menge: 2, einheit: 'Blatt', name: 'Lorbeer' },
+      { menge: 1, einheit: 'TL', name: 'Pfefferkörner', register: 'Pfeffer' },
+      { menge: 2, einheit: 'EL', name: 'Öl' },
+      { menge: 2500, einheit: 'ml', name: 'kaltes Wasser', register: 'Wasser' },
+      { menge: 1, einheit: 'TL', name: 'Salz' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Gemüse schneiden', text: 'Gemüse waschen, aber nicht schälen. Möhren, Sellerie und Lauch grob schneiden. Zwiebeln mit Schale quer halbieren.',
+        erkennen: 'Grobe Stücke, etwa 3 cm groß.', fehler: 'Zu klein schneiden: Das Gemüse zerfällt und die Brühe wird trüb.', timer: null,
+        szene: brett(['wuerfel', F.moehre, 10, 22, 28], ['wuerfel', '#E9DFC2', 8, 22, 26], ['scheibe', '#9CB45A', 6, 30, 24, '#E4EDC4'], ['spalte', '#C98A4A', 2, 50, 14, F.zwiebelRoh], ['blatt', F.kraut, 12, 12, 22]) },
+      { zeit: 10, titel: 'Zwiebeln rösten', text: 'Öl im großen Topf erhitzen. Zwiebeln mit der Schnittfläche nach unten 5 Minuten dunkelbraun rösten.',
+        erkennen: 'Die Schnittflächen sind fast schwarzbraun.', fehler: 'Zu früh aufhören: Die Brühe bleibt blass und schmeckt flach.', timer: 5,
+        szene: sz('topf', [st('spalte', '#5A3A22', 4, 54, .6, { c2: '#8A5A32' }), { f: 'glanz' }], { hitze: 3 }) },
+      { zeit: 15, titel: 'Leise kochen', text: 'Restliches Gemüse, Petersilie, Lorbeer, Pfefferkörner und kaltes Wasser dazugeben. Aufkochen und 60 Minuten nur ganz leise simmern lassen.',
+        erkennen: 'An der Oberfläche steigen nur einzelne kleine Blasen auf.', fehler: 'Sprudelnd kochen: Die Brühe wird trüb.', timer: 60,
+        szene: sz('topf', [fl('#D9B06A', .96, 'bruehe'), st('wuerfel', F.moehre, 10, 22, .8), st('wuerfel', '#E9DFC2', 8, 22, .8), st('spalte', '#8A5A32', 2, 50, .6)], { hitze: 1, dampf: true }) },
+      { zeit: 75, titel: 'Abseihen', text: 'Brühe durch ein Sieb gießen, am besten mit einem sauberen Küchentuch darin. Das Gemüse nicht ausdrücken.',
+        erkennen: 'Eine klare, goldbraune Brühe.', fehler: 'Gemüse ausdrücken: Trübstoffe gelangen in die Brühe.', timer: null,
+        szene: sz('schuessel', [fl('#C9944A', .94, 'bruehe')]) },
+      { zeit: 80, titel: 'Salzen und aufbewahren', text: 'Mit Salz abschmecken. Abgekühlt hält die Brühe 4 Tage im Kühlschrank oder 3 Monate im Gefrierfach.',
+        erkennen: 'Kräftig, aber nicht versalzen.', fehler: 'Gleich am Anfang salzen: Beim Einkochen wird sie zu salzig.', timer: null, vergleich: true,
+        szene: sz('glas', [fl('#C9944A', .9, 'bruehe')]) }
+    ],
+    tipp: 'In Eiswürfelformen einfrieren. So hast du immer kleine Portionen für Soßen und Risotto.'
+  },
+  {
+    id: 'vinaigrette', kapitel: 'basics', land: 'Frankreich', nebenbei: true,
+    titel: 'Vinaigrette', untertitel: 'Das klassische Salatdressing im Glas geschüttelt',
+    intro: 'Die Grundregel: ein Teil Essig, drei Teile Öl. Der Senf sorgt dafür, dass sich beides verbindet. Passt zu fast jedem Blattsalat.',
+    zeit: { gesamt: 10, aktiv: 10 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 140,
+    badges: ['vegetarisch', 'glutenfrei'],
+    bild: foto('vinaigrette', 'Dressing wird über einen Salat geträufelt'),
+    zutaten: [
+      { menge: 2, einheit: 'EL', name: 'Weißweinessig', hinweis: 'oder Apfelessig', register: 'Essig' },
+      { menge: 1, einheit: 'TL', name: 'Dijonsenf', register: 'Senf' },
+      { menge: 1, einheit: 'TL', name: 'Honig' },
+      { menge: 0.5, einheit: 'TL', name: 'Salz' },
+      { menge: 6, einheit: 'EL', name: 'Olivenöl' },
+      { menge: 1, einheit: 'Stk', name: ['Schalotte', 'Schalotten'] },
+      { menge: null, einheit: null, name: 'Pfeffer', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Schalotte würfeln', text: 'Schalotte schälen und sehr fein würfeln.',
+        erkennen: 'Winzige Würfel, kaum größer als ein Reiskorn.', fehler: 'Grobe Stücke: Sie schmecken roh scharf vor.', timer: null,
+        szene: brett(['wuerfel', '#E8C8D0', 30, 5, 26], ['kreis', '#E9C46A', 1, 50, 0], ['pulver', '#D9B44A', 1, 30, 0]) },
+      { zeit: 2, titel: 'Essig und Salz', text: 'Essig, Senf, Honig und Salz in einem Schraubglas verrühren, bis sich das Salz gelöst hat.',
+        erkennen: 'Keine Salzkörner mehr zu sehen.', fehler: 'Salz erst nach dem Öl: In Öl löst sich Salz nicht.', timer: null,
+        szene: sz('glas', [fl('#E2C66A', .5, 'glatt')]) },
+      { zeit: 4, titel: 'Öl dazu und schütteln', text: 'Öl dazugießen, Deckel zuschrauben und 20 Sekunden kräftig schütteln.',
+        erkennen: 'Das Dressing ist leicht cremig und hat sich verbunden.', fehler: 'Ohne Senf: Öl und Essig trennen sich sofort wieder.', timer: null,
+        szene: sz('glas', [fl('#E9C46A', .85, 'creme')]) },
+      { zeit: 6, titel: 'Abschmecken', text: 'Schalotte und Pfeffer einrühren, abschmecken. Erst kurz vor dem Servieren über den Salat geben.',
+        erkennen: 'Frisch, leicht säuerlich und ausgewogen.', fehler: 'Salat zu früh anmachen: Die Blätter fallen zusammen.', timer: null, vergleich: true,
+        szene: sz('schuessel', [st('salat', '#8DBF5A', 6, 60, .65), li('#E9C46A', 3, 4), st('wuerfel', '#E8C8D0', 14, 5, .7)]) }
+    ],
+    tipp: 'Mit Ahornsirup statt Honig ist die Vinaigrette vegan. Im Glas hält sie eine Woche im Kühlschrank, einfach vor Gebrauch schütteln.'
+  },
+  {
+    id: 'nudelteig', kapitel: 'basics', land: 'Italien', nebenbei: true,
+    titel: 'Frischer Nudelteig', untertitel: 'Pasta aus Mehl und Eiern, mit oder ohne Nudelmaschine',
+    intro: 'Nur zwei Zutaten: Mehl und Eier. Frische Nudeln sind in 2–3 Minuten gar und nehmen Soße besonders gut auf. Mit einem Nudelholz geht es auch ohne Maschine.',
+    zeit: { gesamt: 60, aktiv: 30 }, schwierigkeit: 2, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 420,
+    badges: ['vegetarisch'],
+    bild: foto('nudelteig', 'Nudelteig wird von Hand ausgerollt'),
+    zutaten: [
+      { menge: 400, einheit: 'g', name: 'Mehl', hinweis: 'Type 00 oder 405' },
+      { menge: 4, einheit: 'Stk', name: ['Ei', 'Eier'], hinweis: 'Größe M', ganz: true, register: 'Eier' },
+      { menge: 1, einheit: 'Prise', name: 'Salz' },
+      { menge: 2, einheit: 'EL', name: 'Hartweizengrieß', hinweis: 'zum Bestreuen', register: 'Grieß' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Mehlberg', text: 'Mehl und Salz auf die Arbeitsfläche geben und in die Mitte eine Mulde drücken. Eier hineinschlagen und mit einer Gabel von innen nach außen nach und nach mit dem Mehl verrühren.',
+        erkennen: 'Ein krümeliger, gelber Teig.', fehler: 'Mulde zu flach: Die Eier laufen über die Arbeitsfläche.', timer: null,
+        szene: sz('flaeche', [fl(F.mehl, .8, 'teig'), st('eiHalb', F.eigelb, 4, 30, .25)]) },
+      { zeit: 5, titel: 'Kneten', text: 'Mit den Händen 10 Minuten kräftig kneten. Ist der Teig zu trocken, die Hände kurz nass machen. Klebt er, etwas Mehl dazu.',
+        erkennen: 'Glatt, elastisch und fest. Ein Fingerdruck federt langsam zurück.', fehler: 'Zu kurz kneten: Die Nudeln reißen beim Ausrollen.', timer: 10,
+        szene: sz('flaeche', [{ f: 'teigkugel', c: '#F2D58A', gr: 150 }]) },
+      { zeit: 15, titel: 'Ruhen lassen', text: 'Teig in Frischhaltefolie wickeln und 30 Minuten bei Zimmertemperatur ruhen lassen.',
+        erkennen: 'Der Teig ist danach weicher und lässt sich leichter ausrollen.', fehler: 'Ohne Folie: Die Oberfläche trocknet aus und wird rissig.', timer: 30,
+        szene: sz('flaeche', [{ f: 'teigkugel', c: '#F2D58A', gr: 140 }, { f: 'glanz' }]) },
+      { zeit: 45, titel: 'Ausrollen', text: 'Teig vierteln. Jedes Stück mit der Nudelmaschine Stufe für Stufe oder mit dem Nudelholz ganz dünn ausrollen, etwa 1 mm.',
+        erkennen: 'Du kannst deine Hand durch den Teig schimmern sehen.', fehler: 'Gleich auf die dünnste Stufe: Der Teig reißt.', timer: null,
+        szene: sz('flaeche', [fl('#F2D58A', .9, 'teig')]) },
+      { zeit: 55, titel: 'Schneiden und kochen', text: 'Teigplatten in Bandnudeln schneiden und mit Grieß bestreuen, damit nichts klebt. In reichlich Salzwasser 2–3 Minuten kochen.',
+        erkennen: 'Die Nudeln schwimmen oben und sind bissfest.', fehler: 'So lange kochen wie getrocknete Nudeln: Frische Pasta wird dann weich und matschig.', timer: 3, vergleich: true,
+        szene: sz('topf', [fl(F.wasser, .96, 'wasser'), nu('#F2D58A', .8, 30)], { hitze: 3, dampf: true }) }
+    ],
+    tipp: 'Ein Drittel des Mehls durch Hartweizengrieß ersetzen. Dann werden die Nudeln bissfester.'
+  },
+  {
+    id: 'bratensosse', kapitel: 'basics', land: 'Deutschland', nebenbei: true,
+    titel: 'Dunkle Bratensoße', untertitel: 'Kräftige Soße ohne Tütenpulver, zu Frikadellen, Braten und Püree',
+    intro: 'Das Geheimnis ist das kräftige Anrösten von Gemüse und Tomatenmark. Daraus kommen Farbe und Geschmack. Zum Schluss macht kalte Butter die Soße glänzend.',
+    zeit: { gesamt: 35, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 110,
+    badges: [],
+    bild: foto('bratensosse', 'Kartoffelpüree mit dunkler Soße'),
+    zutaten: [
+      { menge: 1, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
+      { menge: 1, einheit: 'Stk', name: ['Möhre', 'Möhren'] },
+      { menge: 2, einheit: 'EL', name: 'Öl' },
+      { menge: 1, einheit: 'EL', name: 'Tomatenmark' },
+      { menge: 2, einheit: 'EL', name: 'Mehl' },
+      { menge: 100, einheit: 'ml', name: 'Rotwein', hinweis: 'oder mehr Brühe' },
+      { menge: 500, einheit: 'ml', name: 'Rinderbrühe', register: 'Brühe' },
+      { menge: 1, einheit: 'Blatt', name: 'Lorbeer' },
+      { menge: 20, einheit: 'g', name: 'Butter', hinweis: 'kalt' },
+      { menge: null, einheit: null, name: 'Salz und Pfeffer', hinweis: 'nach Geschmack' }
+    ],
+    schritte: [
+      { zeit: 0, titel: 'Gemüse würfeln', text: 'Zwiebel und Möhre schälen und in kleine Würfel schneiden.',
+        erkennen: 'Kleine, gleich große Würfel.', fehler: 'Zu große Stücke: Sie rösten nicht gleichmäßig.', timer: null,
+        szene: brett(['wuerfel', F.zwiebelRoh, 18, 9, 26], ['wuerfel', F.moehre, 18, 9, 26], ['pulver', '#B23A2B', 1, 30, 0]) },
+      { zeit: 5, titel: 'Kräftig anrösten', text: 'Öl im Topf erhitzen und das Gemüse 8 Minuten bei mittlerer bis hoher Hitze kräftig braun rösten.',
+        erkennen: 'Die Würfel sind dunkelbraun, am Boden bildet sich ein brauner Belag.', fehler: 'Zu wenig Farbe: Die Soße wird hell und schmeckt fad.', timer: 8,
+        szene: sz('topf', [st('wuerfel', '#8A5A32', 30, 9, .8), st('wuerfel', '#B8622A', 24, 9, .8), { f: 'glanz' }], { hitze: 3 }) },
+      { zeit: 13, titel: 'Tomatenmark und Mehl', text: 'Tomatenmark 2 Minuten mitrösten. Mehl darüberstäuben und 1 Minute unter Rühren anschwitzen.',
+        erkennen: 'Alles ist rotbraun überzogen und riecht geröstet.', fehler: 'Tomatenmark verbrennen lassen: Die Soße wird bitter. Immer rühren.', timer: 3,
+        szene: sz('topf', [st('wuerfel', '#7A3A22', 40, 9, .8), st('krume', '#E8D8B0', 20, 4, .7)], { hitze: 2 }) },
+      { zeit: 16, titel: 'Ablöschen und köcheln', text: 'Mit Rotwein ablöschen und den Bodensatz loskratzen. Kurz einkochen lassen. Brühe nach und nach unter Rühren dazugießen, Lorbeer dazu und 15 Minuten köcheln lassen.',
+        erkennen: 'Die Soße ist dunkelbraun und überzieht den Löffel.', fehler: 'Brühe auf einmal hineinkippen: Es bilden sich Klümpchen.', timer: 15,
+        szene: sz('topf', [fl('#5A3220', .96, 'sosse'), st('wuerfel', '#7A3A22', 16, 9, .8)], { hitze: 1, dampf: true }) },
+      { zeit: 31, titel: 'Passieren und binden', text: 'Soße durch ein Sieb gießen. Die kalte Butter in Stücken einrühren, nicht mehr kochen lassen. Mit Salz und Pfeffer abschmecken.',
+        erkennen: 'Glatt, glänzend und sämig.', fehler: 'Nach der Butter noch kochen: Die Soße wird fettig und trennt sich.', timer: null, vergleich: true,
+        szene: sz('schuessel', [fl('#5A3220', .94, 'sosse'), { f: 'glanz' }]) }
+    ],
+    tipp: 'Hast du Fleisch angebraten, den Bratensatz aus der Pfanne mit verwenden. Mit Gemüsebrühe statt Rinderbrühe ist die Soße vegetarisch.'
+  }
+);
 
 /* =====================================================================
    NEUE REZEPTE AUS ALLER WELT
@@ -3420,7 +3876,7 @@ REZEPTE.push(
     titel: 'Spaghetti Aglio e Olio', untertitel: 'Knoblauch, Olivenöl, Chili: fertig in 15 Minuten',
     intro: 'Das schnellste Nudelgericht Italiens, oft um Mitternacht gekocht, wenn nichts anderes im Haus ist. Wenige Zutaten, deshalb kommt es auf gutes Olivenöl und den richtig gebräunten Knoblauch an.',
     zeit: { gesamt: 15, aktiv: 15 }, schwierigkeit: 1, portionen: 2, portionsWort: ['Portion', 'Portionen'], kcal: 620,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('aglio', 'Teller mit Spaghetti, Knoblauch und Parmesan'),
     zutaten: [
       { menge: 200, einheit: 'g', name: 'Spaghetti', register: 'Nudeln' },
@@ -3451,7 +3907,7 @@ REZEPTE.push(
     titel: 'Penne all’Arrabbiata', untertitel: 'Feurige Tomatensauce mit Knoblauch und Chili',
     intro: '„Arrabbiata“ heißt wütend, gemeint ist die Schärfe der Sauce. Ein Klassiker aus Rom, vegan und mit Zutaten aus dem Vorratsschrank.',
     zeit: { gesamt: 25, aktiv: 15 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 480,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('arrabbiata', 'Penne in roter Tomatensauce auf einem weißen Teller'),
     zutaten: [
       { menge: 400, einheit: 'g', name: 'Penne rigate', register: 'Nudeln' },
@@ -3632,7 +4088,7 @@ REZEPTE.push(
     titel: 'Focaccia', untertitel: 'Luftiges Ofenbrot mit Olivenöl und Rosmarin',
     intro: 'Focaccia aus Ligurien ist außen knusprig und innen weich und luftig. Das Geheimnis: viel Olivenöl, ein sehr weicher Teig und Geduld beim Gehen.',
     zeit: { gesamt: 180, aktiv: 20 }, schwierigkeit: 2, portionen: 8, portionsWort: ['Stück', 'Stücke'], kcal: 290,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('focaccia', 'Focaccia mit Rosmarin auf einem Holzbrett'),
     zutaten: [
       { menge: 500, einheit: 'g', name: 'Weizenmehl', hinweis: 'Type 550', register: 'Mehl' },
@@ -3740,7 +4196,7 @@ REZEPTE.push(
     titel: 'Patatas Bravas', untertitel: 'Knusprige Kartoffeln mit scharfer Tomatensauce',
     intro: 'Die „mutigen Kartoffeln“ aus Madrid: knusprig gebratene Würfel mit einer pikanten Paprika-Tomatensauce. Für den Ofen statt der Fritteuse, dafür richtig knusprig.',
     zeit: { gesamt: 50, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 330,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('bravas', 'Kartoffelwürfel mit roter Sauce auf einem Teller'),
     zutaten: [
       { menge: 1000, einheit: 'g', name: 'festkochende Kartoffeln', register: 'Kartoffeln' },
@@ -4190,7 +4646,7 @@ REZEPTE.push(
       { zeit: 25, titel: 'Würste braten', text: 'Bratwürste im restlichen Öl bei mittlerer Hitze rundum 10 Minuten braten.',
         erkennen: 'Rundum braun und leicht aufgeplatzt.', fehler: 'Zu heiß braten: Die Haut platzt und die Wurst wird trocken.', timer: 10,
         szene: sz('pfanne', [st('stab', '#A0562E', 4, 66, .55)], { hitze: 2 }) },
-      { zeit: 36, titel: 'Servieren', text: 'Würste in Scheiben schneiden, mit heißer Soße übergießen und mit Currypulver bestreuen. Mit Pommes servieren.',
+      { zeit: 45, titel: 'Servieren', text: 'Würste in Scheiben schneiden, mit heißer Soße übergießen und mit Currypulver bestreuen. Mit Pommes servieren.',
         erkennen: 'Glänzende Soße, oben goldgelber Currystaub.', fehler: 'Kalte Soße: Erst wieder erhitzen, dann schmeckt sie richtig.', timer: null,
         szene: sz('teller', [st('scheibe', '#A0562E', 10, 30, .4, { c2: '#C98A6A' }), li('#B84A2A', 4, 8), st('krume', '#D9A030', 30, 3, .4), st('stab', '#E2B85A', 14, 40, .9)]) }
     ],
@@ -4205,7 +4661,7 @@ REZEPTE.push(
     titel: 'Ratatouille', untertitel: 'Provenzalisches Ofengemüse in Tomatensauce',
     intro: 'Bekannt aus dem Film: dünne Gemüsescheiben im Kreis auf einer Tomatensauce, langsam im Ofen geschmort. Sieht aufwendig aus, ist aber vor allem Schneidearbeit.',
     zeit: { gesamt: 90, aktiv: 35 }, schwierigkeit: 2, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 260,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('ratatouille', 'Gemüsescheiben im Kreis in einer Pfanne'),
     zutaten: [
       { menge: 1, einheit: 'Stk', name: ['Zwiebel', 'Zwiebeln'] },
@@ -4930,7 +5386,7 @@ REZEPTE.push(
     titel: 'Chana Masala', untertitel: 'Würziges Kichererbsen-Curry',
     intro: 'Kichererbsen in einer würzig-säuerlichen Tomaten-Zwiebel-Soße: ein Streetfood-Klassiker aus Nordindien. Vegan, günstig und in einer halben Stunde fertig.',
     zeit: { gesamt: 35, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 360,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('chana', 'Chana Masala mit frittiertem Brot'),
     zutaten: [
       { menge: 3, einheit: 'EL', name: 'Öl' },
@@ -5009,7 +5465,7 @@ REZEPTE.push(
     titel: 'Aloo Gobi', untertitel: 'Kartoffeln und Blumenkohl mit Kurkuma und Kreuzkümmel',
     intro: 'Ein trockenes Curry ohne viel Soße: Kartoffeln und Blumenkohl werden mit Gewürzen gebraten, bis sie goldgelb und weich sind. Perfekt zu Naan und Joghurt.',
     zeit: { gesamt: 40, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 240,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('aloogobi', 'Kartoffeln und Blumenkohl mit Gewürzen'),
     zutaten: [
       { menge: 1, einheit: 'Stk', name: ['Blumenkohl', 'Blumenkohl'], hinweis: 'ca. 700 g' },
@@ -5049,7 +5505,7 @@ REZEPTE.push(
     titel: 'Samosas', untertitel: 'Knusprige Teigtaschen mit Kartoffel-Erbsen-Füllung',
     intro: 'Die dreieckigen Teigtaschen sind Indiens beliebtester Snack. Gefüllt mit würzigen Kartoffeln und Erbsen und dazu ein grünes Minz-Chutney. Wir backen sie im Ofen.',
     zeit: { gesamt: 80, aktiv: 50 }, schwierigkeit: 2, portionen: 12, portionsWort: ['Stück', 'Stücke'], kcal: 180,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('samosa', 'Samosas mit grüner Chili und Granatapfelkernen'),
     zutaten: [
       { menge: 250, einheit: 'g', name: 'Mehl' },
@@ -5805,7 +6261,7 @@ REZEPTE.push(
     titel: 'İmam Bayıldı', untertitel: 'Auberginen mit Zwiebel-Tomaten-Füllung in Olivenöl',
     intro: '„Der Imam fiel in Ohnmacht“ – angeblich, weil es so gut schmeckte. Die Auberginen werden mit Zwiebeln, Tomaten und viel Olivenöl geschmort und lauwarm oder kalt gegessen.',
     zeit: { gesamt: 80, aktiv: 35 }, schwierigkeit: 2, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 340,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('imambayildi', 'Gefüllte Auberginen mit Tomaten und Zwiebeln'),
     zutaten: [
       { menge: 4, einheit: 'Stk', name: ['Aubergine', 'Auberginen'], register: 'Auberginen' },
@@ -5881,7 +6337,7 @@ REZEPTE.push(
     titel: 'Hummus', untertitel: 'Cremiges Kichererbsenpüree mit Tahin',
     intro: 'Hummus ist im ganzen Nahen Osten zu Hause. Richtig cremig wird er, wenn die Kichererbsen sehr weich sind und lange mit Tahin und Eiswasser püriert werden.',
     zeit: { gesamt: 20, aktiv: 15 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 310,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('hummus', 'Schale Hummus mit Garnitur'),
     zutaten: [
       { menge: 2, einheit: 'Dose', name: 'Kichererbsen', hinweis: 'je 240 g Abtropfgewicht' },
@@ -5955,7 +6411,7 @@ REZEPTE.push(
     titel: 'Tabouleh', untertitel: 'Libanesischer Petersiliensalat mit Bulgur',
     intro: 'Im Libanon ist Tabouleh ein Kräutersalat mit etwas Bulgur, nicht umgekehrt. Viel Petersilie, Minze, Tomaten, Zitrone und Olivenöl machen ihn super frisch.',
     zeit: { gesamt: 30, aktiv: 25 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 210,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('tabouleh', 'Tabouleh-Salat mit Tomaten und Zitrone'),
     zutaten: [
       { menge: 50, einheit: 'g', name: 'feiner Bulgur', register: 'Bulgur' },
@@ -7396,7 +7852,7 @@ REZEPTE.push(
     titel: 'Sonntagsbrötchen', untertitel: 'Knusprige Brötchen wie vom Bäcker',
     intro: 'Mit einer Schale Wasser im Ofen bekommen die Brötchen eine knusprige, glänzende Kruste. Der Teig ist einfach und braucht nur fünf Zutaten.',
     zeit: { gesamt: 120, aktiv: 25 }, schwierigkeit: 2, portionen: 8, portionsWort: ['Brötchen', 'Brötchen'], kcal: 230,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('broetchen', 'Frische Brötchen'),
     zutaten: [
       { menge: 500, einheit: 'g', name: 'Mehl', hinweis: 'Type 550' },
@@ -7430,7 +7886,7 @@ REZEPTE.push(
     titel: 'Krustenbrot ohne Kneten', untertitel: 'Über Nacht gegangen, im Topf gebacken',
     intro: 'Das „No-Knead Bread“ aus New York: Die lange Ruhezeit ersetzt das Kneten. Gebacken im heißen Topf mit Deckel wird es wie vom Bäcker.',
     zeit: { gesamt: 840, aktiv: 20 }, schwierigkeit: 1, portionen: 10, portionsWort: ['Scheibe', 'Scheiben'], kcal: 175,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('krustenbrot', 'Krustenbrot'),
     zutaten: [
       { menge: 500, einheit: 'g', name: 'Mehl', hinweis: 'Type 550 oder 1050' },
@@ -7465,7 +7921,7 @@ REZEPTE.push(
     titel: 'Baguette', untertitel: 'Knusprige französische Stangenbrote',
     intro: 'Für ein echtes Baguette brauchst du Geduld statt Kraft: wenig Hefe, langes Gehen und viel Dampf im Ofen. Dafür gibt es eine knackige Kruste und große Löcher.',
     zeit: { gesamt: 250, aktiv: 35 }, schwierigkeit: 3, portionen: 3, portionsWort: ['Baguette', 'Baguettes'], kcal: 560,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('baguette', 'Baguettes'),
     zutaten: [
       { menge: 500, einheit: 'g', name: 'Mehl', hinweis: 'Type 550' },
@@ -7501,7 +7957,7 @@ REZEPTE.push(
     titel: 'Ofen-Pommes', untertitel: 'Knusprig ohne Fritteuse',
     intro: 'Pommes frites kommen vermutlich aus Belgien. Aus dem Ofen werden sie knusprig, wenn du die Stärke auswäschst, sie gut abtrocknest und mit etwas Speisestärke bestäubst.',
     zeit: { gesamt: 85, aktiv: 20 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 260,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('pommes', 'Pommes frites'),
     zutaten: [
       { menge: 1000, einheit: 'g', name: 'mehligkochende Kartoffeln', register: 'Kartoffeln' },
@@ -7601,7 +8057,7 @@ REZEPTE.push(
     titel: 'Ofengemüse', untertitel: 'Bunt mit Rosmarin und Knoblauch',
     intro: 'Ein Blech, wenig Arbeit: Gemüse wird im heißen Ofen süßlich und bekommt Röststellen. Passt zu Fleisch, Fisch oder mit Feta als Hauptgericht.',
     zeit: { gesamt: 55, aktiv: 15 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 210,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('ofengemuese', 'Geröstetes Ofengemüse'),
     zutaten: [
       { menge: 2, einheit: 'Stk', name: ['Paprika', 'Paprika'], hinweis: 'rot und gelb', register: 'Paprika' },
@@ -7845,7 +8301,7 @@ REZEPTE.push(
     titel: 'Guacamole mit Nachos', untertitel: 'Avocado-Dip mit Limette und Koriander',
     intro: 'Echte Guacamole wird nicht püriert, sondern grob zerdrückt. Mit Tortillachips perfekt für Filmabende und Partys.',
     zeit: { gesamt: 15, aktiv: 15 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Portion', 'Portionen'], kcal: 380,
-    badges: ['vegetarisch'],
+    badges: ['vegetarisch', 'vegan'],
     bild: foto('guacamole', 'Guacamole mit Tortillachips'),
     zutaten: [
       { menge: 3, einheit: 'Stk', name: ['reife Avocado', 'reife Avocados'], register: 'Avocado' },
@@ -8030,7 +8486,7 @@ REZEPTE.push(
     titel: 'Grüner Smoothie', untertitel: 'Spinat, Apfel, Banane und Limette',
     intro: 'Keine Angst vor Spinat: Man schmeckt ihn kaum, die Banane und der Apfel machen ihn fruchtig-süß. Eine einfache Art, mehr Grünzeug zu essen.',
     zeit: { gesamt: 10, aktiv: 10 }, schwierigkeit: 1, portionen: 2, portionsWort: ['Glas', 'Gläser'], kcal: 150,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('gruenersmoothie', 'Grüner Smoothie'),
     zutaten: [
       { menge: 50, einheit: 'g', name: 'Babyspinat', register: 'Spinat' },
@@ -8157,7 +8613,7 @@ REZEPTE.push(
     titel: 'Pfirsich-Eistee', untertitel: 'Selbst gebrüht mit echtem Pfirsich',
     intro: 'Gekaufter Eistee steckt voller Zucker. Selbst gemacht schmeckt er nach echtem Tee und Pfirsich und du bestimmst die Süße.',
     zeit: { gesamt: 75, aktiv: 15 }, schwierigkeit: 1, portionen: 4, portionsWort: ['Glas', 'Gläser'], kcal: 80,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('eistee', 'Eistee mit Zitrone'),
     zutaten: [
       { menge: 1000, einheit: 'ml', name: 'Wasser' },
@@ -8191,7 +8647,7 @@ REZEPTE.push(
     titel: 'Virgin Mojito', untertitel: 'Kubanischer Klassiker ohne Alkohol',
     intro: 'Limette, Minze und brauner Zucker: Der Mojito kommt aus Havanna. Diese Version ohne Rum ist für alle, die gerade keinen Alkohol trinken.',
     zeit: { gesamt: 10, aktiv: 10 }, schwierigkeit: 1, portionen: 1, portionsWort: ['Glas', 'Gläser'], kcal: 60,
-    badges: ['vegetarisch', 'glutenfrei'],
+    badges: ['vegetarisch', 'vegan', 'glutenfrei'],
     bild: foto('virginmojito', 'Mojito mit Minze und Limette'),
     zutaten: [
       { menge: 1, einheit: 'Stk', name: ['Limette', 'Limetten'] },
@@ -9686,7 +10142,6 @@ const Z = {
   notizen: speicher.lesen('notizen', {}),
   notizbuch: speicher.lesen('notizbuch', ''),
   besitzer: speicher.lesen('besitzer', ''),
-  ton: speicher.lesen('ton', false),
   design: speicher.lesen('design', 'system'),
   wochenplan: speicher.lesen('wochenplan', null),   // { tage: [rid × 7], filter: {...} }
   schritt: {},          // gewählter Zeitpunkt pro Rezept
@@ -9696,11 +10151,7 @@ const Z = {
 
 const $ = (sel, wurzel = document) => wurzel.querySelector(sel);
 const $$ = (sel, wurzel = document) => Array.from(wurzel.querySelectorAll(sel));
-// Animationen sind abgeschaltet: Das Buch verhält sich immer wie bei „weniger Bewegung“ (Seiten wechseln sofort, ohne Umblättern)
-const wenigBewegung = { matches: true, addEventListener() {} };
 const imRahmen = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
-const url = new URL(location.href);
-const ERZWINGE_ERSATZ = url.searchParams.has('ersatz');   // ?ersatz → eigenes Blättern testen
 
 /* ---------- 2. Seitenplan ---------- */
 const kapitelVon = (id) => KAPITEL.find((k) => k.id === id);
@@ -9894,7 +10345,7 @@ function seitenElement(s, i) {
   el.dataset.index = i;
   el.dataset.typ = s.typ;
   if (s.typ === 'deckel' || s.typ === 'rueckseite') { el.dataset.density = 'hard'; el.classList.add('page--deckel'); }
-  // Kapitelfarbe als Klasse (StPageFlip überschreibt Inline-Styles der Seiten)
+  // Kapitelfarbe als Klasse
   if (s.kap) el.classList.add('k-' + s.kap.id);
   if (s.rez) el.dataset.rezept = s.rez.id;
   // Inhalt wird erst gezeichnet, wenn die Seite in die Nähe kommt (seiteFuellen).
@@ -10014,10 +10465,10 @@ function zeitenHTML() {
     { titel: 'Bis eine Stunde', test: (r) => r.zeit.gesamt > 30 && r.zeit.gesamt <= 60 },
     { titel: 'Mehr Zeit: fürs Wochenende', test: (r) => r.zeit.gesamt > 60 }
   ];
-  const alle = KAPITEL.flatMap(rezepteVon);
+  const alle = KAPITEL.filter((k) => k.id !== 'basics').flatMap(rezepteVon);   // Grundrezepte sind keine Mahlzeit
   let h = `<h2 class="h-seite">Was koche ich heute?</h2>
     <div class="ideen-knoepfe"><button class="knopf voll" data-aktion="zufall">${ico('wuerfel')}Überrasch mich</button><button class="knopf" data-aktion="wochenplan">${ico('kalender')}Wochenplan</button></div>
-    <p class="lead">Alle Rezepte nach Zeit sortiert. Das Blatt zeigt vegetarische Gerichte.</p>`;
+    <p class="lead">Alle Rezepte nach Zeit sortiert. Das Blatt zeigt vegetarische Gerichte. Grundrezepte findest du im Kapitel Basics.</p>`;
   for (const g of gruppen) {
     const liste = alle.filter(g.test).sort((a, b) => a.zeit.gesamt - b.zeit.gesamt);
     if (!liste.length) continue;
@@ -10045,7 +10496,7 @@ function laenderHTML() {
 /* ----- Überrasch mich: zufälliges Rezept (nicht das gerade offene) ----- */
 function zufallsRezept() {
   const jetzt = aktuellesRezept();
-  const auswahl = REZEPTE.filter((r) => r.id !== jetzt);
+  const auswahl = REZEPTE.filter((r) => r.id !== jetzt && r.kapitel !== 'basics');   // Grundrezepte nicht vorschlagen
   const r = auswahl[Math.floor(Math.random() * auswahl.length)];
   toast(`Wie wär’s mit ${r.titel}? ${LAENDER[r.land] || ''}`.trim());
   geheZu(rezeptSeite[r.id]);
@@ -10055,7 +10506,7 @@ function zufallsRezept() {
 const WOCHENTAGE = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 function wochenplanKandidaten(filter) {
   // Nur Hauptgerichte: keine Desserts, Frühstücke, Backwaren, Beilagen, Getränke und kein Gebäck aus „Durchs Jahr“
-  return REZEPTE.filter((r) => !['desserts', 'fruehstueck', 'backen', 'beilagen', 'getraenke'].includes(r.kapitel) && !r.nebenbei
+  return REZEPTE.filter((r) => !['desserts', 'fruehstueck', 'backen', 'beilagen', 'getraenke', 'basics'].includes(r.kapitel) && !r.nebenbei
     && (!filter.veg || r.badges.includes('vegetarisch'))
     && (!filter.schnell || r.zeit.gesamt <= 45)
     && (!filter.einfach || r.schwierigkeit === 1));
@@ -10215,7 +10666,7 @@ function heroBildHTML(r) {
     return szeneSVG(r.schritte[letzte].szene, hashText(r.id + ':' + letzte), `${r.titel}: Zeichnung des fertigen Gerichts`) + '<span class="hero-hinweis">Zeichnung</span>';
   }
   const src = r.bild.src;
-  const srcset = false ? ` srcset="${bildURL(src, 600)} 600w, ${bildURL(src, 900)} 900w, ${bildURL(src, 1400)} 1400w" sizes="(max-width: 700px) 92vw, 560px"` : '';
+  const srcset = /unsplash/.test(src) ? ` srcset="${bildURL(src, 600)} 600w, ${bildURL(src, 900)} 900w, ${bildURL(src, 1400)} 1400w" sizes="(max-width: 700px) 92vw, 560px"` : '';
   return `<img src="${escapeHTML(bildURL(src, 900))}"${srcset} alt="${escapeHTML(r.bild.alt)}" loading="lazy" decoding="async" data-ersatz-rezept="${r.id}">`;
 }
 function zutatenListeHTML(r) {
@@ -10234,7 +10685,7 @@ function zutatenListeHTML(r) {
 function rezeptRechtsHTML(r) {
   const i = Z.schritt[r.id] || 0;
   const n = r.schritte.length;
-  const punkte = r.schritte.map((s, k) => `<button class="zs-punkt${k < i ? ' erledigt' : ''}" data-aktion="schritt" data-rid="${r.id}" data-i="${k}"${k === i ? ' aria-current="step"' : ''} aria-label="Schritt ${k + 1}: ${zeitMarke(s.zeit, k === n - 1)}, ${escapeHTML(s.titel)}"><span class="kreis">${k + 1}</span><span>${zeitMarke(s.zeit, k === n - 1)}</span></button>`).join('');
+  const punkte = r.schritte.map((s, k) => `<button class="zs-punkt${k < i ? ' erledigt' : ''}" data-aktion="schritt" data-rid="${r.id}" data-i="${k}"${k === i ? ' aria-current="step"' : ''} aria-label="Schritt ${k + 1}: ${zeitMarke(s.zeit, k === n - 1)}, ${escapeHTML(s.titel)}"><span class="kreis">${k + 1}</span><span class="marke">${zeitMarke(s.zeit, k === n - 1)}</span></button>`).join('');
   return `<div class="fortschritt"><div class="zeile"><b>Schritt für Schritt</b><span data-fortschritt>Schritt ${i + 1} von ${n}</span></div><div class="balken"><i style="--p:${((i + 1) / n) * 100}%"></i></div></div>
     <div class="betrachter" data-betrachter="${r.id}">
       <div class="ebene an" data-ebene="a">${schrittBildHTML(r, i)}</div><div class="ebene" data-ebene="b"></div>
@@ -10317,6 +10768,8 @@ function technikenHTML() {
       <tr><td>Hackfleisch</td><td>immer durchgaren, mind. 70 °C</td></tr>
       <tr><td>Schwein (Filet, Kotelett)</td><td>62–68 °C, innen leicht rosa</td></tr>
       <tr><td>Rind (Steak)</td><td>blutig 48–52 °C, rosa 55–58 °C, durch ab 65 °C</td></tr>
+      <tr><td>Lamm (Keule, Rücken)</td><td>rosa 58–62 °C, durch ab 70 °C</td></tr>
+      <tr><td>Lachs</td><td>glasig 45–50 °C, ganz durch ab 55 °C</td></tr>
       <tr><td>Eier (Größe M, ins kochende Wasser)</td><td>weich 5–6 Min, wachsweich 7 Min, hart 9–10 Min</td></tr>
       <tr><td>Nudeln</td><td>1 Min kürzer als auf der Packung, dann in der Sauce fertig ziehen</td></tr>
     </tbody></table>
@@ -10373,63 +10826,22 @@ function creditsHTML(teil = 0) {
     ${letzte ? '<p class="hinweiszeile">Fotos werden aus dem Internet geladen. Ohne Verbindung zeigt das Buch stattdessen die Zeichnungen.</p>' : ''}`;
 }
 
-/* ---------- 4. Blätter-Engines ---------- */
-/* Beide Engines haben dieselben Methoden: start, weiter, zurueck, gehe, springe,
-   groesse, zerstoeren und die Eigenschaft index (erste sichtbare Seite). */
-
-/** Engine A: StPageFlip (echtes Umblättern mit Wölbung und Schatten) */
-class StPageFlipEngine {
-  constructor(el, seiten, opt) { this.el = el; this.seiten = seiten; this.opt = opt; this.name = 'stpageflip'; }
+/* ---------- 4. Seiten anzeigen ---------- */
+/* Ganz ohne Umblätter-Animation: Beim Wechsel werden die alten Seiten
+   ausgeblendet und die neuen sofort eingeblendet.
+   Querformat = Doppelseite (links + rechts), Hochformat = eine Seite. */
+class SeitenEngine {
+  constructor(el, seiten, opt) { this.el = el; this.seiten = seiten; this.opt = opt; this.n = seiten.length; }
   start() {
-    const o = this.opt;
-    this.pf = new St.PageFlip(this.el, {
-      width: Math.round(1000 * o.verh), height: 1000,
-      size: 'stretch',
-      minWidth: o.quer ? 100 : Math.ceil(o.pw * .6),   // steuert Hoch- oder Querformat
-      maxWidth: 4000, minHeight: 100, maxHeight: 5000,
-      autoSize: false,
-      showCover: true,               // Deckel als harte Einzelseiten
-      usePortrait: true,
-      drawShadow: true, maxShadowOpacity: .42,
-      flippingTime: 850,
-      startPage: o.start,
-      mobileScrollSupport: true,
-      clickEventForward: true,
-      useMouseEvents: true,
-      swipeDistance: 30,
-      showPageCorners: true,
-      // Muss false sein: StPageFlip blättert „zurück“ intern über einen gedachten Klick links.
-      // Bei true wird der in der Einzelseiten-Ansicht (Handy, schmales Fenster) blockiert.
-      // Klicks auf Inhalte blättern trotzdem nicht um, weil seiteEreignisse() sie abfängt.
-      disableFlipByClick: false
-    });
-    this.pf.loadFromHTML(this.seiten);
-    this.pf.on('flip', (e) => o.beiWechsel(e.data));
-    this.pf.on('changeState', (e) => { if (e.data === 'flipping' || e.data === 'user_fold') o.beiStart(null); });
-  }
-  get index() { return this.pf.getCurrentPageIndex(); }
-  weiter() { this.pf.flipNext('bottom'); }
-  zurueck() { this.pf.flipPrev('bottom'); }
-  gehe(i) { this.pf.flip(i, 'bottom'); }
-  springe(i) { this.pf.turnToPage(i); this.opt.beiWechsel(this.pf.getCurrentPageIndex()); }
-  groesse() { this.pf.update(); }
-  zerstoeren() { try { this.pf.destroy(); } catch (e) { /* schon weg */ } }
-}
-
-/** Engine B: eigenes CSS-3D-Umblättern (Ersatz, falls StPageFlip nicht lädt)
-    und Überblenden (bei „weniger Bewegung“) */
-class BlattEngine {
-  constructor(el, seiten, opt) { this.el = el; this.seiten = seiten; this.opt = opt; this.n = seiten.length; this.lauf = null; this.name = opt.modus === 'blende' ? 'blende' : 'css3d'; }
-  start() {
-    this.el.classList.add('blatt-buch');
     for (const s of this.seiten) this.el.appendChild(s);
     this.groesse();
     this.zeigen(this.normal(this.opt.start));
-    this.opt.beiWechsel(this.idx);
   }
   get quer() { return this.opt.quer; }
   get index() { return this.idx; }
+  /** Seite → Doppelseite (im Hochformat ist jede Seite ihre eigene „Doppelseite“) */
   spreadVon(i) { return this.quer ? (i === 0 ? 0 : Math.ceil(i / 2)) : i; }
+  /** Doppelseite → [linke, rechte] Seite (Deckel liegt allein rechts) */
   seitenVon(sp) {
     if (!this.quer) return [sp];
     if (sp === 0) return [null, 0];
@@ -10440,7 +10852,7 @@ class BlattEngine {
   normal(i) { return this.erste(this.spreadVon(Math.max(0, Math.min(this.n - 1, i)))); }
   groesse() {
     for (const s of this.seiten) { s.style.width = this.opt.pw + 'px'; s.style.height = this.opt.ph + 'px'; }
-    if (this.idx !== undefined && !this.lauf) this.zeigen(this.idx);
+    if (this.idx !== undefined) this.zeigen(this.idx);
   }
   platzieren(i, seite) {
     const el = this.seiten[i];
@@ -10455,87 +10867,23 @@ class BlattEngine {
     else this.platzieren(p[0], 'm');
     this.idx = p.find((x) => x !== null);
   }
-  weiter() { const sp = this.spreadVon(this.idx); if (sp < this.spreadVon(this.n - 1)) this.blaettern(this.erste(sp + 1), 1); }
-  zurueck() { const sp = this.spreadVon(this.idx); if (sp > 0) this.blaettern(this.erste(sp - 1), -1); }
-  gehe(i) {
+  /** Sofort zur Seite i wechseln */
+  wechseln(i) {
     const ziel = this.normal(i);
-    const a = this.spreadVon(this.idx), b = this.spreadVon(ziel);
-    if (a !== b) this.blaettern(ziel, b > a ? 1 : -1);
-  }
-  springe(i) { this.abbrechen(); this.zeigen(this.normal(i)); this.opt.beiWechsel(this.idx); }
-  blaettern(ziel, richtung) {
-    this.abbrechen();
+    if (this.spreadVon(ziel) === this.spreadVon(this.idx)) return;
     this.opt.beiStart(ziel);
-    if (this.opt.modus === 'blende') {
-      this.zeigen(ziel);
-      this.opt.beiWechsel(this.idx);
-      return;
-    }
-    this.blattDrehen(ziel, richtung);
-  }
-  blattDrehen(ziel, richtung) {
-    const pw = this.opt.pw, ph = this.opt.ph;
-    const alt = this.seitenVon(this.spreadVon(this.idx)), neu = this.seitenVon(this.spreadVon(ziel));
-    const blatt = document.createElement('div'); blatt.className = 'blatt';
-    const vorne = document.createElement('div'); vorne.className = 'blatt-seite vorne';
-    const hinten = document.createElement('div'); hinten.className = 'blatt-seite hinten';
-    blatt.append(vorne, hinten);
-    this.seiten.forEach((el) => { el.hidden = true; });
-    let vorneSeite = null, hintenSeite = null, links = 0, ursprung = 'left center', von = 0, nach = -180;
-    if (this.quer) {
-      if (richtung > 0) {
-        vorneSeite = alt[1]; hintenSeite = neu[0];
-        if (alt[0] !== null) this.platzieren(alt[0], 'l');
-        if (neu[1] !== null) this.platzieren(neu[1], 'r');
-        links = pw;
-      } else {
-        vorneSeite = alt[0]; hintenSeite = neu[1];
-        if (neu[0] !== null) this.platzieren(neu[0], 'l');
-        if (alt[1] !== null) this.platzieren(alt[1], 'r');
-        ursprung = 'right center'; nach = 180;
-      }
-    } else if (richtung > 0) {
-      vorneSeite = alt[0]; this.platzieren(neu[0], 'm');
-    } else {
-      vorneSeite = neu[0]; this.platzieren(alt[0], 'm'); von = -180; nach = 0;
-    }
-    Object.assign(blatt.style, { left: links + 'px', width: pw + 'px', height: ph + 'px', transformOrigin: ursprung });
-    const einhaengen = (k, behaelter) => {
-      if (k === null || k === undefined) { behaelter.classList.add('leer'); return; }
-      const s = this.seiten[k];
-      s.hidden = false; s.style.left = '0px'; s.style.top = '0px';
-      behaelter.appendChild(s);
-    };
-    einhaengen(vorneSeite, vorne);
-    einhaengen(hintenSeite, hinten);
-    this.el.appendChild(blatt);
-    const dauer = 760;
-    const schritte = [{ transform: `rotateY(${von}deg)` }, { transform: `rotateY(${nach}deg)` }];
-    if (!this.quer) { // im Hochformat verschwindet das Blatt am Ende
-      schritte[0].opacity = richtung > 0 ? 1 : 0; schritte[1].opacity = richtung > 0 ? 0 : 1;
-      schritte.splice(1, 0, { transform: `rotateY(${(von + nach) / 2}deg)`, opacity: 1 });
-    }
-    const anim = blatt.animate(schritte, { duration: dauer, easing: 'cubic-bezier(.45,.05,.25,1)' });
-    this.lauf = { anim, blatt, ziel, teile: [vorneSeite, hintenSeite] };
-    anim.onfinish = () => this.fertig();
-  }
-  fertig() {
-    const l = this.lauf;
-    if (!l) return;
-    this.lauf = null;
-    for (const k of l.teile) if (k !== null && k !== undefined) this.el.appendChild(this.seiten[k]);
-    l.blatt.remove();
-    this.zeigen(l.ziel);
+    this.zeigen(ziel);
     this.opt.beiWechsel(this.idx);
   }
-  abbrechen() { if (this.lauf) { this.lauf.anim.onfinish = null; this.lauf.anim.cancel(); this.fertig(); } }
-  zerstoeren() { this.abbrechen(); }
+  weiter() { const sp = this.spreadVon(this.idx); if (sp < this.spreadVon(this.n - 1)) this.wechseln(this.erste(sp + 1)); }
+  zurueck() { const sp = this.spreadVon(this.idx); if (sp > 0) this.wechseln(this.erste(sp - 1)); }
+  gehe(i) { this.wechseln(i); }
+  zerstoeren() { /* nichts aufzuräumen */ }
 }
 
 /* ---------- 5. Buch steuern ---------- */
 let engine = null;
 let layout = null;
-let pageFlipGeladen = false;
 let seitenEls = [];
 const buchEl = () => $('#book');
 
@@ -10560,10 +10908,8 @@ function layoutBerechnen() {
   return { quer: false, pw, ph, verh: pw / ph };
 }
 
-/** Buch (neu) aufbauen – beim Start, beim Wechsel Hoch/Quer und wenn StPageFlip nachlädt */
+/** Buch (neu) aufbauen – beim Start und wenn sich die Fenstergröße deutlich ändert */
 function buchAufbauen(start) {
-  // Wichtig: StPageFlip löscht beim Zerstören das ganze #book-Element.
-  // Darum merken wir uns das alte Element vorher und setzen das neue sicher ein.
   const alt = buchEl();
   if (engine) engine.zerstoeren();
   layout = layoutBerechnen();
@@ -10583,18 +10929,9 @@ function buchAufbauen(start) {
   seitenEls.forEach(seiteEreignisse);
   umgebungFuellen(Math.max(0, Math.min(SEITEN.length - 1, start || 0)));
 
-  const modus = wenigBewegung.matches ? 'blende' : '3d';
-  const opt = { ...layout, start: Math.max(0, Math.min(SEITEN.length - 1, start || 0)), modus, beiWechsel: nachDemBlaettern, beiStart: vorDemBlaettern };
-  const nimmStPageFlip = pageFlipGeladen && modus === '3d' && !ERZWINGE_ERSATZ;
-  engine = nimmStPageFlip ? new StPageFlipEngine(neu, seitenEls, opt) : new BlattEngine(neu, seitenEls, opt);
-  try {
-    engine.start();
-  } catch (fehler) {
-    console.warn('Umblättern mit StPageFlip fehlgeschlagen, nutze Ersatz.', fehler);
-    pageFlipGeladen = false;
-    return buchAufbauen(start);
-  }
-  document.documentElement.dataset.engine = engine.name;
+  const opt = { ...layout, start: Math.max(0, Math.min(SEITEN.length - 1, start || 0)), beiWechsel: nachDemBlaettern, beiStart: vorDemBlaettern };
+  engine = new SeitenEngine(neu, seitenEls, opt);
+  engine.start();
   nachDemBlaettern(engine.index);
 }
 
@@ -10606,28 +10943,18 @@ function sichtbareSeiten(i) {
   return [l, l + 1].filter((k) => k < SEITEN.length);
 }
 
+/** Kurz vor dem Seitenwechsel: Inhalte der Zielseiten bauen, Videos anhalten */
 function vorDemBlaettern(ziel) {
   umgebungFuellen(ziel);
   videosPausieren();
-  rascheln();
-  if (ziel !== null && ziel !== undefined) {
-    zustandFuerSeite(ziel, true);
-    if (!wenigBewegung.matches) for (const k of sichtbareSeiten(ziel)) {
-      const el = seitenEls[k];
-      if (!el) continue;
-      el.classList.remove('zeigt'); void el.offsetWidth; el.classList.add('zeigt');
-      clearTimeout(el._zeigtTimer); el._zeigtTimer = setTimeout(() => el.classList.remove('zeigt'), 1300);
-    }
-  }
-  const band = $('#band');
-  band.classList.remove('schwingt'); void band.offsetWidth; band.classList.add('schwingt');
+  zustandFuerSeite(ziel);
 }
 
 function nachDemBlaettern(index) {
   umgebungFuellen(index);
   Z.seite = index;
   speicher.schreiben('seite', index);
-  zustandFuerSeite(index, false);
+  zustandFuerSeite(index);
   const sichtbar = sichtbareSeiten(index);
   // Anzeige unten
   const titel = sichtbar.map((k) => SEITEN[k]).find((s) => s.typ !== 'kapitel' && s.typ !== 'vorsatz') || SEITEN[sichtbar[0]];
@@ -10639,6 +10966,8 @@ function nachDemBlaettern(index) {
   $('#b-vor').disabled = sichtbar[sichtbar.length - 1] >= SEITEN.length - 1;
   videosAbspielen();
   scrollHinweise();
+  // neue Seite immer oben anfangen lassen
+  for (const k of sichtbar) { const el = seitenEls[k] && $('.inhalt', seitenEls[k]); if (el) el.scrollTop = 0; }
 }
 /** Unten ausblenden, wenn eine Seite weiter scrollbar ist */
 function scrollHinweis(el) { el.classList.toggle('mehr', el.scrollTop + el.clientHeight < el.scrollHeight - 6); }
@@ -10648,17 +10977,16 @@ function scrollHinweise() {
 }
 
 /** Lage des Buchs: geschlossen mittig, offen als Doppelseite */
-function zustandFuerSeite(index, vorab) {
+function zustandFuerSeite(index) {
   const pw = layout.pw;
   const zu = index === 0, hinten = index === SEITEN.length - 1 && layout.quer;
-  const huelle = $('#huelle'), block = $('#buchblock'), schwebe = $('#schwebe');
+  const huelle = $('#huelle'), block = $('#buchblock');
   let versatz = 0, links = 0, breite = layout.quer ? pw * 2 : pw;
   if (layout.quer && zu) { versatz = -pw / 2; links = pw; breite = pw; }
   if (hinten) { versatz = pw / 2; links = 0; breite = pw; }
   huelle.style.setProperty('--versatz', versatz + 'px');
   block.style.left = links + 'px'; block.style.width = breite + 'px';
   block.classList.toggle('zu', zu || hinten);
-  schwebe.classList.toggle('schwebt', zu && !vorab && !wenigBewegung.matches);
   $('#band').style.setProperty('--band-x', (layout.quer ? pw * 1.72 : pw * .72) + 'px');
   const hinweis = $('#hinweis');
   hinweis.hidden = !zu;
@@ -10669,29 +10997,16 @@ function zustandFuerSeite(index, vorab) {
   if (!zu) speicher.schreiben('zuletzt', index);
 }
 
+/** Eine (Doppel-)Seite vor oder zurück – sofort, ohne Animation */
 function blaettern(richtung) {
   if (!engine) return;
-  if (richtung > 0) {
-    if (engine.name === 'stpageflip') {
-      const ziel = Math.min(SEITEN.length - 1, layout.quer ? (engine.index === 0 ? 1 : sichtbareSeiten(engine.index).slice(-1)[0] + 1) : engine.index + 1);
-      if (ziel !== engine.index) vorDemBlaettern(ziel);
-    }
-    engine.weiter();
-  } else {
-    if (engine.name === 'stpageflip') {
-      const erste = sichtbareSeiten(engine.index)[0];
-      const ziel = Math.max(0, layout.quer ? erste - 2 : erste - 1);
-      if (erste > 0) vorDemBlaettern(Math.max(0, ziel === -1 ? 0 : ziel));
-    }
-    engine.zurueck();
-  }
+  if (richtung > 0) engine.weiter(); else engine.zurueck();
 }
+/** Direkt zu Seite i springen */
 function geheZu(i) {
   if (!engine) return;
   i = Math.max(0, Math.min(SEITEN.length - 1, i));
-  const jetzt = sichtbareSeiten(engine.index);
-  if (jetzt.includes(i)) return;
-  if (engine.name === 'stpageflip') vorDemBlaettern(i);
+  if (sichtbareSeiten(engine.index).includes(i)) return;
   engine.gehe(i);
 }
 
@@ -10713,9 +11028,8 @@ let wisch = null;
 function seiteEreignisse(el) {
   el.addEventListener('mousedown', (e) => { if (e.target.closest(NICHT_BLAETTERN)) e.stopPropagation(); });
   el.addEventListener('touchstart', (e) => {
-    if (!e.target.closest(NICHT_BLAETTERN)) return;
     e.stopPropagation();
-    // eigene Wisch-Erkennung, weil StPageFlip diese Berührung nicht sieht
+    // Wisch-Erkennung: nach links wischen = weiter, nach rechts = zurück
     // Schieberegler (Vorher/Nachher, Video-Spulleiste, Rechner) sind Eingabefelder: dort nicht blättern
     if (e.target.closest('[data-noswipe], input, textarea, select')) { wisch = null; return; }
     const t = e.changedTouches[0];
@@ -10895,17 +11209,9 @@ function portionAendern(rid, delta) {
     zahlAnimieren(mengeEl, von, bis, z.einheit, z.ganz);
   });
 }
-/** Zahlen zählen kurz hoch oder runter */
+/** Neue Menge anzeigen */
 function zahlAnimieren(el, von, bis, einheit, ganz) {
-  if (wenigBewegung.matches) { el.textContent = mengeText(bis, einheit, ganz); return; }
-  const start = performance.now(), dauer = 380;
-  cancelAnimationFrame(el._anim);
-  const schritt = (jetzt) => {
-    const t = Math.min(1, (jetzt - start) / dauer), e = 1 - Math.pow(1 - t, 3);
-    el.textContent = mengeText(von + (bis - von) * e, einheit, ganz);
-    if (t < 1) el._anim = requestAnimationFrame(schritt);
-  };
-  el._anim = requestAnimationFrame(schritt);
+  el.textContent = mengeText(bis, einheit, ganz);   // ohne Hochzählen, sofort der neue Wert
 }
 
 /* ---------- 7. Einkaufsliste, Favoriten, Notizen ---------- */
@@ -10924,9 +11230,10 @@ function einkaufHinzufuegen(rid, trotzdem = false) {
     if (da) {
       if (da.menge !== null && menge !== null) da.menge += menge;
       if (!da.quellen.includes(rid)) da.quellen.push(rid);
+      if ((da.hinweis || '') !== (z.hinweis || '')) da.hinweis = '';   // unterschiedliche Hinweise → keinen anzeigen
       da.erledigt = false;
     } else {
-      Z.einkauf.push({ schluessel, name: z.name, einheit: z.einheit, ganz: !!z.ganz, menge, hinweis: z.menge === null ? z.hinweis : '', quellen: [rid], erledigt: false });
+      Z.einkauf.push({ schluessel, name: z.name, einheit: z.einheit, ganz: !!z.ganz, menge, hinweis: z.hinweis || '', quellen: [rid], erledigt: false });
     }
   }
   speicher.schreiben('einkauf', Z.einkauf);
@@ -11005,7 +11312,7 @@ function favoritUmschalten(rid, knopf) {
   toast(an ? `${rezeptVon(rid).titel} ist jetzt ein Favorit.` : `${rezeptVon(rid).titel} aus den Favoriten entfernt.`);
 }
 
-/* ---------- 8. Timer, Ton, Vorlesen ---------- */
+/* ---------- 8. Timer, Ton (nur für den Timer), Vorlesen ---------- */
 let audioCtx = null;
 function audio() {
   if (!audioCtx) {
@@ -11015,19 +11322,6 @@ function audio() {
   }
   if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
   return audioCtx;
-}
-/** Leises Papierrascheln (aus Rauschen erzeugt, keine Datei nötig) */
-function rascheln() {
-  if (!Z.ton) return;
-  const ctx = audio(); if (!ctx) return;
-  const dauer = .42, laenge = Math.floor(ctx.sampleRate * dauer);
-  const puffer = ctx.createBuffer(1, laenge, ctx.sampleRate), d = puffer.getChannelData(0);
-  for (let i = 0; i < laenge; i++) { const t = i / laenge; d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.6) * (0.6 + 0.4 * Math.sin(t * 40)); }
-  const quelle = ctx.createBufferSource(); quelle.buffer = puffer;
-  const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 2600; filter.Q.value = .6;
-  const lautst = ctx.createGain(); lautst.gain.value = .14;
-  quelle.connect(filter).connect(lautst).connect(ctx.destination);
-  quelle.start();
 }
 function piepen() {
   const ctx = audio(); if (!ctx) return;
@@ -11152,6 +11446,7 @@ function toast(text, aktion) {
 let offenesFenster = null;
 function fensterOeffnen({ titel, art = 'mitte', id }) {
   fensterSchliessen();
+  $('.toast')?.remove();
   const zurueck = document.activeElement;
   const schleier = document.createElement('div'); schleier.className = 'schleier';
   const f = document.createElement('div');
@@ -11421,18 +11716,6 @@ function designWechseln() {
   designAnwenden();
   toast(`Design: ${{ system: 'wie das System', hell: 'Hell', dunkel: 'Dunkel' }[Z.design]}`);
 }
-function tonAnwenden() {
-  Z.ton = false;   // Blättergeräusch wurde entfernt
-  const b = $('#b-ton');
-  if (!b) return;
-  b.setAttribute('aria-pressed', Z.ton);
-  b.innerHTML = ico(Z.ton ? 'tonAn' : 'tonAus');
-}
-function tonWechseln() {
-  Z.ton = !Z.ton; speicher.schreiben('ton', Z.ton); tonAnwenden();
-  if (Z.ton) { audio(); rascheln(); }
-  toast(Z.ton ? 'Blättergeräusch an' : 'Blättergeräusch aus');
-}
 let ersatzVollbild = false;
 const echtesVollbild = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
 /** Vollbild an/aus. Klappt die Fullscreen-API nicht (z. B. iPhone oder eingebettete Vorschau),
@@ -11490,7 +11773,6 @@ function mehrMenue() {
     if (w === 'zufall') zufallsRezept();
     if (w === 'wochenplan') wochenplanOeffnen();
     if (w === 'laender') geheZu(SEITE.laender);
-    if (w === 'ton') tonWechseln();
     if (w === 'design') designWechseln();
   });
 }
@@ -11499,8 +11781,8 @@ function mehrMenue() {
 function buchKlick(e) {
   const a = e.target.closest('[data-aktion]');
   if (!a) {
-    // Ersatz-Engine: Klick auf den Seitenrand blättert wie bei einem echten Buch
-    if (engine && engine.name !== 'stpageflip' && !e.target.closest(NICHT_BLAETTERN)) {
+    // Klick auf eine freie Stelle der Seite: rechte Seite = weiter, linke = zurück
+    if (engine && !e.target.closest(NICHT_BLAETTERN)) {
       const seite = e.target.closest('.page'); if (!seite) return;
       const rect = seite.getBoundingClientRect();
       const rechts = layout.quer ? seite.classList.contains('page--r') : (e.clientX - rect.left) > rect.width / 2;
@@ -11614,26 +11896,13 @@ function glanzBewegen(x, y) {
 }
 
 /* ---------- 10. Start ---------- */
-function stPageFlipLaden() {
-  return new Promise((ok, fehler) => {
-    if (window.St && window.St.PageFlip) { ok(); return; }
-    const s = document.createElement('script');
-    s.src = 'page-flip.browser.js';   // liegt lokal neben der index.html
-    s.async = true;
-    const zeitlimit = setTimeout(() => fehler(new Error('Zeitüberschreitung')), 6000);
-    s.onload = () => { clearTimeout(zeitlimit); (window.St && window.St.PageFlip) ? ok() : fehler(new Error('St.PageFlip fehlt')); };
-    s.onerror = () => { clearTimeout(zeitlimit); fehler(new Error('Laden fehlgeschlagen')); };
-    document.head.appendChild(s);
-  });
-}
-
 function starten() {
   document.body.insertAdjacentHTML('afterbegin', spriteSVG());
   // Kapitelfarben aus den Daten als CSS-Klassen
   const farben = document.createElement('style');
   farben.textContent = KAPITEL.map((k) => `.k-${k.id}{--k:${k.farbe};--kt:${k.textFarbe}}`).join('');
   document.head.appendChild(farben);
-  designAnwenden(); tonAnwenden(); zaehlerAktualisieren();
+  designAnwenden(); zaehlerAktualisieren();
 
   // Gespeicherte Timer prüfen (abgelaufene still als fertig markieren)
   for (const t of Z.timer) if (!t.fertig && t.rest === null && t.ende <= Date.now()) t.fertig = true;
@@ -11696,23 +11965,10 @@ function starten() {
   document.addEventListener('gesturestart', (e) => e.preventDefault());
   document.addEventListener('touchmove', (e) => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-  // Ton freischalten beim ersten Antippen
-  document.addEventListener('pointerdown', () => { if (Z.ton) audio(); }, { once: true });
-
   window.addEventListener('resize', beiGroessenAenderung);
-  wenigBewegung.addEventListener?.('change', () => buchAufbauen(engine ? engine.index : 0));
 
-  // Erst sofort mit dem eigenen Umblättern starten (schnell bedienbar),
-  // dann StPageFlip nachladen und übernehmen
+  // Buch aufbauen und Deckel zeigen (keine externe Blätter-Bibliothek mehr nötig)
   buchAufbauen(0);
-  if (!wenigBewegung.matches && !ERZWINGE_ERSATZ) {
-    stPageFlipLaden().then(() => {
-      pageFlipGeladen = true;
-      buchAufbauen(engine ? engine.index : 0);
-    }).catch((fehler) => {
-      console.info('StPageFlip nicht verfügbar, eigenes Umblättern bleibt aktiv:', fehler.message);
-    });
-  }
 }
 
 /* ---------- Offline-App: Service Worker anmelden ----------
