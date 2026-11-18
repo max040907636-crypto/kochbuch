@@ -10347,7 +10347,7 @@ const speicher = {
    eines geteilten Artifacts. Pro Schlüssel gewinnt die neueste Änderung.
    Außerhalb von Claude (Datei direkt im Browser) läuft alles wie bisher nur lokal.
    ===================================================================== */
-const APP_VERSION = '6.1 vom 18.11.2026';   // zum Prüfen, ob ein Gerät die neue Version hat
+const APP_VERSION = '6.2 vom 18.11.2026';   // zum Prüfen, ob ein Gerät die neue Version hat
 const SYNC_SCHLUESSEL = ['portionen', 'abgehakt', 'favoriten', 'einkauf', 'notizen', 'notizbuch', 'besitzer', 'design', 'stil', 'wochenplan', 'gym', 'einkaufSort', 'vorrat'];
 const SYNC = {
   db: null, sammlung: null,
@@ -13954,7 +13954,21 @@ function starten() {
    Der Service Worker speichert das Buch, die Schriften und alle Fotos auf dem Handy.
    Nach dem ersten Öffnen mit Internet läuft das Kochbuch auch ohne Netz. */
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  navigator.serviceWorker.register('sw.js').catch((e) => console.info('Service Worker nicht möglich:', e.message));
+  // Service Worker anmelden. updateViaCache 'none' = sw.js immer frisch vom Server holen,
+  // damit neue Versionen von GitHub sofort erkannt werden.
+  const hatteSW = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((reg) => {
+    // Jedes Mal, wenn die App wieder in den Vordergrund kommt: nach Update schauen
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch((e) => console.info('Service Worker nicht möglich:', e.message));
+  // Neue Version wurde im Hintergrund geladen: einmal neu starten (nur wenn vorher schon eine Version lief)
+  let neuGeladen = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hatteSW || neuGeladen) return;
+    neuGeladen = true;
+    try { if (document.querySelector('.fenster:not([hidden])')) { toast('Neue Version von Löffelweise ist da.', { label: 'Jetzt laden', fn: () => location.reload() }); return; } } catch (_) { /* egal */ }
+    location.reload();   // kein Fenster offen: direkt neu laden, du verlierst nichts
+  });
   navigator.serviceWorker.addEventListener('message', (e) => {
     if (e.data && e.data.typ === 'offline-bereit') {
       try { if (!localStorage.getItem('lw-offline-gemeldet')) { toast('Fertig: Das Kochbuch klappt jetzt auch offline.'); localStorage.setItem('lw-offline-gemeldet', '1'); } } catch (_) { /* egal */ }

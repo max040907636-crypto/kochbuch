@@ -6,7 +6,7 @@
    - Videos werden NICHT gespeichert (zu groß), die gehen nur mit Internet.
    ===================================================================== */
 
-const VERSION = 'loeffelweise-v7';          // bei Änderungen hochzählen
+const VERSION = 'loeffelweise-v8';          // bei Änderungen hochzählen
 const APP_CACHE = VERSION + '-app';
 const FOTO_CACHE = 'loeffelweise-fotos';    // bleibt über Versionen erhalten
 
@@ -76,7 +76,8 @@ self.addEventListener('fetch', (e) => {
   if (anfrage.mode === 'navigate') {
     e.respondWith((async () => {
       try {
-        const netz = await mitZeitlimit(fetch(anfrage), 3500);
+        // cache: 'no-cache' = beim Server nachfragen, ob es eine neue Version gibt (nicht die alte Browser-Kopie nehmen)
+        const netz = await mitZeitlimit(fetch(anfrage.url, { cache: 'no-cache', credentials: 'same-origin' }), 3500);
         const c = await caches.open(APP_CACHE);
         c.put('index.html', netz.clone());
         return netz;
