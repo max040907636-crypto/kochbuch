@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="Löffelweise">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head><body>
-<meta name="description" content="Interaktives Kochbuch zum Blättern: 193 Rezepte aus 37 Ländern: Kochen, Backen, Getränke und Festessen mit Zeitstrahl, Timern, Einkaufsliste, Wochenplan und Kochmodus.">
+<meta name="description" content="Interaktives Kochbuch zum Blättern: 193 Rezepte aus 37 Ländern: Kochen, Backen, Getränke und Festessen mit Zeitstrahl, Timern, Einkaufsliste, Wochenplan, Kochmodus und Gym-Bereich mit Essensplänen.">
 <style>/* Schriften liegen lokal im Ordner „schriften“ (funktioniert offline) */
 @font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:100 900;src:url(schriften/fraunces-latin-ext-full-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:100 900;src:url(schriften/fraunces-latin-full-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -1125,6 +1125,194 @@ html, body, button, a, input, select, textarea, label { touch-action: manipulati
 *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 .dampf path, .sz-dampf path { opacity: .5; }
 
+/* ---------- 14. Gym & Ernährung ---------- */
+.fenster.mitte.breit { width: min(780px, calc(100% - 32px)); }
+@media (max-width: 600px) {
+  .fenster.mitte.breit { width: calc(100% - 16px); top: max(8px, env(safe-area-inset-top, 0px)); max-height: calc(100% - 16px); }
+  .fenster.breit .fenster-inhalt { padding: 12px 14px 16px; }
+}
+/* Reiter oben (Training, Eiweiß, Essenspläne, Preise) */
+.reiter { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--papier-2); position: sticky; top: -14px; z-index: 2; }
+.reiter button { flex: 1; min-height: 40px; border: 0; border-radius: 10px; background: none; font-weight: 600; font-size: 15px; color: var(--tinte-2); padding: 4px 6px; }
+.reiter button[aria-selected="true"] { background: var(--papier); color: var(--tinte); box-shadow: 0 1px 4px var(--schatten); }
+@media (max-width: 420px) { .reiter button { font-size: 13.5px; padding: 4px 2px; } }
+.g-karte { border: 1.5px solid var(--linie); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; }
+.g-karte .h-klein { margin: 8px 0 0; }
+.g-tipp { border-left: 3px solid var(--akzent); background: var(--akzent-zart); border-radius: 0 10px 10px 0; padding: 10px 12px; font-size: 15px; line-height: 1.5; }
+/* Übungen mit Häkchen und Gewicht */
+.g-liste { list-style: none; margin: 0; padding: 0; display: grid; }
+.g-uebung { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--linie); padding: 2px 0; }
+.g-uebung:last-child { border-bottom: 0; }
+.g-uebung .zutat { flex: 1; grid-template-columns: 22px 1fr; min-width: 0; }
+.g-uebung .zutat .name { background-image: none; transition: opacity .25s; }
+.g-uebung .zutat input:checked ~ .name { opacity: .55; }
+.g-saetze { font-size: 14px; color: var(--akzent); font-weight: 600; white-space: nowrap; }
+.g-kg { display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--tinte-2); flex: none; }
+.g-kg input { width: 58px; padding: 7px 6px; border: 1.5px solid var(--linie); border-radius: 8px; background: var(--papier-2); text-align: center; font-size: 16px; font-variant-numeric: tabular-nums; color: var(--tinte); }
+.g-kg input:focus { outline: none; border-color: var(--akzent); }
+/* Fortschrittsbalken */
+.g-fortschritt { display: grid; gap: 6px; font-size: 15px; }
+.g-balken { display: block; height: 9px; border-radius: 9px; background: var(--papier-2); overflow: hidden; }
+.g-balken i { display: block; height: 100%; width: 0; background: var(--akzent); border-radius: 9px; transition: width .35s var(--ease); }
+.g-balken.voll i { background: #3E8E5A; }
+.g-verlauf { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 15px; }
+.g-verlauf li { display: flex; gap: 10px; }
+.g-verlauf span { min-width: 92px; color: var(--tinte-2); font-variant-numeric: tabular-nums; }
+/* Eiweiß-Zähler */
+.g-ziel .g-gross { margin: 2px 0 0; font-size: 18px; }
+.g-gewicht { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.g-gewicht input, .g-eigen input { width: 76px; padding: 7px 8px; border: 1.5px solid var(--linie); border-radius: 8px; background: var(--papier-2); font-size: 16px; text-align: center; color: var(--tinte); }
+.g-eigen { display: flex; gap: 8px; align-items: center; }
+.g-eigen input { width: 130px; text-align: left; }
+.g-schnell .chip { font-size: 14px; padding: 6px 11px; }
+.g-heute { list-style: none; margin: 4px 0 0; padding: 0; display: grid; }
+.g-heute li { display: flex; align-items: center; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--linie); }
+.g-heute li span { flex: 1; }
+.g-heute .weg, .g-uebung .weg { width: 32px; height: 32px; border: 0; background: none; border-radius: 8px; color: var(--tinte-2); display: grid; place-items: center; }
+.g-rezepte { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.g-rezepte .wp-rezept { width: 100%; }
+/* Essenspläne */
+.g-zahlen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.g-zahlen div { border: 1.5px solid var(--linie); border-radius: 12px; padding: 10px; display: grid; gap: 2px; }
+.g-zahlen b { font-family: var(--f-display); font-size: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.g-zahlen span { font-size: 13px; color: var(--tinte-2); line-height: 1.3; }
+@media (max-width: 600px) { .g-zahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.g-mahlzeiten, .g-laden ul, .g-preise, .g-vergleich { list-style: none; margin: 0; padding: 0; display: grid; }
+.g-mahlzeiten li { display: grid; grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--linie); }
+.g-zeit { font-family: var(--f-display); font-style: italic; color: var(--tinte-2); }
+.g-essen, .g-prod { display: grid; min-width: 0; }
+.g-essen small, .g-prod small { color: var(--tinte-2); font-size: 13.5px; line-height: 1.4; }
+.g-eiw { font-weight: 700; color: var(--akzent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) { .g-mahlzeiten li { grid-template-columns: minmax(0, 1fr) auto; } .g-zeit { grid-column: 1 / -1; margin-bottom: -6px; } }
+.g-laden { border: 1.5px solid var(--linie); border-radius: 12px; padding: 4px 12px 6px; }
+.g-laden h4 { margin: 6px 0 2px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-2); }
+.g-laden li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--linie); }
+.g-anz { font-size: 14px; color: var(--tinte-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.g-preis { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+@media (max-width: 480px) { .g-laden li { grid-template-columns: minmax(0, 1fr) auto; } .g-anz { grid-column: 1; grid-row: 2; } .g-preis { grid-row: 1 / 3; grid-column: 2; } }
+.g-vergleich li { display: grid; grid-template-columns: 80px repeat(3, minmax(0, 1fr)); gap: 8px; padding: 7px 8px; border-radius: 10px; font-size: 15px; font-variant-numeric: tabular-nums; }
+.g-vergleich li.an { background: var(--akzent-zart); }
+@media (max-width: 480px) { .g-vergleich li { grid-template-columns: 1fr 1fr; } .g-vergleich b { grid-column: 1 / -1; } }
+/* Preise: Eiweiß pro Euro */
+.g-preise li { display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--linie); }
+.g-wert { display: grid; gap: 4px; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) { .g-preise li { grid-template-columns: minmax(0, 1fr) 84px; } }
+/* ---------- 15. Version 2: Pause, Kalender, Wasser, Einkauf nach Gängen ---------- */
+.reiter { overflow-x: auto; scrollbar-width: none; min-height: 48px; }   /* Mindesthöhe, sonst drückt das Raster die Leiste zusammen */
+.reiter button { flex: 1 0 auto; }
+.g-pause { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 15px; color: var(--tinte-2); }
+.g-pause > span { display: inline-flex; align-items: center; gap: 6px; }
+.g-pause svg.i { width: 18px; height: 18px; }
+.g-pause .chip { padding: 5px 12px; font-size: 14px; }
+.g-best { display: block; color: var(--akzent) !important; font-weight: 600; }
+.g-kalender { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+.g-kalender span { aspect-ratio: 1; display: grid; place-items: center; border-radius: 10px; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--tinte-2); }
+.g-kalender span:not(.kopf):not(:empty) { background: var(--papier-2); }
+.g-kalender .kopf { aspect-ratio: auto; font-size: 12.5px; font-weight: 600; }
+.g-kalender .an { background: var(--akzent) !important; color: var(--akzent-text); font-weight: 700; }
+.g-kalender .heute { outline: 2px solid var(--akzent); outline-offset: -2px; }
+.g-chart { width: 100%; height: 90px; display: block; overflow: visible; }
+.g-chart path { fill: none; stroke: var(--akzent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.g-chart circle { fill: var(--akzent); }
+.g-kraft { list-style: none; margin: 0; padding: 0; display: grid; }
+.g-kraft li { display: grid; grid-template-columns: minmax(0, 1fr) 120px auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--linie); }
+.g-kraft .g-chart { height: 36px; }
+@media (max-width: 480px) { .g-kraft li { grid-template-columns: minmax(0, 1fr) 70px auto; } }
+.g-glaeser { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.g-glas { width: 30px; height: 38px; border: 2px solid var(--akzent); border-top-width: 0; border-radius: 0 0 9px 9px; background: none; padding: 0; position: relative; }
+.g-glas.an { background: linear-gradient(to top, color-mix(in srgb, var(--akzent) 70%, transparent) 75%, transparent 75%); }
+.g-prep { margin: 0 0 6px; padding-left: 20px; display: grid; gap: 4px; }
+.g-daten { min-height: 110px; font: 16px/1.4 ui-monospace, Consolas, monospace; }   /* 16 px, sonst zoomt das iPhone beim Antippen */
+.einkauf-neu { display: flex; gap: 8px; }
+.einkauf-neu input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--linie); border-radius: 10px; background: var(--papier-2); font-size: 16px; color: var(--tinte); }
+.einkauf-neu input:focus { outline: none; border-color: var(--akzent); }
+/* Fensterinhalt nie breiter als das Fenster (sonst rutscht auf dem Handy etwas über den Rand) */
+.fenster-inhalt { grid-template-columns: minmax(0, 1fr); }
+.g-eigen { flex-wrap: wrap; }
+.g-eigen input { width: 104px; }
+.einkauf-neu .knopf { flex: none; }
+.einkauf-kat { margin: 8px 0 0; font-size: 13.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-2); display: flex; gap: 8px; align-items: center; }
+.einkauf-kat span { font-weight: 700; color: var(--akzent); }
+/* ---------- 16. Version 3: Kühlschrank, Vorschlag, Tausch ---------- */
+.g-uebung { flex-wrap: wrap; }
+.g-rechts { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.g-vorschlag { border: 1.5px dashed var(--akzent); color: var(--akzent); background: none; border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.g-tausch { border: 0; background: none; color: var(--tinte-2); font-size: 13px; padding: 2px 4px; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.g-statt { display: block; color: var(--tinte-2); font-style: italic; }
+.k-gruppe { margin: 4px 0 -4px; }
+.k-grund { display: flex; gap: 10px; align-items: center; font-size: 15px; }
+.k-grund input { width: 18px; height: 18px; accent-color: var(--akzent); }
+.k-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; border-top: 1px solid var(--linie); padding-top: 10px; }
+.k-kopf .h-klein { margin: 0; flex: 1 1 100%; }
+.k-leeren { min-height: 34px; padding: 4px 12px; font-size: 14px; }
+.k-treffer { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.k-treffer li { display: flex; gap: 8px; align-items: center; }
+.k-rezept { flex: 1; min-width: 0; display: grid; grid-template-columns: 12px minmax(0, 1fr); column-gap: 10px; align-items: center; text-align: left; padding: 9px 12px; border-radius: 12px; border: 1.5px solid var(--linie); background: var(--papier); }
+.k-rezept:hover { border-color: var(--k, var(--akzent)); }
+.k-rezept .punkt { width: 10px; height: 10px; border-radius: 50%; background: var(--k, var(--akzent)); grid-row: 1 / 3; }
+.k-rezept small { color: var(--tinte-2); font-size: 13.5px; line-height: 1.4; }
+.k-fehlt { color: var(--warn); font-weight: 600; }
+.k-ok { color: #3E8E5A; font-weight: 600; }
+/* ---------- 17. Version 4: Ziel-Rechner ---------- */
+.z-form .chip small { color: inherit; opacity: .75; font-size: 12.5px; }
+.z-felder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+@media (max-width: 600px) { .z-felder { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.z-feld { display: grid; gap: 3px; font-size: 13.5px; color: var(--tinte-2); }
+.z-wert { display: flex; align-items: center; gap: 6px; color: var(--tinte); }
+.z-wert input { width: 100%; min-width: 0; padding: 8px; border: 1.5px solid var(--linie); border-radius: 8px; background: var(--papier-2); font-size: 17px; text-align: center; color: var(--tinte); }
+.z-wert input:focus { outline: none; border-color: var(--akzent); }
+.z-ergebnis { display: grid; gap: 4px; padding: 16px; border-radius: 16px; background: var(--akzent-zart); border-left: 5px solid #3E8E5A; }
+.z-ergebnis.z-mittel { border-left-color: #D99A2B; }
+.z-ergebnis.z-schlecht { border-left-color: #C2412D; }
+.z-label { font-size: 13.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-2); }
+.z-kcal { font-family: var(--f-display); font-size: 34px; font-weight: 700; line-height: 1.1; }
+.z-tempo { font-weight: 600; margin-top: 4px; }
+.z-makros { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.z-makros li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 2px 10px; align-items: center; }
+.z-makros b { font-variant-numeric: tabular-nums; }
+.z-makros span { font-size: 14px; color: var(--tinte-2); }
+.z-makros i { grid-column: 1 / -1; display: block; height: 7px; border-radius: 7px; background: linear-gradient(to right, var(--akzent) var(--w), var(--papier-2) var(--w)); }
+.z-vergleich { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.z-vergleich button { width: 100%; display: grid; grid-template-columns: 92px repeat(2, minmax(0, 1fr)) 14px; gap: 8px; align-items: center; text-align: left; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--linie); background: var(--papier); font-variant-numeric: tabular-nums; font-size: 15px; }
+.z-vergleich button.an { border-color: var(--akzent); background: var(--akzent-zart); }
+.z-punkt { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: middle; }
+.z-punkt.z-gut { background: #3E8E5A; } .z-punkt.z-mittel { background: #D99A2B; } .z-punkt.z-schlecht { background: #C2412D; }
+.z-booster { list-style: none; margin: 0; padding: 0; display: grid; }
+.z-booster li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--linie); }
+/* ---------- 18. Version 5: Design-Auswahl ---------- */
+.d-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+@media (max-width: 420px) { .d-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
+.d-karte { display: grid; gap: 4px; padding: 8px 8px 10px; border-radius: 14px; border: 2px solid var(--linie); background: var(--papier); text-align: left; color: var(--tinte); min-width: 0; }
+.d-karte[aria-pressed="true"] { border-color: var(--akzent); box-shadow: 0 0 0 2px var(--akzent); }
+.d-karte:hover { border-color: var(--akzent); }
+.d-vorschau { display: grid; grid-template-columns: 26% 1fr; gap: 6px; height: 84px; padding: 8px; border-radius: 10px; background: var(--dtisch); overflow: hidden; }
+.d-buch { border-radius: 4px 7px 7px 4px; background: var(--de); box-shadow: inset 3px 0 0 rgba(0,0,0,.25); }
+.d-seite { display: grid; align-content: start; gap: 5px; padding: 6px 7px; border-radius: 4px; background: var(--dp); color: var(--dt); min-width: 0; }
+.d-seite b { font-family: var(--df); font-size: 19px; line-height: 1; }
+.d-seite i { display: block; height: 4px; border-radius: 4px; background: var(--dt2); opacity: .55; }
+.d-seite i.kurz { width: 60%; }
+.d-pille { justify-self: start; padding: 1px 8px; border-radius: 999px; background: var(--da); color: var(--dat); font: 600 11px/1.6 var(--dft); }
+/* Infozeile im Wochenplan darf umbrechen (sonst wird sie auf dem Handy abgeschnitten) */
+.wp-rezept .m, .wp-rezept .t { white-space: normal; text-overflow: clip; }   /* lange Titel und Infos umbrechen statt abschneiden */
+.d-name { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+.d-karte small { color: var(--tinte-2); font-size: 12.5px; line-height: 1.35; }
+/* ---------- 19. Sync zwischen Geräten ---------- */
+.s-zeile { display: flex; gap: 10px; align-items: center; margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--papier-2); }
+.s-punkt { width: 11px; height: 11px; border-radius: 50%; flex: none; background: var(--tinte-2); }
+.s-punkt.s-aktiv { background: #3E8E5A; } .s-punkt.s-offline, .s-punkt.s-verbinde, .s-punkt.s-konflikt { background: #D99A2B; } .s-punkt.s-fehler, .s-punkt.s-nichtda { background: #C2412D; }
+#b-sync, #b-mehr { position: relative; }
+#b-mehr[data-status]::after { content: ""; position: absolute; right: 7px; bottom: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--tinte-2); box-shadow: 0 0 0 2px var(--tisch); }
+#b-mehr[data-status="aktiv"]::after { background: #3E8E5A; }
+#b-mehr:is([data-status="offline"], [data-status="verbinde"], [data-status="konflikt"])::after { background: #D99A2B; }
+#b-mehr:is([data-status="fehler"], [data-status="nichtda"])::after { background: #C2412D; }
+#b-sync::after { content: ""; position: absolute; right: 7px; bottom: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--tinte-2); box-shadow: 0 0 0 2px var(--tisch); }
+#b-sync[data-status="aktiv"]::after { background: #3E8E5A; }
+#b-sync:is([data-status="offline"], [data-status="verbinde"], [data-status="konflikt"])::after { background: #D99A2B; }
+#b-sync:is([data-status="fehler"], [data-status="nichtda"])::after { background: #C2412D; }
+.s-wahl { display: grid; gap: 4px; width: 100%; text-align: left; padding: 14px; border-radius: 14px; border: 2px solid var(--linie); background: var(--papier); color: var(--tinte); }
+.s-wahl:hover { border-color: var(--akzent); }
+.s-wahl b { display: flex; align-items: center; gap: 8px; font-size: 17px; }
+.s-wahl small { color: var(--tinte-2); }
 </style>
 <div class="app" id="app">
   <!-- Werkzeugleiste -->
@@ -1134,12 +1322,15 @@ html, body, button, a, input, select, textarea, label { touch-action: manipulati
     <button class="ib" id="b-suche" aria-label="Suche (Taste /)" title="Suche (Taste /)"><svg class="i" aria-hidden="true"><use href="#i-suche"/></svg></button>
     <button class="ib nur-breit" id="b-favoriten" aria-label="Favoriten" title="Favoriten"><svg class="i" aria-hidden="true"><use href="#i-herz"/></svg></button>
     <button class="ib nur-breit" id="b-zufall" aria-label="Überrasch mich: zufälliges Rezept" title="Überrasch mich"><svg class="i" aria-hidden="true"><use href="#i-wuerfel"/></svg></button>
+    <button class="ib nur-breit" id="b-kuehl" aria-label="Was habe ich da? (Taste H)" title="Was habe ich da? (Taste H)"><svg class="i" aria-hidden="true"><use href="#i-kuehlschrank"/></svg></button>
     <button class="ib nur-breit" id="b-wochenplan" aria-label="Wochenplan" title="Wochenplan"><svg class="i" aria-hidden="true"><use href="#i-kalender"/></svg></button>
+    <button class="ib" id="b-gym" aria-label="Gym und Ernährung (Taste G)" title="Gym & Ernährung (Taste G)"><svg class="i" aria-hidden="true"><use href="#i-hantel"/></svg></button>
     <span class="trenner nur-breit" aria-hidden="true"></span>
     <button class="ib" id="b-einkauf" aria-label="Einkaufsliste" title="Einkaufsliste"><svg class="i" aria-hidden="true"><use href="#i-korb"/></svg><span class="zahl" id="z-einkauf"></span></button>
     <button class="ib" id="b-timer" aria-label="Timer" title="Timer"><svg class="i" aria-hidden="true"><use href="#i-timer"/></svg><span class="zahl" id="z-timer"></span></button>
     <button class="ib" id="b-koch" aria-label="Kochmodus (Taste K)" title="Kochmodus (Taste K)"><svg class="i" aria-hidden="true"><use href="#i-muetze"/></svg></button>
     <span class="trenner nur-breit" aria-hidden="true"></span>
+    <button class="ib nur-breit" id="b-sync" data-status="start" aria-label="Sync und Daten" title="Sync &amp; Daten"><svg class="i" aria-hidden="true"><use href="#i-wolke"/></svg></button>
     <button class="ib nur-breit" id="b-design" aria-label="Design wechseln" title="Design"><svg class="i" aria-hidden="true"><use href="#i-auto"/></svg></button>
     <button class="ib" id="b-vollbild" aria-label="Vollbild (Taste F)" title="Vollbild (Taste F)"><svg class="i" aria-hidden="true"><use href="#i-vollbild"/></svg></button>
     <button class="ib nur-schmal" id="b-mehr" aria-label="Mehr" aria-haspopup="true" aria-expanded="false" title="Mehr"><svg class="i" aria-hidden="true"><use href="#i-mehr"/></svg></button>
@@ -9523,6 +9714,11 @@ const SYMBOLE = {
   wuerfel: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/>',
   kalender: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M7.5 13.5h2M11 13.5h2M14.5 13.5h2M7.5 16.5h2M11 16.5h2"/>',
   welt: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5s1.2-6.1 3.8-8.5z"/>',
+  wolke: '<path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/>',
+  pinsel: '<path d="M14.5 4.5l5 5L11 18l-5-5z"/><path d="M6 13c-2 0-3 1.5-3 3.5S2 20 2 20s3.5.5 5-1 1.5-3 1.5-3"/>',
+  euro: '<path d="M17.5 6.5a6.5 6.5 0 1 0 0 11"/><path d="M4.5 10.5h9M4.5 13.5h8"/>',
+  kuehlschrank: '<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 10h12M9 5.5v2M9 13v3"/>',
+  hantel: '<path d="M6.5 7.5v9M17.5 7.5v9M3.5 10v4M20.5 10v4M6.5 12h11"/>',
   tastatur: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h1M9.5 10h1M13 10h1M16.5 10h1M6 14h12"/>'
 };
 
@@ -10140,8 +10336,214 @@ const speicher = {
   },
   schreiben(schluessel, wert) {
     try { localStorage.setItem(SPEICHER_PRAEFIX + schluessel, JSON.stringify(wert)); } catch (e) { /* egal */ }
+    syncMerken(schluessel);   // Änderung für den Abgleich mit anderen Geräten vormerken
   }
 };
+
+/* =====================================================================
+   ABGLEICH ZWISCHEN GERÄTEN (Sync über die Artifact-Datenbank)
+   Jeder Speicher-Schlüssel ist ein eigenes Dokument im privaten Bereich
+   data/users/<deine-id>/<schlüssel>. Nur du siehst ihn, auch nicht der Besitzer
+   eines geteilten Artifacts. Pro Schlüssel gewinnt die neueste Änderung.
+   Außerhalb von Claude (Datei direkt im Browser) läuft alles wie bisher nur lokal.
+   ===================================================================== */
+const APP_VERSION = '6.1 vom 18.11.2026';   // zum Prüfen, ob ein Gerät die neue Version hat
+const SYNC_SCHLUESSEL = ['portionen', 'abgehakt', 'favoriten', 'einkauf', 'notizen', 'notizbuch', 'besitzer', 'design', 'stil', 'wochenplan', 'gym', 'einkaufSort', 'vorrat'];
+const SYNC = {
+  db: null, sammlung: null,
+  status: 'start',            // start | lokal | verbinde | aktiv | offline | konflikt | fehler
+  offen: new Set(),           // Schlüssel, die noch hochgeladen werden müssen
+  timer: null, laeuft: false, zuletzt: 0,
+  zeiten: (() => { try { return JSON.parse(localStorage.getItem(SPEICHER_PRAEFIX + '_syncZeiten')) || {}; } catch (e) { return {}; } })()
+};
+const rohLesen = (k) => { try { return localStorage.getItem(SPEICHER_PRAEFIX + k); } catch (e) { return null; } };
+const rohSchreiben = (k, v) => { try { localStorage.setItem(SPEICHER_PRAEFIX + k, v); } catch (e) { /* Speicher gesperrt */ } };
+function syncZeitenSpeichern() { rohSchreiben('_syncZeiten', JSON.stringify(SYNC.zeiten)); }
+
+/** Wird bei jedem speicher.schreiben aufgerufen: Änderung merken und gesammelt hochladen */
+function syncMerken(schluessel) {
+  if (!SYNC_SCHLUESSEL.includes(schluessel)) return;
+  SYNC.zeiten[schluessel] = Date.now();
+  syncZeitenSpeichern();
+  if (!SYNC.db || SYNC.status === 'konflikt') return;   // wird beim Verbinden nachgeholt
+  SYNC.offen.add(schluessel);
+  clearTimeout(SYNC.timer);
+  SYNC.timer = setTimeout(syncHochladen, 1500);          // mehrere Änderungen zu einem Schreiben bündeln
+}
+/** Offene Änderungen nacheinander hochladen (ein Schreiben pro Dokument gleichzeitig) */
+async function syncHochladen() {
+  if (!SYNC.db || SYNC.laeuft) return;
+  SYNC.laeuft = true;
+  const liste = [...SYNC.offen];
+  SYNC.offen.clear();
+  for (const k of liste) {
+    const wert = rohLesen(k);
+    if (wert === null) continue;
+    if (wert.length > 200000) { toast('Ein Bereich ist zu groß für den Abgleich und bleibt nur auf diesem Gerät.'); continue; }
+    try {
+      await SYNC.sammlung.doc(k).set({ wert, zeit: SYNC.zeiten[k] || Date.now() });
+    } catch (err) {
+      const code = err && err.code;
+      if (code === 'quota_exceeded') { syncStatus('fehler'); toast('Der Online-Speicher ist voll. Deine Daten bleiben auf diesem Gerät.'); }
+      else if (code === 'revoked' || code === 'not_granted' || code === 'capability_disabled' || code === 'invalid_argument') { syncStatus('fehler'); }
+      else { SYNC.offen.add(k); syncStatus('offline'); }   // vorübergehend: später nochmal
+    }
+  }
+  SYNC.laeuft = false;
+  if (SYNC.offen.size) { clearTimeout(SYNC.timer); SYNC.timer = setTimeout(syncHochladen, 5000); }
+  else if (SYNC.status !== 'fehler') { SYNC.zuletzt = Date.now(); syncStatus('aktiv'); }
+}
+/** Hat dieser Wert echte Daten (nicht nur Standardwerte)? */
+function hatEchteDaten(roh) {
+  return roh !== null && roh.length > 4 && !['"system"', '"klassisch"', '"gang"', '"liste"', '"hell"', '"dunkel"', 'null'].includes(roh);
+}
+/** Kurze Zusammenfassung von Daten für die Konflikt-Frage */
+function datenKurz(lesen) {
+  const json = (k, std) => { try { return JSON.parse(lesen(k)) ?? std; } catch (e) { return std; } };
+  const gym = json('gym', {}) || {};
+  const teile = [];
+  const n = (x, ein, mehr) => x ? `${x} ${x === 1 ? ein : mehr}` : '';
+  teile.push(n((gym.log || []).length, 'Training', 'Trainings'), n((json('einkauf', []) || []).length, 'Artikel auf der Einkaufsliste', 'Artikel auf der Einkaufsliste'),
+    n((json('favoriten', []) || []).length, 'Favorit', 'Favoriten'), n(Object.keys(json('notizen', {}) || {}).length, 'Notiz', 'Notizen'), n((gym.koerper || []).length, 'Gewichts-Eintrag', 'Gewichts-Einträge'));
+  return teile.filter(Boolean).join(', ') || 'kaum Daten';
+}
+
+/** Verbindung zur Datenbank aufbauen (läuft im Hintergrund, App ist sofort bedienbar) */
+async function syncStarten() {
+  if (!window.claude || typeof window.claude.use !== 'function') { syncStatus('lokal'); return; }
+  syncStatus('verbinde');
+  let db = null, user = null, uid = null;
+  try { [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]); uid = user ? await user.id() : null; } catch (e) { /* nicht verfügbar */ }
+  if (!db || !uid) { syncStatus('nichtda'); return; }   // in Claude geöffnet, aber Datenbank hier nicht verfügbar
+  SYNC.db = db;
+  SYNC.sammlung = db.collection('data/users/' + uid);
+  let erstes = true;
+  const ladeTimer = setTimeout(() => { if (erstes) syncStatus('offline'); }, 10000);
+  SYNC.sammlung.onSnapshot((snap) => {
+    if (erstes && snap.metadata.fromCache) return;     // auf die echte Antwort warten
+    clearTimeout(ladeTimer);
+    const war = erstes; erstes = false;
+    syncEmpfangen(snap, war);
+  }, () => { clearTimeout(ladeTimer); syncStatus('fehler'); });
+}
+/** Daten aus der Datenbank verarbeiten */
+function syncEmpfangen(snap, erstesMal) {
+  const fern = {};
+  for (const d of snap.docs) {
+    const x = d.data();
+    if (x && SYNC_SCHLUESSEL.includes(d.id) && typeof x.wert === 'string') fern[d.id] = { wert: x.wert, zeit: Number(x.zeit) || 0 };
+  }
+  // Allererster Abgleich auf diesem Gerät: bei unterschiedlichen Daten fragen
+  if (erstesMal && !rohLesen('_syncVerbunden')) {
+    const konflikt = SYNC_SCHLUESSEL.some((k) => fern[k] && hatEchteDaten(rohLesen(k)) && rohLesen(k) !== fern[k].wert);
+    if (konflikt) { syncStatus('konflikt'); konfliktFragen(fern); return; }
+    rohSchreiben('_syncVerbunden', '1');
+    // Ohne Konflikt: Online-Daten übernehmen, eigene Daten ergänzen
+    const neu = [];
+    for (const k of SYNC_SCHLUESSEL) {
+      if (fern[k]) { if (rohLesen(k) !== fern[k].wert) { rohSchreiben(k, fern[k].wert); neu.push(k); } SYNC.zeiten[k] = fern[k].zeit; }
+      else if (rohLesen(k) !== null) { SYNC.zeiten[k] = SYNC.zeiten[k] || Date.now(); SYNC.offen.add(k); }
+    }
+    syncZeitenSpeichern();
+    if (neu.length) syncAnwenden(neu, false);
+    if (Object.keys(fern).length) toast('Abgleich aktiv: Deine Daten sind jetzt auf allen Geräten gleich.');
+    syncHochladen(); syncStatus('aktiv');
+    return;
+  }
+  if (SYNC.status === 'konflikt') return;
+  // Normalfall: pro Schlüssel gewinnt die neuere Änderung
+  const neu = [];
+  for (const k of SYNC_SCHLUESSEL) {
+    const f = fern[k], lokalZeit = SYNC.zeiten[k] || 0;
+    if (f && f.zeit > lokalZeit) {
+      if (rohLesen(k) !== f.wert) { rohSchreiben(k, f.wert); neu.push(k); }
+      SYNC.zeiten[k] = f.zeit;
+    } else if ((!f || lokalZeit > f.zeit) && rohLesen(k) !== null && lokalZeit) {
+      SYNC.offen.add(k);                                  // offline gemachte Änderungen nachreichen
+    }
+  }
+  syncZeitenSpeichern();
+  if (neu.length) syncAnwenden(neu, true);
+  if (SYNC.offen.size) { clearTimeout(SYNC.timer); SYNC.timer = setTimeout(syncHochladen, 800); }
+  else { SYNC.zuletzt = Date.now(); syncStatus('aktiv'); }
+}
+/** Neue Daten in die laufende App übernehmen und anzeigen */
+function syncAnwenden(schluessel, meldung) {
+  for (const k of schluessel) Z[k] = speicher.lesen(k, Z[k]);
+  if (schluessel.some((k) => k === 'gym')) gymZustand();
+  if (schluessel.some((k) => k === 'design' || k === 'stil')) designAnwenden();
+  zaehlerAktualisieren();
+  const tippt = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  // Buchseiten neu zeichnen (Favoriten, Notizen, Häkchen …), aber nicht beim Tippen
+  if (!tippt && engine && schluessel.some((k) => ['favoriten', 'notizen', 'notizbuch', 'abgehakt', 'portionen', 'besitzer'].includes(k))) buchAufbauen(engine.index);
+  // Offenes Fenster mit neuen Daten auffrischen
+  const offen = offenesFenster && offenesFenster.f.dataset.id;
+  const neuOeffnen = { gym: () => gymOeffnen(), einkauf: einkaufOeffnen, wochenplan: wochenplanOeffnen, kuehlschrank: kuehlschrankOeffnen }[offen];
+  const passt = { gym: ['gym'], einkauf: ['einkauf', 'einkaufSort'], wochenplan: ['wochenplan'], kuehlschrank: ['vorrat'] }[offen] || [];
+  if (neuOeffnen && !tippt && schluessel.some((k) => passt.includes(k))) {
+    const y = $('.fenster-inhalt', offenesFenster.f).scrollTop;
+    neuOeffnen();
+    if (offenesFenster) $('.fenster-inhalt', offenesFenster.f).scrollTop = y;
+  }
+  if (meldung) toast('Neue Daten vom anderen Gerät übernommen.');
+  SYNC.zuletzt = Date.now(); syncStatus('aktiv');
+}
+/** Beim ersten Abgleich: welche Daten sollen gelten? */
+function konfliktFragen(fern) {
+  const f = fensterOeffnen({ titel: 'Daten abgleichen', id: 'sync' });
+  $('.fenster-fuss', f).hidden = true;
+  $('.fenster-inhalt', f).innerHTML = `<p class="fenster-text">Auf diesem Gerät und online liegen <b>unterschiedliche Daten</b>. Welche sollen ab jetzt auf allen Geräten gelten?</p>
+    <button class="s-wahl" data-swahl="online"><b>${ico('wolke')} Online-Daten nehmen</b><small>Zum Beispiel vom anderen Gerät: ${escapeHTML(datenKurz((k) => fern[k] ? fern[k].wert : null))}</small></button>
+    <button class="s-wahl" data-swahl="geraet"><b>${ico('handy')} Daten von diesem Gerät nehmen</b><small>${escapeHTML(datenKurz(rohLesen))}</small></button>
+    <p class="hinweiszeile">Die Daten, die du nicht wählst, werden vorher gesichert. Du findest sie unter „Sync &amp; Daten“ und kannst sie dort zurückholen.</p>`;
+  f.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-swahl]');
+    if (!b) return;
+    const jetzt = Date.now();
+    if (b.dataset.swahl === 'online') {
+      rohSchreiben('_sicherungVorSync', datenExport());             // Gerätedaten sichern
+      const neu = [];
+      for (const k of SYNC_SCHLUESSEL) {
+        if (fern[k]) { if (rohLesen(k) !== fern[k].wert) { rohSchreiben(k, fern[k].wert); neu.push(k); } SYNC.zeiten[k] = fern[k].zeit; }
+        else if (rohLesen(k) !== null) { SYNC.zeiten[k] = jetzt; SYNC.offen.add(k); }
+      }
+      rohSchreiben('_syncVerbunden', '1'); syncZeitenSpeichern(); fensterSchliessen();
+      syncStatus('aktiv'); syncAnwenden(neu, false);
+      toast('Online-Daten übernommen. Deine alten Gerätedaten sind gesichert.');
+    } else {
+      // Online-Daten als Sicherung aufheben, dann Gerätedaten hochladen
+      const sicherung = {}; for (const k of Object.keys(fern)) sicherung[k] = fern[k].wert;
+      rohSchreiben('_sicherungVorSync', JSON.stringify({ app: 'loeffelweise', version: 1, datum: datumHeute(), daten: sicherung }));
+      for (const k of SYNC_SCHLUESSEL) {
+        if (rohLesen(k) !== null) { SYNC.zeiten[k] = jetzt; SYNC.offen.add(k); }
+        else if (fern[k]) { rohSchreiben(k, fern[k].wert); SYNC.zeiten[k] = fern[k].zeit; }
+      }
+      rohSchreiben('_syncVerbunden', '1'); syncZeitenSpeichern(); fensterSchliessen();
+      syncStatus('aktiv'); syncAnwenden(SYNC_SCHLUESSEL, false);
+      toast('Daten von diesem Gerät werden jetzt auf alle Geräte übertragen.');
+    }
+    syncHochladen();
+  });
+}
+/** Status merken und Anzeige (Wolken-Knopf, Daten-Fenster) aktualisieren */
+const SYNC_TEXT = {
+  start: 'Wird gestartet …', verbinde: 'Verbinde …', aktiv: 'Synchronisiert', offline: 'Gerade offline, wird später abgeglichen',
+  konflikt: 'Wartet auf deine Entscheidung', fehler: 'Abgleich gerade nicht möglich, Daten bleiben auf diesem Gerät',
+  lokal: 'Daten liegen auf diesem Gerät (übertragen mit „Text kopieren“ und „Wiederherstellen“)',
+  nichtda: 'In dieser Ansicht nicht verfügbar. Öffne den Link im Browser (Safari oder Chrome) und melde dich bei claude.ai an.'
+};
+function syncStatus(s) {
+  SYNC.status = s;
+  const b = $('#b-sync');
+  const m = $('#b-mehr'); if (m) m.dataset.status = s;
+  if (b) { b.dataset.status = s; b.title = `Sync: ${SYNC_TEXT[s]}`; b.setAttribute('aria-label', `Sync und Daten: ${SYNC_TEXT[s]}`); }
+  const z = $('#sync-zeile');
+  if (z) z.innerHTML = syncZeileHTML();
+}
+function syncZeileHTML() {
+  const zeit = SYNC.zuletzt ? ` · zuletzt ${new Date(SYNC.zuletzt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr` : '';
+  return `<span class="s-punkt s-${SYNC.status}"></span><span><b>Sync:</b> ${SYNC_TEXT[SYNC.status] || ''}${SYNC.status === 'aktiv' ? zeit : ''}<br><small>App-Version ${APP_VERSION}</small></span>`;
+}
 
 const Z = {
   seite: speicher.lesen('seite', 0),
@@ -10154,7 +10556,11 @@ const Z = {
   notizbuch: speicher.lesen('notizbuch', ''),
   besitzer: speicher.lesen('besitzer', ''),
   design: speicher.lesen('design', 'system'),
+  stil: speicher.lesen('stil', 'klassisch'),          // 'klassisch' oder eins der 20 Designs
   wochenplan: speicher.lesen('wochenplan', null),   // { tage: [rid × 7], filter: {...} }
+  gym: speicher.lesen('gym', null),                 // Training, Eiweiß-Zähler, gewählter Essensplan
+  einkaufSort: speicher.lesen('einkaufSort', 'gang'), // 'gang' = nach Supermarkt-Kategorien, 'liste' = wie hinzugefügt
+  vorrat: speicher.lesen('vorrat', null),           // Kühlschrank-Modus: ausgewählte Zutaten
   schritt: {},          // gewählter Zeitpunkt pro Rezept
   vergleich: {},        // Vorher/Nachher an?
   video: {}             // Video an?
@@ -10520,7 +10926,9 @@ function wochenplanKandidaten(filter) {
   return REZEPTE.filter((r) => !['desserts', 'fruehstueck', 'backen', 'beilagen', 'getraenke', 'basics'].includes(r.kapitel) && !r.nebenbei
     && (!filter.veg || r.badges.includes('vegetarisch'))
     && (!filter.schnell || r.zeit.gesamt <= 45)
-    && (!filter.einfach || r.schwierigkeit === 1));
+    && (!filter.einfach || r.schwierigkeit === 1)
+    && (!filter.eiweiss || eiweissProPortion(r) >= 30)
+    && (!filter.guenstig || kostenProPortion(r) <= 2.5));
 }
 /** Ein passendes Rezept für einen Tag ziehen: kein Doppel, möglichst anderes Kapitel als die Nachbartage */
 function wochenplanZiehen(tage, tag, filter) {
@@ -10548,17 +10956,20 @@ function wochenplanOeffnen() {
   const zeichnen = () => {
     const p = Z.wochenplan;
     $('.fenster-inhalt', f).innerHTML = `<p class="fenster-text">Sieben Hauptgerichte für deine Woche. Mit dem Würfel tauschst du einzelne Tage aus.</p>
+      <p class="fenster-text">Geschätzte Kosten: <b>ca. ${euro(p.tage.filter(Boolean).reduce((s, rid) => s + kostenProPortion(rezeptVon(rid)) * portionenVon(rid), 0))}</b> für alle Gerichte (Discounter-Preise, ohne Grundvorrat).</p>
       <div class="chips" role="group" aria-label="Filter">
         <button class="chip" data-wfilter="veg" aria-pressed="${p.filter.veg}">Vegetarisch</button>
         <button class="chip" data-wfilter="schnell" aria-pressed="${p.filter.schnell}">Bis 45 Min</button>
-        <button class="chip" data-wfilter="einfach" aria-pressed="${p.filter.einfach}">Einfach</button>
+        <button class="chip" data-wfilter="einfach" aria-pressed="${!!p.filter.einfach}">Einfach</button>
+        <button class="chip" data-wfilter="eiweiss" aria-pressed="${!!p.filter.eiweiss}">Viel Eiweiß (ab 30 g)</button>
+        <button class="chip" data-wfilter="guenstig" aria-pressed="${!!p.filter.guenstig}">Günstig (bis 2,50 €)</button>
       </div>
       <ol class="wochenplan">${p.tage.map((rid, t) => {
         const r = rid && rezeptVon(rid);
         if (!r) return `<li><span class="tag">${WOCHENTAGE[t]}</span><span class="leer">Kein passendes Rezept</span></li>`;
         const k = kapitelVon(r.kapitel);
         return `<li><span class="tag">${WOCHENTAGE[t]}</span>
-          <button class="wp-rezept" style="--k:${k.farbe}" data-wziel="${rezeptSeite[r.id]}"><span class="punkt"></span><span class="t">${escapeHTML(r.titel)}</span><span class="m">${LAENDER[r.land] || ''} ${escapeHTML(r.land || '')} · ${zeitText(r.zeit.gesamt)}${r.badges.includes('vegetarisch') ? ' · vegetarisch' : ''}</span></button>
+          <button class="wp-rezept" style="--k:${k.farbe}" data-wziel="${rezeptSeite[r.id]}"><span class="punkt"></span><span class="t">${escapeHTML(r.titel)}</span><span class="m">${LAENDER[r.land] || ''} ${escapeHTML(r.land || '')} · ${zeitText(r.zeit.gesamt)} · ca. ${eiweissProPortion(r)} g Eiweiß · ca. ${euro(kostenProPortion(r))}${r.badges.includes('vegetarisch') ? ' · vegetarisch' : ''}</span></button>
           <button class="rund" data-wtag="${t}" aria-label="${WOCHENTAGE[t]} neu würfeln" title="Neu würfeln">${ico('wuerfel')}</button></li>`;
       }).join('')}</ol>`;
   };
@@ -10594,6 +11005,8 @@ function bedienungHTML() {
     <li><span class="sym">${ico('notiz')}</span><span><b>Notizen</b> pro Rezept und ein eigenes Notizblatt. Alles bleibt in diesem Browser gespeichert.</span></li>
     <li><span class="sym">${ico('wuerfel')}</span><span><b>Überrasch mich</b>: springt zu einem zufälligen Rezept.</span></li>
     <li><span class="sym">${ico('kalender')}</span><span><b>Wochenplan</b>: sieben Gerichte für die Woche, mit einem Tipp alles auf die Einkaufsliste.</span></li>
+    <li><span class="sym">${ico('hantel')}</span><span><b>Gym &amp; Ernährung</b>: Trainingsplan, Eiweiß-Zähler, drei Essenspläne mit Preisen.</span></li>
+    <li><span class="sym">${ico('kuehlschrank')}</span><span><b>Was habe ich da?</b>: Zutaten antippen, passende Rezepte finden, Fehlendes auf die Liste.</span></li>
   </ul>
   <h3 class="h-klein">Tastatur</h3>
   <table class="tasten"><tbody>
@@ -10603,6 +11016,8 @@ function bedienungHTML() {
     <tr><td><kbd>/</kbd></td><td>Suche</td></tr>
     <tr><td><kbd>Z</kbd></td><td>Überrasch mich</td></tr>
     <tr><td><kbd>W</kbd></td><td>Wochenplan</td></tr>
+    <tr><td><kbd>G</kbd></td><td>Gym &amp; Ernährung</td></tr>
+    <tr><td><kbd>H</kbd></td><td>Was habe ich da?</td></tr>
     <tr><td><kbd>Esc</kbd></td><td>Fenster schließen</td></tr>
   </tbody></table>`;
 }
@@ -10649,6 +11064,8 @@ function rezeptLinksHTML(r) {
       <span title="Aktive Zeit">${ico('loeffel')}${zeitText(r.zeit.aktiv)} aktiv</span>
       <span title="Schwierigkeit">${muetzenHTML(r.schwierigkeit)}</span>
       <span title="Kalorien pro ${r.portionsWort[0]}">${ico('flamme')}ca. ${r.kcal} kcal</span>
+      <span title="Eiweiß pro ${r.portionsWort[0]} (aus den Zutaten geschätzt)">${ico('hantel')}ca. ${eiweissProPortion(r)} g Eiweiß</span>
+      <span title="Geschätzte Kosten pro ${r.portionsWort[0]} (Discounter-Preise, nur verbrauchte Menge)">${ico('euro')}ca. ${euro(kostenProPortion(r))} / ${r.portionsWort[0]}</span>
       ${abzeichen}
     </div>
     <div class="zutaten-kopf"><h3 class="h-klein">Zutaten</h3>
@@ -11226,15 +11643,17 @@ function zahlAnimieren(el, von, bis, einheit, ganz) {
 }
 
 /* ---------- 7. Einkaufsliste, Favoriten, Notizen ---------- */
-function einkaufHinzufuegen(rid, trotzdem = false) {
+function einkaufHinzufuegen(rid, trotzdem = false, auswahl = null) {
   const r = rezeptVon(rid);
   if (!trotzdem && Z.einkauf.some((e) => e.quellen.includes(rid))) {
     toast(`${r.titel} steht schon auf der Einkaufsliste.`, { label: 'Nochmal hinzufügen', fn: () => einkaufHinzufuegen(rid, true) });
     return;
   }
   const faktor = portionenVon(rid) / r.portionen;
-  for (const z of r.zutaten) {
+  for (const [i, z] of r.zutaten.entries()) {
+    if (auswahl && !auswahl.has(i)) continue;    // nur die fehlenden Zutaten
     const einzahl = Array.isArray(z.name) ? z.name[0] : z.name;
+    if (istLeitungswasser(einzahl)) continue;   // Wasser aus der Leitung muss man nicht kaufen
     const schluessel = `${einzahl.toLowerCase()}|${z.einheit || ''}`;
     const menge = z.menge === null ? null : z.menge * faktor;
     const da = Z.einkauf.find((e) => e.schluessel === schluessel);
@@ -11249,25 +11668,34 @@ function einkaufHinzufuegen(rid, trotzdem = false) {
   }
   speicher.schreiben('einkauf', Z.einkauf);
   zaehlerAktualisieren();
-  toast(`${r.titel} ist auf der Einkaufsliste (${portionenVon(rid)} ${r.portionsWort[portionenVon(rid) === 1 ? 0 : 1]}).`, { label: 'Liste ansehen', fn: einkaufOeffnen });
+  toast(auswahl ? `${auswahl.size} fehlende Zutaten für ${r.titel} sind auf der Einkaufsliste.` : `${r.titel} ist auf der Einkaufsliste (${portionenVon(rid)} ${r.portionsWort[portionenVon(rid) === 1 ? 0 : 1]}).`, { label: 'Liste ansehen', fn: einkaufOeffnen });
 }
 function einkaufZeile(e) {
   return `${mengeText(e.menge, e.einheit, e.ganz)} ${zutatName(e, e.menge)}`.trim() + (e.hinweis ? ` (${e.hinweis})` : '');
 }
 function einkaufText() {
   const offen = Z.einkauf.filter((e) => !e.erledigt);
-  return 'Einkaufsliste\n' + offen.map((e) => `- ${einkaufZeile(e)}`).join('\n');
+  if (Z.einkaufSort !== 'gang') return 'Einkaufsliste\n' + offen.map((e) => `- ${einkaufZeile(e)}`).join('\n');
+  return 'Einkaufsliste\n' + einkaufGruppen(offen).map(([k, liste]) => `\n${k}:\n` + liste.map((e) => `- ${einkaufZeile(e)}`).join('\n')).join('\n');
 }
 function einkaufOeffnen() {
   const f = fensterOeffnen({ titel: 'Einkaufsliste', art: 'seite-r', id: 'einkauf' });
+  // Eine Zeile der Einkaufsliste
+  const zeile = (e) => {
+    const k = Z.einkauf.indexOf(e);
+    return `<li><label class="zutat"><input type="checkbox" data-einkauf="${k}"${e.erledigt ? ' checked' : ''}><span class="box" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+        <span class="menge">${mengeText(e.menge, e.einheit, e.ganz)}</span><span class="name">${escapeHTML(zutatName(e, e.menge))}${e.hinweis ? ` <small>${escapeHTML(e.hinweis)}</small>` : ''}<br><span class="quelle">${e.quellen.map((q) => escapeHTML(quelleText(q))).join(', ')}</span></span></label>
+        <button class="weg" data-weg="${k}" aria-label="${escapeHTML(zutatName(e, e.menge))} entfernen">${ico('zu')}</button></li>`;
+  };
   const zeichnen = () => {
     const liste = [...Z.einkauf].sort((a, b) => a.erledigt - b.erledigt);
-    $('.fenster-inhalt', f).innerHTML = liste.length ? `<ul class="einkauf">${liste.map((e) => {
-      const k = Z.einkauf.indexOf(e);
-      return `<li><label class="zutat"><input type="checkbox" data-einkauf="${k}"${e.erledigt ? ' checked' : ''}><span class="box" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
-        <span class="menge">${mengeText(e.menge, e.einheit, e.ganz)}</span><span class="name">${escapeHTML(zutatName(e, e.menge))}${e.hinweis ? ` <small>${escapeHTML(e.hinweis)}</small>` : ''}<br><span class="quelle">${e.quellen.map((q) => escapeHTML(rezeptVon(q)?.titel || '')).join(', ')}</span></span></label>
-        <button class="weg" data-weg="${k}" aria-label="${escapeHTML(zutatName(e, e.menge))} entfernen">${ico('zu')}</button></li>`;
-    }).join('')}</ul>` : '<p class="leer">Die Liste ist leer. Bei jedem Rezept findest du den Knopf „Auf die Einkaufsliste“. Gleiche Zutaten werden automatisch zusammengezählt.</p>';
+    const nachGang = Z.einkaufSort === 'gang';
+    const kopf = `<form class="einkauf-neu" data-einkauf-neu><input id="einkauf-neu" type="text" placeholder="Eigener Artikel, z. B. Spülmittel" aria-label="Eigenen Artikel hinzufügen" autocomplete="off"><button class="knopf" type="submit">${ico('plus')}Dazu</button></form>
+      ${liste.length ? `<div class="chips" role="group" aria-label="Sortierung"><button class="chip" data-tun="sort-gang" aria-pressed="${nachGang}">Nach Gang im Laden</button><button class="chip" data-tun="sort-liste" aria-pressed="${!nachGang}">Wie hinzugefügt</button></div>` : ''}`;
+    const listeHTML = !liste.length ? '<p class="leer">Die Liste ist leer. Bei jedem Rezept findest du den Knopf „Auf die Einkaufsliste“. Gleiche Zutaten werden automatisch zusammengezählt.</p>'
+      : nachGang ? einkaufGruppen(liste).map(([kat, l]) => `<h4 class="einkauf-kat">${escapeHTML(kat)} <span>${l.filter((e) => !e.erledigt).length}</span></h4><ul class="einkauf">${l.map(zeile).join('')}</ul>`).join('')
+      : `<ul class="einkauf">${liste.map(zeile).join('')}</ul>`;
+    $('.fenster-inhalt', f).innerHTML = kopf + listeHTML;
     $('.fenster-fuss', f).innerHTML = Z.einkauf.length ? `<button class="knopf voll" data-tun="kopieren">${ico('kopieren')}Kopieren</button>
       <button class="knopf" data-tun="teilen">${ico('teilen')}Teilen</button>
       <button class="knopf" data-tun="erledigte">${ico('haken')}Erledigte entfernen</button>
@@ -11297,6 +11725,20 @@ function einkaufOeffnen() {
     }
     if (tun === 'ja') { Z.einkauf = []; speicher.schreiben('einkauf', Z.einkauf); zaehlerAktualisieren(); zeichnen(); }
     if (tun === 'nein') zeichnen();
+    if (tun === 'sort-gang' || tun === 'sort-liste') { Z.einkaufSort = tun === 'sort-gang' ? 'gang' : 'liste'; speicher.schreiben('einkaufSort', Z.einkaufSort); zeichnen(); }
+  });
+  // Eigenen Artikel hinzufügen (z. B. Spülmittel, Brot)
+  f.addEventListener('submit', (e) => {
+    if (!e.target.closest('[data-einkauf-neu]')) return;
+    e.preventDefault();
+    const name = $('#einkauf-neu', f).value.trim().slice(0, 80);
+    if (!name) { $('#einkauf-neu', f).focus(); return; }
+    const schluessel = `eigen|${name.toLowerCase()}`;
+    const da = Z.einkauf.find((x) => x.schluessel === schluessel);
+    if (da) da.erledigt = false;
+    else Z.einkauf.push({ schluessel, name, einheit: null, ganz: false, menge: null, hinweis: '', quellen: ['eigen'], erledigt: false });
+    speicher.schreiben('einkauf', Z.einkauf); zaehlerAktualisieren(); zeichnen();
+    $('#einkauf-neu', f).focus();
   });
 }
 async function kopieren(text, meldung) {
@@ -11557,6 +11999,7 @@ function sucheOeffnen() {
       <button class="chip" data-filter="veg" aria-pressed="false">Vegetarisch</button>
       <button class="chip" data-filter="schnell" aria-pressed="false">Schnell (unter 30 Min)</button>
       <button class="chip" data-filter="einfach" aria-pressed="false">Einfach</button>
+      <button class="chip" data-kuehl>${ico('kuehlschrank')} Was habe ich da?</button>
     </div>
     <ul class="treffer" id="treffer" aria-live="polite"></ul>`;
   $('.fenster-fuss', f).remove();
@@ -11573,6 +12016,7 @@ function sucheOeffnen() {
   f.addEventListener('click', (e) => {
     const chip = e.target.closest('[data-filter]');
     if (chip) { filter[chip.dataset.filter] = !filter[chip.dataset.filter]; chip.setAttribute('aria-pressed', filter[chip.dataset.filter]); zeigen(); return; }
+    if (e.target.closest('[data-kuehl]')) { kuehlschrankOeffnen(); return; }
     const t = e.target.closest('[data-ziel]');
     if (t) { fensterSchliessen(); geheZu(Number(t.dataset.ziel)); }
   });
@@ -11713,20 +12157,26 @@ function drucken(rid) {
 /* ---------- Design, Ton, Vollbild ---------- */
 function designAnwenden() {
   const root = document.documentElement;
-  if (Z.design === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', Z.design === 'dunkel' ? 'dark' : 'light');
-  const symbol = { system: 'auto', hell: 'sonne', dunkel: 'mond' }[Z.design];
-  const name = { system: 'wie das System', hell: 'Hell', dunkel: 'Dunkel' }[Z.design];
+  if (!['system', 'hell', 'dunkel'].includes(Z.design)) Z.design = 'system';
+  const stil = Z.stil !== 'klassisch' ? stilVon(Z.stil) : null;
+  if (!stil) Z.stil = 'klassisch';
+  if (stil) {
+    // Eines der 20 Designs: eigene Farben, hell oder dunkel fest
+    root.dataset.stil = stil.id;
+    root.setAttribute('data-theme', stil.dunkel ? 'dark' : 'light');
+    schriftenLaden(stil.f);
+  } else {
+    delete root.dataset.stil;
+    if (Z.design === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', Z.design === 'dunkel' ? 'dark' : 'light');
+  }
+  const name = stil ? stil.name : { system: 'Klassisch automatisch', hell: 'Klassisch hell', dunkel: 'Klassisch dunkel' }[Z.design];
   const b = $('#b-design');
-  b.innerHTML = ico(symbol);
-  b.setAttribute('aria-label', `Design: ${name}. Antippen zum Wechseln`);
+  b.innerHTML = ico('pinsel');
+  b.setAttribute('aria-label', `Design: ${name}. Antippen zum Auswählen`);
   b.title = `Design: ${name}`;
 }
-function designWechseln() {
-  Z.design = { system: 'hell', hell: 'dunkel', dunkel: 'system' }[Z.design];
-  speicher.schreiben('design', Z.design);
-  designAnwenden();
-  toast(`Design: ${{ system: 'wie das System', hell: 'Hell', dunkel: 'Dunkel' }[Z.design]}`);
-}
+/* Früher: Hell/Dunkel durchschalten. Jetzt öffnet sich die Design-Auswahl. */
+function designWechseln() { designOeffnen(); }
 let ersatzVollbild = false;
 const echtesVollbild = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
 /** Vollbild an/aus. Klappt die Fullscreen-API nicht (z. B. iPhone oder eingebettete Vorschau),
@@ -11771,8 +12221,10 @@ function mehrMenue() {
   m.innerHTML = `<button role="menuitem" data-m="favoriten">${ico('herz')}Favoriten</button>
     <button role="menuitem" data-m="zufall">${ico('wuerfel')}Überrasch mich</button>
     <button role="menuitem" data-m="wochenplan">${ico('kalender')}Wochenplan</button>
+    <button role="menuitem" data-m="kuehl">${ico('kuehlschrank')}Was habe ich da?</button>
     <button role="menuitem" data-m="laender">${ico('welt')}Weltreise</button>
-    <button role="menuitem" data-m="design">${ico('auto')}Design wechseln</button>`;
+    <button role="menuitem" data-m="design">${ico('pinsel')}Design wählen</button>
+    <button role="menuitem" data-m="daten">${ico('wolke')}Sync &amp; Daten</button>`;
   document.body.appendChild(m);
   knopf.setAttribute('aria-expanded', 'true');
   $('button', m).focus();
@@ -11785,6 +12237,8 @@ function mehrMenue() {
     if (w === 'wochenplan') wochenplanOeffnen();
     if (w === 'laender') geheZu(SEITE.laender);
     if (w === 'design') designWechseln();
+    if (w === 'daten') datenOeffnen();
+    if (w === 'kuehl') kuehlschrankOeffnen();
   });
 }
 
@@ -11906,6 +12360,1512 @@ function glanzBewegen(x, y) {
   $$('.page--deckel .glanz').forEach((g) => { g.style.setProperty('--gx', x + '%'); g.style.setProperty('--gy', y + '%'); });
 }
 
+/* =====================================================================
+   EIWEISS PRO PORTION (geschätzt aus den Zutaten)
+   Jede Regel: [Muster im Zutatennamen, g Eiweiß pro 100 g, g pro Stück, g pro EL, g pro Scheibe]
+   Die erste passende Regel gewinnt, darum stehen genaue Regeln oben.
+   Werte sind Richtwerte aus üblichen Nährwerttabellen (roh bzw. trocken).
+   ===================================================================== */
+const EIWEISS_REGELN = [
+  [/brühe|fond|sauce|soße|essig|öl\b|öl$|wasser|saft|wein|bier|espresso|sirup|zucker(?!schoten)|salz/, 0],
+  [/eiweiß/, 11, 33],
+  [/eigelb/, 16, 18],
+  [/(^|\s)ei(er)?$/, 13, 55],
+  [/whey|proteinpulver/, 77],
+  [/garnele/, 18, 15],
+  [/hähnchenflügel/, 11],                     // mit Knochen gewogen
+  [/hähnchenschenkel(?!filet)/, 12, 200],      // mit Knochen gewogen
+  [/^hähnchen$/, 20, 750],
+  [/hähnchen|huhn/, 23],
+  [/entenbrust/, 19, 300],
+  [/gänsekeule/, 16, 350],
+  [/lachs/, 20, 150],                        // Filet ca. 150 g
+  [/thunfisch/, 23],
+  [/kabeljau|seelachs|fischfilet/, 18],
+  [/dünnes kalbsschnitzel/, 22, 80],
+  [/schnitzel/, 22, 150],
+  [/roulade/, 21, 180],
+  [/speck|guanciale|pancetta/, 13, null, null, 10],
+  [/schinken/, 26, null, null, 15],
+  [/chorizo|mettenden/, 22],
+  [/blutwurst/, 15],
+  [/würstchen|wiener/, 12, 50],
+  [/bratwurst/, 13, 100],
+  [/schweinebauch/, 14],
+  [/steak/, 22, 250],                         // ein Steak ca. 250 g
+  [/(?<!ge)hack|rind|lamm|schwein|kalb/, 20],
+  [/seidentofu|weicher tofu/, 6],
+  [/tofu/, 15],
+  [/paneer/, 18],
+  [/quark/, 12],
+  [/skyr/, 11],
+  [/griechischer joghurt/, 6],
+  [/joghurt/, 4.5, null, 15],
+  [/feta|schafskäse|kaşar/, 17],
+  [/mozzarella/, 18, 125],
+  [/parmesan|pecorino|kefalotyri/, 33],
+  [/mascarpone|frischkäse/, 5],
+  [/raclette|gouda|cheddar|emmentaler|gruyère|bergkäse/, 25, null, null, 20],
+  [/schmand|sahne|clotted/, 2.5],
+  [/kondensmilch/, 8],
+  [/milch/, 3.4, null, 15],
+  [/vanilleeis/, 4, 50],
+  [/getrocknete kichererbsen|getrocknete schwarze bohnen/, 20],
+  [/linsen/, 24],
+  [/kichererbsen|kidneybohnen|weiße bohnen|schwarze bohnen/, 7, 240],
+  [/grüne bohnen|zuckerschoten/, 2],
+  [/erbsen/, 5],
+  [/maistortilla/, 6, 30],
+  [/tortillachips/, 7],
+  [/tortilla/, 8, 60],
+  [/pide/, 8, 300],
+  [/fladenbrot|lavash/, 8, 150],
+  [/pitabrot/, 8, 80],
+  [/burgerbrötchen/, 8, 70],
+  [/brötchen/, 8, 60],
+  [/baguette/, 8, 250, null, 30],
+  [/ciabatta|toastbrot|weißbrot|brioche/, 8, null, null, 28],
+  [/mais/, 3, 140],
+  [/erdnüsse|erdnuss/, 25],
+  [/mandeln/, 22],
+  [/cashew/, 18],
+  [/pistazien/, 20],
+  [/walnüsse|haselnüsse|pinienkerne/, 15, null, 8],
+  [/kürbiskerne/, 30, null, 10],
+  [/sesam/, 18, null, 9],
+  [/tahin/, 17],
+  [/haferflocken/, 13.5, null, 8],
+  [/blätterteig/, 6, 275],
+  [/pizzateig/, 7, 400],
+  [/strudelteig/, 9, 120],
+  [/yufka|filo/, 8, 100],
+  [/gyoza/, 8, 8],
+  [/semmelbrösel|panko/, 10, null, 8],
+  [/bulgur|couscous/, 12],
+  [/glasnudeln|tapioka/, 0.5],
+  [/reisbandnudeln|reisnudeln/, 6],
+  [/nudel|spaghetti|penne|lasagne|ramen/, 12],
+  [/gekochter reis/, 2.7],
+  [/reis/, 7],
+  [/mehl(?!igkochend)/, 10, null, 10],         // nicht „mehligkochende Kartoffeln“
+  [/löffelbiskuit|butterkekse|printen|lebkuchen/, 7],
+  [/kakaopulver/, 20, null, 7],
+  [/schokolade|kuvertüre/, 8],
+  [/süßkartoffel/, 1.6, 300],
+  [/große kartoffel/, 2, 250],
+  [/kartoffel/, 2, 150],
+  [/champignon|kräuterseitling/, 3],
+  [/spinat/, 2.8],
+  [/blumenkohl/, 2, 600],
+  [/sprossen/, 3],
+  [/avocado/, 2, 150]
+];
+const NULL_EINHEITEN = ['Prise', 'Bund', 'Blatt', 'Zweig', 'cm'];
+
+/** Eiweiß einer einzelnen Zutat in Gramm (für die Grundmenge des Rezepts) */
+function eiweissZutat(z) {
+  if (z.menge === null || NULL_EINHEITEN.includes(z.einheit)) return 0;
+  const name = (Array.isArray(z.name) ? z.name[0] : z.name).toLowerCase();
+  const regel = EIWEISS_REGELN.find(([muster]) => muster.test(name));
+  if (!regel || !regel[1]) return 0;
+  const [, pro100, stueck, el, scheibe] = regel;
+  let gramm = 0;
+  if (z.einheit === 'g' || z.einheit === 'ml') gramm = z.menge;
+  else if (z.einheit === 'EL') gramm = z.menge * (el || 12);
+  else if (z.einheit === 'TL') gramm = z.menge * 4;
+  else if (z.einheit === 'Scheibe') gramm = z.menge * (scheibe || 28);
+  else if (stueck) gramm = z.menge * stueck;                  // Stk, Kugel, Dose …
+  return gramm * pro100 / 100;
+}
+
+const eiweissCache = {};
+/** Geschätztes Eiweiß pro Portion (gerundet), wird zwischengespeichert */
+function eiweissProPortion(r) {
+  if (eiweissCache[r.id] === undefined) {
+    const summe = r.zutaten.reduce((s, z) => s + eiweissZutat(z), 0);
+    eiweissCache[r.id] = Math.round(summe / r.portionen);
+  }
+  return eiweissCache[r.id];
+}
+
+/* =====================================================================
+   GYM & ERNÄHRUNG: Trainingsplan, Eiweiß-Zähler, 3 Essenspläne, Preisvergleich
+   ===================================================================== */
+
+/* ---------- Trainingsplan: 3er-Split für Einsteiger (Mi / Fr / Sa) ---------- */
+const GYM_TAGE = [
+  { id: 'push', tag: 'Mittwoch', kurz: 'Mi', wtag: 3, titel: 'Brust, Schultern, Trizeps', uebungen: [
+    { id: 'brustpresse', name: 'Brustpresse (Maschine)', saetze: '3 × 10–12', schritt: 2.5, tipp: 'Schulterblätter nach hinten ziehen, langsam ablassen.', alt: [
+      { id: 'butterfly', name: 'Butterfly (Maschine)', saetze: '3 × 12', tipp: 'Arme leicht gebeugt, vorne kurz zusammendrücken.' },
+      { id: 'liegestuetz', name: 'Liegestütze', saetze: '3 × so viele wie sauber gehen', ohneKg: true, tipp: 'Zu schwer? Knie auf den Boden oder Hände auf eine Bank.' }] },
+    { id: 'kh-bank', name: 'Kurzhantel-Bankdrücken', saetze: '3 × 8–10', schritt: 2, tipp: 'Hanteln über der Brust, Ellbogen ca. 45° vom Körper.', alt: [
+      { id: 'lh-bank', name: 'Langhantel-Bankdrücken', saetze: '3 × 8–10', schritt: 2.5, tipp: 'Stange zur unteren Brust, Füße fest am Boden. Mit Partner absichern.' },
+      { id: 'kh-schraeg', name: 'Schrägbankdrücken mit Kurzhanteln', saetze: '3 × 8–10', tipp: 'Bank auf ca. 30°, trifft die obere Brust.' }] },
+    { id: 'schulterpresse', name: 'Schulterpresse (Maschine)', saetze: '3 × 10–12', schritt: 2.5, tipp: 'Nicht ins Hohlkreuz drücken, Bauch fest.', alt: [
+      { id: 'kh-schulter', name: 'Kurzhantel-Schulterdrücken sitzend', saetze: '3 × 10', schritt: 2, tipp: 'Rücken an die Lehne, Hanteln bis knapp über Kopf.' }] },
+    { id: 'seitheben', name: 'Seitheben mit Kurzhanteln', saetze: '3 × 12–15', schritt: 1, tipp: 'Leichtes Gewicht, Arme nur bis Schulterhöhe.', alt: [
+      { id: 'seitheben-kabel', name: 'Seitheben am Kabel', saetze: '3 × 12–15', tipp: 'Einarmig, Kabel vor dem Körper.' }] },
+    { id: 'trizeps-kabel', name: 'Trizepsdrücken am Kabel', saetze: '3 × 12', schritt: 2.5, tipp: 'Ellbogen bleiben am Körper, nur der Unterarm bewegt sich.', alt: [
+      { id: 'dips-maschine', name: 'Dips an der Maschine', saetze: '3 × 10', tipp: 'Schultern unten lassen, langsam runter.' },
+      { id: 'trizeps-ueberkopf', name: 'Trizeps über Kopf mit Kurzhantel', saetze: '3 × 12', schritt: 1, tipp: 'Ellbogen zeigen nach vorne, nicht nach außen.' }] }
+  ] },
+  { id: 'pull', tag: 'Freitag', kurz: 'Fr', wtag: 5, titel: 'Rücken, Bizeps', uebungen: [
+    { id: 'latziehen', name: 'Latziehen zur Brust', saetze: '3 × 10–12', schritt: 2.5, tipp: 'Brust raus, Stange zur oberen Brust ziehen, nicht schwingen.', alt: [
+      { id: 'latziehen-eng', name: 'Latziehen eng (V-Griff)', saetze: '3 × 10–12', tipp: 'Griff zum Brustbein ziehen, Ellbogen nach unten.' }] },
+    { id: 'rudern-kabel', name: 'Rudern sitzend am Kabel', saetze: '3 × 10–12', schritt: 2.5, tipp: 'Rücken gerade, Ellbogen eng nach hinten.', alt: [
+      { id: 'rudermaschine', name: 'Rudermaschine (Brust gestützt)', saetze: '3 × 10–12', tipp: 'Brust bleibt am Polster, Schulterblätter zusammen.' },
+      { id: 'kh-rudern', name: 'Kurzhantel-Rudern einarmig', saetze: '3 × 10 je Seite', schritt: 2, tipp: 'Knie und Hand auf der Bank, Rücken flach.' }] },
+    { id: 'hyperext', name: 'Rückenstrecker (Hyperextension)', saetze: '3 × 12', schritt: 2.5, tipp: 'Langsam, oben nicht überstrecken.', alt: [
+      { id: 'rueckenstrecker-maschine', name: 'Rückenstrecker-Maschine', saetze: '3 × 12', tipp: 'Kontrolliert, ohne Schwung.' }] },
+    { id: 'face-pull', name: 'Face Pulls am Kabel', saetze: '3 × 15', schritt: 2.5, tipp: 'Seil Richtung Stirn ziehen, gut für die Haltung.', alt: [
+      { id: 'reverse-butterfly', name: 'Reverse Butterfly (Maschine)', saetze: '3 × 15', tipp: 'Brust ans Polster, Arme nach hinten öffnen.' }] },
+    { id: 'curls', name: 'Bizeps-Curls mit Kurzhanteln', saetze: '3 × 10–12', schritt: 1, tipp: 'Oberarme ruhig halten, kein Schwung aus dem Rücken.', alt: [
+      { id: 'curls-kabel', name: 'Bizeps-Curls am Kabel', saetze: '3 × 12', schritt: 2.5, tipp: 'Ellbogen bleiben vorne am Körper.' },
+      { id: 'hammer-curls', name: 'Hammer-Curls', saetze: '3 × 10–12', tipp: 'Daumen zeigen nach oben.' }] }
+  ] },
+  { id: 'beine', tag: 'Samstag', kurz: 'Sa', wtag: 6, titel: 'Beine, Bauch', uebungen: [
+    { id: 'beinpresse', name: 'Beinpresse', saetze: '3 × 10–12', schritt: 5, tipp: 'Knie zeigen in Richtung Fußspitzen, unten nicht rund werden.', alt: [
+      { id: 'hackenschmidt', name: 'Hackenschmidt-Kniebeuge', saetze: '3 × 10', tipp: 'Rücken am Polster, nur so tief wie es sauber geht.' },
+      { id: 'goblet', name: 'Goblet Squat mit Kurzhantel', saetze: '3 × 10–12', schritt: 2, tipp: 'Hantel vor der Brust, Oberkörper aufrecht.' }] },
+    { id: 'beinstrecker', name: 'Beinstrecker (Maschine)', saetze: '3 × 12', schritt: 2.5, tipp: 'Oben kurz halten, langsam zurück.', alt: [
+      { id: 'ausfallschritte', name: 'Ausfallschritte mit Kurzhanteln', saetze: '3 × 10 je Bein', schritt: 2, tipp: 'Nur wenn der Fuß schmerzfrei ist. Kleine Schritte, Knie hinten fast zum Boden.' }] },
+    { id: 'beinbeuger', name: 'Beinbeuger (Maschine)', saetze: '3 × 12', schritt: 2.5, tipp: 'Hüfte bleibt auf dem Polster.', alt: [
+      { id: 'beinbeuger-sitzend', name: 'Beinbeuger sitzend', saetze: '3 × 12', tipp: 'Polster knapp über der Ferse.' }] },
+    { id: 'wadenheben', name: 'Wadenheben (Maschine)', saetze: '3 × 15', schritt: 5, tipp: 'Ganz langsam, nur so weit es schmerzfrei geht.', alt: [
+      { id: 'wadenheben-sitzend', name: 'Wadenheben sitzend', saetze: '3 × 15', tipp: 'Weniger Druck auf den Fuß, gut zum Einsteigen.' }] },
+    { id: 'plank', name: 'Unterarmstütz (Plank)', saetze: '3 × 30 Sek.', ohneKg: true, tipp: 'Körper wie ein Brett, Po nicht hochstrecken.', alt: [
+      { id: 'crunch-kabel', name: 'Crunches am Kabel', saetze: '3 × 15', schritt: 2.5, tipp: 'Rücken rund machen, nicht an den Armen ziehen.' },
+      { id: 'seitstuetz', name: 'Seitstütz', saetze: '3 × 20 Sek. je Seite', ohneKg: true, tipp: 'Hüfte oben halten, Körper gerade.' }] }
+  ] }
+];
+const GYM_AUFWAERMEN = [
+  { id: 'cardio', name: '5–10 Min. Rad oder Crosstrainer', tipp: 'Leicht, du sollst noch reden können.' },
+  { id: 'aufwaermsatz', name: 'Bei der ersten Übung 1 leichter Aufwärmsatz', tipp: 'Etwa halbes Gewicht, 12–15 Wiederholungen.' }
+];
+const GYM_DEHNEN = [
+  { id: 'wade', name: 'Wade an der Wand dehnen', saetze: '2 × 30 Sek. je Seite', tipp: 'Ferse bleibt am Boden, hinteres Bein gestreckt.' },
+  { id: 'fuss', name: 'Fußsohle über einen Ball rollen', saetze: '1 Min. je Fuß', tipp: 'Sanfter Druck, nicht in den Schmerz gehen.' },
+  { id: 'oberschenkel', name: 'Oberschenkel vorne im Stand', saetze: '30 Sek. je Seite', tipp: 'Ferse zum Po ziehen, Knie zeigen nach unten.' },
+  { id: 'brust-dehnen', name: 'Brust im Türrahmen', saetze: '30 Sek. je Seite', tipp: 'Unterarm an den Rahmen, Oberkörper leicht wegdrehen.' }
+];
+
+/* ---------- Produkte mit Preisen (Richtwerte, Stand siehe Hinweis) ----------
+   inhalt = Packungsgröße in g/ml (bei stk:true in Stück), eiw = g Eiweiß und kcal = Kalorien pro 100 g bzw. pro Stück */
+const PRODUKTE = {
+  haferK:       { name: 'Haferflocken', marke: 'K-Classic / ja!', laden: 'Kaufland / Rewe', packung: '500 g', inhalt: 500, preis: 0.69, eiw: 13.5, kcal: 370 },
+  quarkD:       { name: 'Magerquark', marke: 'Milbona / Milsani', laden: 'Lidl / Aldi', packung: '500 g', inhalt: 500, preis: 1.19, eiw: 12, kcal: 72, hinweis: 'im Angebot oft 0,89 €' },
+  milchD:       { name: 'Fettarme Milch 1,5 %', marke: 'Milsani', laden: 'Aldi', packung: '1 l', inhalt: 1000, einheit: 'ml', preis: 0.85, eiw: 3.4, kcal: 47, hinweis: 'Preis von Nov. 2025' },
+  bananeD:      { name: 'Bananen', marke: 'lose', laden: 'Lidl', packung: '1 kg', inhalt: 1000, preis: 1.19, eiw: 1.1, kcal: 90 },
+  haehnchenD:   { name: 'Hähnchenbrustfilet XXL', marke: 'Meine Metzgerei / Metzgerfrisch', laden: 'Aldi / Lidl', packung: '1,5 kg', inhalt: 1500, preis: 12.99, eiw: 23, kcal: 110, hinweis: 'Aktionspreis, Rest portionsweise einfrieren' },
+  reisD:        { name: 'Parboiled-Reis', marke: 'Bon-Ri', laden: 'Aldi', packung: '1 kg', inhalt: 1000, preis: 1.39, eiw: 7, kcal: 350 },
+  brokkoliK:    { name: 'TK-Brokkoli', marke: 'K-Classic', laden: 'Kaufland', packung: '1 kg', inhalt: 1000, preis: 1.99, eiw: 3, kcal: 34 },
+  erdnuss:      { name: 'Erdnusskerne', marke: 'Alesto', laden: 'Lidl', packung: '1 kg', inhalt: 1000, preis: 3.98, eiw: 25, kcal: 620, vorrat: true },
+  linsenD:      { name: 'Rote Linsen', marke: 'Müller\'s Mühle', laden: 'Aldi Süd', packung: '500 g', inhalt: 500, preis: 1.49, eiw: 25, kcal: 340 },
+  eierD:        { name: 'Eier (Bodenhaltung)', marke: 'Eigenmarke', laden: 'Aldi', packung: '10 Stück', inhalt: 10, stk: true, preis: 2.49, eiw: 7, kcal: 80 },
+  thunfisch:    { name: 'Thunfisch in eigenem Saft', marke: 'Nixe', laden: 'Lidl', packung: 'Dose (150 g abgetropft)', inhalt: 150, preis: 1.29, eiw: 23, kcal: 110 },
+  haferKoelln:  { name: 'Haferflocken', marke: 'Kölln', laden: 'Edeka', packung: '500 g', inhalt: 500, preis: 1.69, eiw: 13.5, kcal: 370 },
+  skyr:         { name: 'Skyr Natur', marke: 'Milbona / Milsani', laden: 'Lidl / Aldi', packung: '500 g', inhalt: 500, preis: 1.19, eiw: 11, kcal: 63, hinweis: 'Preis von Nov. 2025' },
+  frischkaese:  { name: 'Körniger Frischkäse leicht', marke: 'Milbona', laden: 'Lidl', packung: '400 g', inhalt: 400, preis: 2.38, eiw: 12.5, kcal: 70 },
+  haehnchenE:   { name: 'Hähnchenbrustfilet (Theke)', marke: 'z. B. Bauerngut', laden: 'Edeka', packung: 'lose, ca. 1,69 € / 100 g', inhalt: 1000, preis: 16.90, eiw: 23, kcal: 110, lose: true },
+  lachsAldi:    { name: 'Lachsfilet-Portionen (TK)', marke: 'Golden Seafood', laden: 'Aldi Süd', packung: '500 g', inhalt: 500, preis: 9.49, eiw: 20, kcal: 208 },
+  rinderhack:   { name: 'Rinderhackfleisch', marke: 'Eigenmarke', laden: 'Aldi Nord', packung: '500 g', inhalt: 500, preis: 6.19, eiw: 20, kcal: 230 },
+  basmati:      { name: 'Basmati-Reis', marke: 'Golden Sun', laden: 'Lidl', packung: '1 kg', inhalt: 1000, preis: 2.49, eiw: 7.5, kcal: 350 },
+  brokkoliBio:  { name: 'Bio-Brokkoli (TK)', marke: 'Aldi Bio', laden: 'Aldi Süd', packung: '750 g', inhalt: 750, preis: 1.99, eiw: 3, kcal: 34 },
+  eierFrei:     { name: 'Eier (Freiland)', marke: 'Landfreude', laden: 'Aldi Süd', packung: '10 Stück', inhalt: 10, stk: true, preis: 2.99, eiw: 7, kcal: 80 },
+  mandeln:      { name: 'Mandeln', marke: 'Alesto', laden: 'Lidl', packung: '500 g', inhalt: 500, preis: 7.40, eiw: 22, kcal: 600, vorrat: true },
+  bananeBio:    { name: 'Bio-Bananen', marke: 'Edeka Bio', laden: 'Edeka', packung: '1 kg', inhalt: 1000, preis: 1.99, eiw: 1.1, kcal: 90 },
+  haferBio:     { name: 'Bio-Haferflocken (Demeter)', marke: 'Bauck Mühle', laden: 'Bio-Markt / Supermarkt', packung: '500 g', inhalt: 500, preis: 1.99, eiw: 13, kcal: 370 },
+  whey:         { name: 'Whey-Proteinpulver', marke: 'ESN Designer Whey', laden: 'Online / Rossmann', packung: '908 g Dose', inhalt: 908, preis: 43.90, eiw: 77, kcal: 380, vorrat: true, hinweis: 'online oft ab ca. 38 €' },
+  quarkBio:     { name: 'Bio-Magerquark', marke: 'dennree', laden: 'Denns BioMarkt', packung: '500 g', inhalt: 500, preis: 2.09, eiw: 12, kcal: 72 },
+  haehnchenBio: { name: 'Bio-Hähnchenbrustfilet', marke: 'REWE Bio', laden: 'Rewe', packung: '1 kg', inhalt: 1000, preis: 34.90, eiw: 23, kcal: 110, hinweis: 'im Angebot oft ca. 25 €' },
+  lachsseite:   { name: 'Lachsseite mit Haut', marke: 'Fischerstolz', laden: 'Lidl', packung: '1 kg', inhalt: 1000, preis: 19.99, eiw: 20, kcal: 208, hinweis: 'im Angebot oft ca. 13,50 €, portionsweise einfrieren' },
+  linsenBio:    { name: 'Bio Rote Linsen', marke: 'dmBio', laden: 'dm', packung: '500 g', inhalt: 500, preis: 1.45, eiw: 25, kcal: 340 },
+  brokkoliGB:   { name: 'Bio-Brokkoli (TK)', marke: 'Gut Bio', laden: 'Aldi Süd', packung: '750 g', inhalt: 750, preis: 2.69, eiw: 3, kcal: 34 }
+};
+const PREIS_STAND = 'Richtwerte aus Händler-Prospekten, Pressemitteilungen und Preisportalen, zuletzt geprüft im November 2026. Preise ändern sich oft und sind regional verschieden.';
+
+/* ---------- Drei Essenspläne (ein Tag, gilt für jeden Tag der Woche) ----------
+   teile: [Produkt, Menge in g bzw. Stück, an wie vielen Tagen pro Woche (Standard 7)] */
+const ESSENSPLAENE = {
+  billig: { titel: 'Billig', unter: 'Discounter, Eigenmarken, XXL-Packungen', mahlzeiten: [
+    { zeit: 'Frühstück', name: 'Haferbrei mit Banane', teile: [['haferK', 80], ['milchD', 300], ['bananeD', 120]] },
+    { zeit: 'Mittag', name: 'Hähnchen-Reis-Bowl mit Brokkoli', teile: [['haehnchenD', 150], ['reisD', 80], ['brokkoliK', 200]] },
+    { zeit: 'Snack', name: 'Magerquark mit Erdnüssen', teile: [['quarkD', 250], ['erdnuss', 20]] },
+    { zeit: 'Abend', name: 'Rote-Linsen-Curry mit 2 Spiegeleiern', teile: [['linsenD', 80], ['eierD', 2]] }
+  ] },
+  normal: { titel: 'Normal', unter: 'Mehr Abwechslung: Skyr, Lachs, Rind, Freiland-Eier', mahlzeiten: [
+    { zeit: 'Frühstück', name: 'Skyr-Bowl mit Haferflocken und Banane', teile: [['skyr', 250], ['haferKoelln', 50], ['bananeBio', 120]] },
+    { zeit: 'Mittag', name: 'Hähnchen mit Basmati und Brokkoli', teile: [['haehnchenE', 150], ['basmati', 80], ['brokkoliBio', 200]] },
+    { zeit: 'Snack', name: 'Körniger Frischkäse mit Mandeln', teile: [['frischkaese', 200], ['mandeln', 20]] },
+    { zeit: 'Abend', name: 'Lachs (3×) oder Rinderhack-Pfanne (4×), dazu Rührei aus 2 Eiern', teile: [['lachsAldi', 125, 3], ['rinderhack', 125, 4], ['eierFrei', 2]] }
+  ] },
+  teuer: { titel: 'Teuer', unter: 'Bio, Premium-Fisch und Whey-Shake', mahlzeiten: [
+    { zeit: 'Frühstück', name: 'Porridge mit Whey und Bio-Banane', teile: [['haferBio', 70], ['whey', 30], ['bananeBio', 120]] },
+    { zeit: 'Mittag', name: 'Bio-Hähnchen mit Basmati und Bio-Brokkoli', teile: [['haehnchenBio', 140], ['basmati', 80], ['brokkoliGB', 200]] },
+    { zeit: 'Snack', name: 'Bio-Magerquark mit Mandeln', teile: [['quarkBio', 250], ['mandeln', 15]] },
+    { zeit: 'Abend', name: 'Lachs auf rotem Linsen-Dal', teile: [['lachsseite', 125], ['linsenBio', 50]] }
+  ] }
+};
+
+/* Schnell-Knöpfe für den Eiweiß-Zähler (Werte gerundet) */
+const EIWEISS_SCHNELL = [
+  { t: 'Magerquark 250 g', g: 30 }, { t: '3 Eier', g: 21 }, { t: 'Hähnchen 150 g', g: 35 }, { t: 'Skyr 250 g', g: 28 },
+  { t: 'Whey-Shake 30 g', g: 23 }, { t: 'Thunfisch 1 Dose', g: 35 }, { t: 'Rote Linsen 80 g', g: 20 }, { t: 'Milch 300 ml', g: 10 }
+];
+
+/* ---------- Hilfsfunktionen ---------- */
+const euro = (x) => x.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+/** Heutiges Datum als JJJJ-MM-TT (lokale Zeit) */
+function datumHeute(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+/** Montag der Woche eines Datums (als Schlüssel für „diese Woche“) */
+function wochenStart(datum) {
+  const d = new Date(datum + 'T12:00:00');
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return datumHeute(d);
+}
+function datumKurz(datum) {
+  const d = new Date(datum + 'T12:00:00');
+  return d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
+}
+/** Gespeicherten Gym-Zustand laden und fehlende Felder ergänzen */
+function gymZustand() {
+  const g = Z.gym && typeof Z.gym === 'object' ? Z.gym : {};
+  g.gewicht = Number(g.gewicht) > 0 ? Number(g.gewicht) : 70;
+  g.kg = g.kg && typeof g.kg === 'object' ? g.kg : {};
+  g.log = Array.isArray(g.log) ? g.log : [];
+  g.reiter = g.reiter || 'training';
+  g.verlauf = g.verlauf && typeof g.verlauf === 'object' ? g.verlauf : {};   // Gewichte pro Übung über die Zeit
+  g.koerper = Array.isArray(g.koerper) ? g.koerper : [];
+  g.tausch = g.tausch && typeof g.tausch === 'object' ? g.tausch : {};             // gewählte Alternative pro Übung                     // Körpergewicht-Einträge
+  g.plan = ESSENSPLAENE[g.plan] ? g.plan : 'billig';
+  const heute = datumHeute();
+  if (!g.haken || g.haken.datum !== heute) g.haken = { datum: heute, ids: [] };          // Häkchen gelten nur heute
+  if (!g.eiweiss || g.eiweiss.datum !== heute) g.eiweiss = { datum: heute, liste: [] };  // Zähler startet jeden Tag neu
+  if (!g.wasser || g.wasser.datum !== heute) g.wasser = { datum: heute, glaeser: 0 };
+  Z.gym = g;
+  return g;
+}
+const gymSpeichern = () => speicher.schreiben('gym', Z.gym);
+/** Welcher Trainingstag ist heute bzw. als Nächstes dran? */
+function naechsterTrainingstag() {
+  const wtag = new Date().getDay();
+  const i = GYM_TAGE.findIndex((t) => t.wtag >= wtag);
+  return i < 0 ? 0 : i;
+}
+/** Eiweiß-Ziel aus dem Körpergewicht: 1,6–2,0 g pro kg */
+const eiweissZiel = (kg) => ({ min: Math.round(kg * 1.6), max: Math.round(kg * 2) });
+/** Gramm Eiweiß in einer Menge eines Produkts */
+function produktEiweiss(pid, menge) {
+  const p = PRODUKTE[pid];
+  return p.stk ? menge * p.eiw : menge * p.eiw / 100;
+}
+/** Hauptgerichte aus dem Buch, sortiert nach Eiweiß pro Portion */
+function eiweissRezepte(anzahl = 8) {
+  return wochenplanKandidaten({}).map((r) => ({ r, g: eiweissProPortion(r) })).sort((a, b) => b.g - a.g).slice(0, anzahl);
+}
+
+/** Essensplan durchrechnen: Eiweiß pro Tag, Einkauf pro Woche, Kosten */
+function planRechnen(stufe) {
+  const plan = ESSENSPLAENE[stufe];
+  const woche = {};   // Produkt-ID → Menge pro Woche
+  let eiweissTag = 0, kcalTag = 0;
+  const mahlzeiten = plan.mahlzeiten.map((m) => {
+    let g = 0;
+    for (const [pid, menge, tage = 7] of m.teile) {
+      g += produktEiweiss(pid, menge) * tage / 7;
+      const p = PRODUKTE[pid];
+      kcalTag += (p.stk ? menge * p.kcal : menge * p.kcal / 100) * tage / 7;
+      woche[pid] = (woche[pid] || 0) + menge * tage;
+    }
+    eiweissTag += g;
+    return { ...m, eiweiss: Math.round(g) };
+  });
+  const posten = Object.entries(woche).map(([pid, menge]) => {
+    const p = PRODUKTE[pid];
+    const packungen = p.lose ? null : Math.ceil(menge / p.inhalt - 1e-9);
+    const anteilig = menge / p.inhalt * p.preis;                       // was in einer Woche verbraucht wird
+    const einkauf = p.lose ? anteilig : packungen * p.preis;             // was du an der Kasse zahlst
+    return { pid, p, menge, packungen, anteilig, einkauf };
+  });
+  const summe = (feld) => posten.reduce((s, x) => s + x[feld], 0);
+  return { plan, mahlzeiten, posten, eiweissTag: Math.round(eiweissTag), kcalTag: Math.round(kcalTag / 10) * 10, proWoche: summe('anteilig'), einkauf: summe('einkauf') };
+}
+/** Menge schön anzeigen (g / kg / ml / Stück) */
+function produktMenge(p, menge) {
+  if (p.stk) return `${menge} Stück`;
+  return mengeText(menge, p.einheit || 'g', false);
+}
+
+/* ---------- Fenster öffnen und zeichnen ---------- */
+function gymOeffnen(reiter) {
+  const g = gymZustand();
+  if (reiter) g.reiter = reiter;
+  const f = fensterOeffnen({ titel: 'Gym & Ernährung', id: 'gym' });
+  f.classList.add('breit');
+  gymZeichnen(f);
+
+  f.addEventListener('click', (e) => {
+    const g = Z.gym;
+    const el = (sel) => e.target.closest(sel);
+    if (el('[data-greiter]')) { $('.toast')?.remove(); g.reiter = el('[data-greiter]').dataset.greiter; gymSpeichern(); gymZeichnen(f); $('.fenster-inhalt', f).scrollTop = 0; return; }
+    if (el('[data-gtag]')) { g.tag = Number(el('[data-gtag]').dataset.gtag); gymSpeichern(); gymZeichnen(f); return; }
+    if (el('[data-gfertig]')) { trainingAbschliessen(f); return; }
+    if (el('[data-greset]')) { g.haken.ids = []; gymSpeichern(); gymZeichnen(f); return; }
+    if (el('[data-gplus]')) { eiweissDazu(f, EIWEISS_SCHNELL[Number(el('[data-gplus]').dataset.gplus)]); return; }
+    if (el('[data-geigen]')) {
+      const feld = $('#g-eigen', f); const wert = Math.round(Number(String(feld.value).replace(',', '.')));
+      if (wert > 0 && wert <= 200) eiweissDazu(f, { t: 'Eigener Eintrag', g: wert }); else { feld.focus(); toast('Bitte eine Zahl zwischen 1 und 200 eingeben.'); }
+      return;
+    }
+    if (el('[data-gweg]')) { g.eiweiss.liste.splice(Number(el('[data-gweg]').dataset.gweg), 1); gymSpeichern(); gymZeichnen(f); return; }
+    if (el('[data-gziel]')) { const ziel = Number(el('[data-gziel]').dataset.gziel); fensterSchliessen(); geheZu(ziel); return; }
+    if (el('[data-gwochenplan]')) {
+      const filter = { veg: false, schnell: false, einfach: false, eiweiss: true };
+      Z.wochenplan = { filter, tage: wochenplanNeu(filter) }; speicher.schreiben('wochenplan', Z.wochenplan);
+      fensterSchliessen(); wochenplanOeffnen(); return;
+    }
+    if (el('[data-gplan]')) { g.plan = el('[data-gplan]').dataset.gplan; gymSpeichern(); gymZeichnen(f); return; }
+    if (el('[data-gplaneinkauf]')) { planAufEinkaufsliste(g.plan); return; }
+    if (el('[data-gpause]')) { satzpause(Number(el('[data-gpause]').dataset.gpause)); return; }
+    if (el('[data-gglas]')) {
+      const n = Number(el('[data-gglas]').dataset.gglas);
+      g.wasser.glaeser = g.wasser.glaeser === n ? n - 1 : Math.min(n, 20);   // nochmal tippen = ein Glas zurück
+      gymSpeichern(); gymZeichnen(f); return;
+    }
+    if (el('[data-gkoerper]')) { koerperEintragen(f); return; }
+    const zielKlick = el('[data-zgeschl]') || el('[data-zaktiv]') || el('[data-zmonate]');
+    if (zielKlick) {
+      const z = zielZustand();
+      if (zielKlick.dataset.zgeschl) z.geschlecht = zielKlick.dataset.zgeschl;
+      if (zielKlick.dataset.zaktiv) z.aktiv = Number(zielKlick.dataset.zaktiv);
+      if (zielKlick.dataset.zmonate) z.monate = Number(zielKlick.dataset.zmonate);
+      gymSpeichern(); const y = $('.fenster-inhalt', f).scrollTop; gymZeichnen(f); $('.fenster-inhalt', f).scrollTop = y; return;
+    }
+    if (el('[data-gvorschlag]')) {
+      const b = el('[data-gvorschlag]'), kg = Number(b.dataset.kg);
+      g.kg[b.dataset.gvorschlag] = kg; gymSpeichern();
+      const feld = $(`[data-gkg="${b.dataset.gvorschlag}"]`, f); if (feld) feld.value = kg;
+      toast(`${zahlDeutsch(kg)} kg eingetragen.`); return;
+    }
+    if (el('[data-gtausch]')) {
+      const key = el('[data-gtausch]').dataset.gtausch, [tid, uid] = key.split(':');
+      const u = GYM_TAGE.find((x) => x.id === tid).uebungen.find((x) => x.id === uid);
+      g.tausch[key] = ((g.tausch[key] || 0) + 1) % (1 + u.alt.length);
+      gymSpeichern(); const y = $('.fenster-inhalt', f).scrollTop; gymZeichnen(f); $('.fenster-inhalt', f).scrollTop = y; return;
+    }
+    if (el('[data-gsichern]')) { datenOeffnen(); return; }
+  });
+  // Häkchen im Training
+  f.addEventListener('change', (e) => {
+    const box = e.target.closest('[data-ghaken]');
+    if (box) {
+      const ids = Z.gym.haken.ids, id = box.dataset.ghaken;
+      if (box.checked) { if (!ids.includes(id)) ids.push(id); } else ids.splice(ids.indexOf(id), 1);
+      gymSpeichern(); trainingFortschritt(f); return;
+    }
+    if (e.target.matches('[data-zfeld]')) {
+      const z = zielZustand(), feld = e.target.dataset.zfeld;
+      const wert = Number(String(e.target.value).replace(',', '.'));
+      const grenzen = { alter: [14, 100], groesse: [120, 230], gewicht: [30, 250], zielkg: [30, 250] }[feld];
+      if (!(wert >= grenzen[0] && wert <= grenzen[1])) { toast(`Bitte eine Zahl zwischen ${grenzen[0]} und ${grenzen[1]} eingeben.`); e.target.focus(); return; }
+      if (feld === 'gewicht') Z.gym.gewicht = wert; else z[feld] = feld === 'alter' ? Math.round(wert) : wert;
+      gymSpeichern(); const y = $('.fenster-inhalt', f).scrollTop; gymZeichnen(f); $('.fenster-inhalt', f).scrollTop = y; return;
+    }
+    if (e.target.matches('[data-ggewicht]')) {
+      const kg = Number(String(e.target.value).replace(',', '.'));
+      if (kg >= 30 && kg <= 250) { Z.gym.gewicht = kg; gymSpeichern(); gymZeichnen(f); }
+      else { e.target.value = Z.gym.gewicht; toast('Bitte ein Gewicht zwischen 30 und 250 kg eingeben.'); }
+    }
+  });
+  // Gewichte pro Übung beim Tippen speichern
+  f.addEventListener('input', (e) => {
+    if (e.target.id === 'g-1rm-kg' || e.target.id === 'g-1rm-wdh') { einsRmRechnen(f); return; }
+    const feld = e.target.closest('[data-gkg]');
+    if (!feld) return;
+    const wert = String(feld.value).replace(',', '.').trim();
+    if (wert === '') delete Z.gym.kg[feld.dataset.gkg]; else if (Number(wert) >= 0) Z.gym.kg[feld.dataset.gkg] = Number(wert);
+    gymSpeichern();
+  });
+  f.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    if (e.target.id === 'g-eigen') { e.preventDefault(); $('[data-geigen]', f).click(); }
+    if (e.target.id === 'g-koerper') { e.preventDefault(); koerperEintragen(f); }
+  });
+}
+
+function gymZeichnen(f) {
+  const g = gymZustand();
+  const reiter = [['training', 'Training'], ['ziel', 'Ziel'], ['eiweiss', 'Eiweiß'], ['plaene', 'Pläne'], ['preise', 'Preise'], ['fortschritt', 'Fortschritt']];
+  const kopf = `<div class="reiter" role="tablist" aria-label="Bereiche">${reiter.map(([id, t]) => `<button role="tab" data-greiter="${id}" aria-selected="${g.reiter === id}">${t}</button>`).join('')}</div>`;
+  const inhalt = { training: trainingHTML, ziel: zielHTML, eiweiss: eiweissHTML, plaene: plaeneHTML, preise: preiseHTML, fortschritt: fortschrittHTML }[g.reiter] || trainingHTML;
+  $('.fenster-inhalt', f).innerHTML = kopf + inhalt();
+  const fuss = {
+    training: `<button class="knopf voll" data-gfertig>${ico('haken')}Training fertig</button><button class="knopf" data-greset>Zurücksetzen</button>`,
+    eiweiss: `<button class="knopf voll" data-gwochenplan>${ico('kalender')}Eiweiß-Wochenplan aus dem Buch</button>`,
+    plaene: `<button class="knopf voll" data-gplaneinkauf>${ico('korb')}Wocheneinkauf auf die Einkaufsliste</button>`,
+    preise: '',
+    ziel: '',
+    fortschritt: ''
+  }[g.reiter] || '';
+  $('.fenster-fuss', f).innerHTML = fuss;
+  $('.fenster-fuss', f).hidden = !fuss;
+  if (g.reiter === 'training') trainingFortschritt(f);
+}
+
+/* ----- Reiter 1: Training ----- */
+function hakenZeile(id, name, saetze, tipp, mitKg) {
+  const an = Z.gym.haken.ids.includes(id);
+  const uid = id.split(':')[1];
+  const kg = Z.gym.kg[uid];
+  const best = mitKg ? uebungBest(uid) : 0;
+  return `<li class="g-uebung"><label class="zutat"><input type="checkbox" data-ghaken="${id}"${an ? ' checked' : ''}><span class="box" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="name"><b>${escapeHTML(name)}</b>${saetze ? ` <span class="g-saetze">${escapeHTML(saetze)}</span>` : ''}<br><small>${escapeHTML(tipp)}</small>${best ? `<small class="g-best">Bestwert ${zahlDeutsch(best)} kg</small>` : ''}</span></label>
+    ${mitKg ? `<label class="g-kg"><input type="text" inputmode="decimal" data-gkg="${id.split(':')[1]}" value="${kg ?? ''}" placeholder="–" aria-label="Gewicht für ${escapeHTML(name)} in kg"><span>kg</span></label>` : ''}</li>`;
+}
+function trainingHTML() {
+  const g = Z.gym;
+  const heute = datumHeute(), woche = wochenStart(heute);
+  const idx = Number.isInteger(g.tag) && GYM_TAGE[g.tag] ? g.tag : naechsterTrainingstag();
+  const t = GYM_TAGE[idx];
+  const erledigt = (tid) => g.log.some((l) => l.tag === tid && wochenStart(l.datum) === woche);
+  const heuteWtag = new Date().getDay();
+  const verlauf = g.log.slice(-6).reverse();
+  return `<p class="fenster-text">Dein 3er-Split für Mittwoch, Freitag und Samstag. Hake ab, was du geschafft hast, und trag dein Gewicht ein. Das Gewicht bleibt gespeichert.</p>
+    <div class="chips" role="group" aria-label="Trainingstag">${GYM_TAGE.map((x, i) => `<button class="chip" data-gtag="${i}" aria-pressed="${i === idx}">${erledigt(x.id) ? '✓ ' : ''}${x.kurz} · ${escapeHTML(x.titel)}${x.wtag === heuteWtag ? ' (heute)' : ''}</button>`).join('')}</div>
+    <div class="g-karte">
+      <div class="g-fortschritt"><span id="g-fortschritt-text"></span><div class="g-balken"><i id="g-fortschritt-balken"></i></div></div>
+      <div class="g-pause"><span>${ico('timer')}Satzpause:</span><button class="chip" data-gpause="60">60 Sek.</button><button class="chip" data-gpause="90">90 Sek.</button><button class="chip" data-gpause="120">2 Min.</button></div>
+      <h3 class="h-klein">1. Aufwärmen</h3>
+      <ul class="g-liste">${GYM_AUFWAERMEN.map((u) => hakenZeile(`${t.id}:${u.id}`, u.name, '', u.tipp, false)).join('')}</ul>
+      <h3 class="h-klein">2. ${escapeHTML(t.tag)}: ${escapeHTML(t.titel)}</h3>
+      <ul class="g-liste">${uebungenVon(t).map((u) => uebungZeile(t, u)).join('')}</ul>
+      <h3 class="h-klein">3. Dehnen (5 Min.)</h3>
+      <ul class="g-liste">${GYM_DEHNEN.map((u) => hakenZeile(`${t.id}:${u.id}`, u.name, u.saetze, u.tipp, false)).join('')}</ul>
+    </div>
+    <div class="g-tipp"><b>Steigern:</b> Hake eine Übung nur ab, wenn du alle Sätze sauber geschafft hast. Dann schlägt dir die App beim nächsten Mal etwas mehr Gewicht vor („Heute: … kg“). Zwischen den Sätzen 60–90 Sek. Pause. Tut etwas weh (nicht Muskelbrennen, sondern Schmerz), Übung weglassen.</div>
+    <h3 class="h-klein">Letzte Trainings</h3>
+    ${verlauf.length ? `<ul class="g-verlauf">${verlauf.map((l) => `<li><span>${datumKurz(l.datum)}</span>${escapeHTML(GYM_TAGE.find((x) => x.id === l.tag)?.titel || '')}</li>`).join('')}</ul>` : '<p class="leer">Noch kein Training eingetragen. Nach dem Gym auf „Training fertig“ tippen.</p>'}`;
+}
+/** Zähler „x von y erledigt“ aktualisieren, ohne alles neu zu zeichnen */
+function trainingFortschritt(f) {
+  const boxen = $$('[data-ghaken]', f);
+  if (!boxen.length) return;
+  const fertig = boxen.filter((b) => b.checked).length;
+  $('#g-fortschritt-text', f).textContent = `${fertig} von ${boxen.length} erledigt`;
+  $('#g-fortschritt-balken', f).style.width = `${Math.round(fertig / boxen.length * 100)}%`;
+}
+function trainingAbschliessen(f) {
+  const g = Z.gym;
+  const idx = Number.isInteger(g.tag) && GYM_TAGE[g.tag] ? g.tag : naechsterTrainingstag();
+  const t = GYM_TAGE[idx], heute = datumHeute();
+  if (g.log.some((l) => l.datum === heute && l.tag === t.id)) { toast(`${t.titel} ist für heute schon eingetragen.`); return; }
+  g.log.push({ datum: heute, tag: t.id });
+  const rekorde = gewichteMerken(t, heute);
+  if (g.log.length > 150) g.log = g.log.slice(-150);
+  g.haken.ids = g.haken.ids.filter((id) => !id.startsWith(t.id + ':'));
+  gymSpeichern(); gymZeichnen(f);
+  toast(rekorde.length ? `Neuer Bestwert: ${rekorde.join(', ')}! Training ist eingetragen.` : `Stark! ${t.titel} ist eingetragen. Jetzt Eiweiß nicht vergessen.`, { label: 'Eiweiß-Zähler', fn: () => { Z.gym.reiter = 'eiweiss'; gymOeffnen('eiweiss'); } });
+}
+
+/* ----- Reiter 2: Eiweiß ----- */
+function eiweissDazu(f, eintrag) {
+  Z.gym.eiweiss.liste.push({ t: eintrag.t, g: eintrag.g });
+  gymSpeichern(); gymZeichnen(f);
+}
+function eiweissHTML() {
+  const g = Z.gym;
+  const ziel = eiweissZiel(g.gewicht);
+  const summe = g.eiweiss.liste.reduce((s, x) => s + x.g, 0);
+  const prozent = Math.min(100, Math.round(summe / ziel.min * 100));
+  const top = eiweissRezepte(8);
+  return `<div class="g-karte g-ziel">
+      <label class="g-gewicht">Dein Körpergewicht <input type="text" inputmode="decimal" data-ggewicht value="${zahlDeutsch(g.gewicht)}" aria-label="Körpergewicht in kg"> kg</label>
+      <p class="g-gross">Ziel: <b>${ziel.min}–${ziel.max} g</b> Eiweiß am Tag</p>
+      <p class="hinweiszeile">Richtwert für Muskelaufbau: 1,6 bis 2 g pro kg Körpergewicht. Mehr bringt meist nichts extra.</p>
+    </div>
+    ${wasserHTML()}
+    <div class="g-karte">
+      <div class="g-fortschritt"><span><b>Heute: ${summe} g</b> von mindestens ${ziel.min} g</span><div class="g-balken${summe >= ziel.min ? ' voll' : ''}"><i style="width:${prozent}%"></i></div></div>
+      <div class="chips g-schnell">${EIWEISS_SCHNELL.map((x, i) => `<button class="chip" data-gplus="${i}">+${x.g} g · ${escapeHTML(x.t)}</button>`).join('')}</div>
+      <div class="g-eigen"><input id="g-eigen" type="text" inputmode="numeric" placeholder="Eigene Gramm" aria-label="Eigene Menge Eiweiß in Gramm"><button class="knopf" data-geigen>${ico('plus')}Dazu</button></div>
+      ${g.eiweiss.liste.length ? `<ul class="g-heute">${g.eiweiss.liste.map((x, i) => `<li><span>${escapeHTML(x.t)}</span><b>${x.g} g</b><button class="weg" data-gweg="${i}" aria-label="${escapeHTML(x.t)} entfernen">${ico('zu')}</button></li>`).join('')}</ul>` : '<p class="leer">Noch nichts eingetragen. Der Zähler startet jeden Tag bei null.</p>'}
+    </div>
+    <h3 class="h-klein">Rezepte mit viel Eiweiß aus deinem Buch</h3>
+    <ul class="g-rezepte">${top.map(({ r, g: e }) => `<li><button class="wp-rezept" style="--k:${kapitelVon(r.kapitel).farbe}" data-gziel="${rezeptSeite[r.id]}"><span class="punkt"></span><span class="t">${escapeHTML(r.titel)}</span><span class="m">ca. ${e} g Eiweiß · ${r.kcal} kcal pro ${escapeHTML(r.portionsWort[0])}</span></button></li>`).join('')}</ul>
+    <p class="hinweiszeile">Eiweißwerte der Rezepte sind aus den Zutaten geschätzt (Richtwerte).</p>`;
+}
+
+/* ----- Reiter 3: Essenspläne ----- */
+function plaeneHTML() {
+  const g = Z.gym;
+  const x = planRechnen(g.plan);
+  const ziel = eiweissZiel(g.gewicht);
+  // Einkauf nach Laden gruppieren
+  const laeden = {};
+  for (const p of x.posten) (laeden[p.p.laden] = laeden[p.p.laden] || []).push(p);
+  const vergleich = Object.keys(ESSENSPLAENE).map((s) => ({ s, r: planRechnen(s) }));
+  return `<div class="chips" role="group" aria-label="Preisstufe">${Object.entries(ESSENSPLAENE).map(([id, p]) => `<button class="chip" data-gplan="${id}" aria-pressed="${g.plan === id}">${p.titel}</button>`).join('')}</div>
+    <p class="fenster-text">${escapeHTML(x.plan.unter)}. Ein Tagesplan, den du jeden Tag essen kannst. Öl, Gewürze, Zwiebeln und Extra-Gemüse sind nicht eingerechnet.</p>
+    <div class="g-zahlen">
+      <div><b>${euro(x.proWoche)}</b><span>pro Woche (verbraucht)</span></div>
+      <div><b>${euro(x.proWoche / 7)}</b><span>pro Tag</span></div>
+      <div><b>ca. ${x.eiweissTag} g</b><span>Eiweiß pro Tag ${x.eiweissTag >= ziel.min ? '✓' : `(Ziel ${ziel.min} g)`} · ca. ${x.kcalTag.toLocaleString('de-DE')} kcal</span></div>
+      <div><b>${euro(x.einkauf)}</b><span>erster Einkauf (ganze Packungen)</span></div>
+    </div>
+    <h3 class="h-klein">So sieht ein Tag aus</h3>
+    <ul class="g-mahlzeiten">${x.mahlzeiten.map((m) => `<li><span class="g-zeit">${m.zeit}</span><span class="g-essen"><b>${escapeHTML(m.name)}</b><small>${m.teile.map(([pid, menge, tage]) => `${produktMenge(PRODUKTE[pid], menge)} ${escapeHTML(PRODUKTE[pid].name)}${tage ? ` (${tage}× pro Woche)` : ''}`).join(' · ')}</small></span><span class="g-eiw">${m.eiweiss} g</span></li>`).join('')}</ul>
+    <h3 class="h-klein">Wocheneinkauf: wo, welche Marke, was es kostet</h3>
+    ${Object.entries(laeden).map(([laden, liste]) => `<div class="g-laden"><h4>${escapeHTML(laden)}</h4><ul>${liste.map((p) => `<li><span class="g-prod"><b>${escapeHTML(p.p.name)}</b><small>${escapeHTML(p.p.marke)} · ${escapeHTML(p.p.packung)}${p.p.hinweis ? ` · ${escapeHTML(p.p.hinweis)}` : ''}${p.p.vorrat ? ' · reicht mehrere Wochen' : ''}</small></span><span class="g-anz">${p.p.lose ? produktMenge(p.p, p.menge) : `${p.packungen} × ${euro(p.p.preis)}`}</span><span class="g-preis">${euro(p.einkauf)}</span></li>`).join('')}</ul></div>`).join('')}
+    ${mealPrepHTML(g.plan)}
+    <h3 class="h-klein">Die drei Pläne im Vergleich</h3>
+    <ul class="g-vergleich">${vergleich.map(({ s, r }) => `<li${s === g.plan ? ' class="an"' : ''}><b>${ESSENSPLAENE[s].titel}</b><span>${euro(r.proWoche)} / Woche</span><span>${euro(r.proWoche * 30 / 7)} / Monat</span><span>ca. ${r.eiweissTag} g Eiweiß / Tag</span></li>`).join('')}</ul>
+    <p class="hinweiszeile">${escapeHTML(PREIS_STAND)} „Pro Woche“ rechnet nur, was du in 7 Tagen verbrauchst. Den Rest großer Packungen kannst du einfrieren oder später nutzen.</p>`;
+}
+function planAufEinkaufsliste(stufe) {
+  const x = planRechnen(stufe), quelle = `plan:${stufe}`;
+  if (Z.einkauf.some((e) => e.quellen.includes(quelle))) {
+    toast(`Der Plan „${x.plan.titel}“ steht schon auf der Einkaufsliste.`, { label: 'Liste ansehen', fn: einkaufOeffnen });
+    return;
+  }
+  const sortiert = [...x.posten].sort((a, b) => a.p.laden.localeCompare(b.p.laden, 'de'));   // nach Laden gruppiert
+  for (const p of sortiert) {
+    const schluessel = `plan|${p.pid}`;
+    const menge = p.p.lose ? Math.round(p.menge) : p.packungen;
+    const einheit = p.p.lose ? 'g' : 'Pack';
+    const hinweis = `${p.p.marke}, bei ${p.p.laden}, ${p.p.lose ? 'ca. ' + euro(p.einkauf) : p.p.packung + ' ca. ' + euro(p.p.preis)}`;
+    const da = Z.einkauf.find((e) => e.schluessel === schluessel);
+    if (da) { da.menge += menge; da.quellen.push(quelle); da.erledigt = false; }
+    else Z.einkauf.push({ schluessel, name: p.p.name, einheit, ganz: !p.p.lose, menge, hinweis, quellen: [quelle], erledigt: false });
+  }
+  speicher.schreiben('einkauf', Z.einkauf);
+  zaehlerAktualisieren();
+  toast(`${x.posten.length} Produkte aus dem Plan „${x.plan.titel}“ sind auf der Einkaufsliste.`, { label: 'Liste ansehen', fn: einkaufOeffnen });
+}
+/** Name einer Quelle in der Einkaufsliste (Rezept oder Essensplan) */
+function quelleText(q) {
+  if (q === 'eigen') return 'Eigener Eintrag';
+  if (String(q).startsWith('plan:')) return `Essensplan ${ESSENSPLAENE[q.slice(5)]?.titel || ''}`;
+  return rezeptVon(q)?.titel || '';
+}
+
+/* ----- Reiter 4: Preise & Eiweiß pro Euro ----- */
+function preiseHTML() {
+  const liste = Object.entries(PRODUKTE).map(([pid, p]) => {
+    const eiweissPackung = p.stk ? p.inhalt * p.eiw : p.inhalt * p.eiw / 100;
+    return { pid, p, proEuro: eiweissPackung / p.preis };
+  }).sort((a, b) => b.proEuro - a.proEuro);
+  const max = liste[0].proEuro;
+  const stufeVon = (pid) => Object.entries(ESSENSPLAENE).filter(([, pl]) => pl.mahlzeiten.some((m) => m.teile.some(([x]) => x === pid))).map(([, pl]) => pl.titel).join(', ');
+  return `<p class="fenster-text">Welche Lebensmittel liefern am meisten Eiweiß für dein Geld? Sortiert nach Gramm Eiweiß pro 1 €.</p>
+    <ul class="g-preise">${liste.map(({ pid, p, proEuro }) => `<li>
+      <span class="g-prod"><b>${escapeHTML(p.name)}</b><small>${escapeHTML(p.marke)} · ${escapeHTML(p.laden)} · ${escapeHTML(p.packung)} für ${euro(p.preis)}${p.hinweis ? ` (${escapeHTML(p.hinweis)})` : ''}${stufeVon(pid) ? ` · im Plan: ${stufeVon(pid)}` : ''}</small></span>
+      <span class="g-wert"><b>${Math.round(proEuro)} g</b><span class="g-balken"><i style="width:${Math.max(4, Math.round(proEuro / max * 100))}%"></i></span></span></li>`).join('')}</ul>
+    <div class="g-tipp"><b>Spartipps:</b> Magerquark, Linsen und Haferflocken sind die Preis-Sieger. Eigenmarken (Milbona, Milsani, K-Classic, ja!) kosten oft die Hälfte von Markenprodukten. Fleisch und Fisch in XXL-Packungen oder im Angebot kaufen und portionsweise einfrieren. Die Apps von Lidl und Aldi haben oft Coupons auf Quark und Skyr. Haferflocken und Linsen haben nicht alle Eiweiß-Bausteine, darum mit Milch, Quark oder Ei kombinieren.</div>
+    <p class="hinweiszeile">${escapeHTML(PREIS_STAND)}</p>`;
+}
+
+/* =====================================================================
+   VERSION 2: Ideen aus dem Vergleich mit anderen Apps
+   (Hevy/Strong: Satzpause, Bestwerte · MacroFactor: Gewichtsverlauf ·
+    Yazio/Lifesum: Wasser · Bring!/AnyList: Kategorien, eigene Artikel ·
+    Mealime: Meal-Prep · Strong/Tandoor: Daten sichern)
+   ===================================================================== */
+
+/* ---------- Einkaufsliste nach Gängen im Supermarkt ---------- */
+const EINKAUF_KATEGORIEN = [
+  ['Tiefkühl', /(^|\s)tk[-\s]|\(tk\)|tiefgek|tiefkühl|vanilleeis|eiswürfel/],
+  ['Gewürze, Saucen & Backzutaten', /(?<!protein)pulver|flocken(?<!haferflocken)|gewürz|zimt|kümmel|pfeffer|salz|muskat|kurkuma|lorbeer|nelke|kardamom|sternanis|vanille|wacholder|curry|paste|mark\b|mark$|sauce|soße|essig|öl$|öl\s|senf|ketchup|mayonnaise|sirup|honig|zucker(?!schoten)|backpulver|natron|hefe|stärke|brühe|fond|sahnesteif|tortenguss|streusel|hagelzucker|oregano|safran|majoran|masala|bockshorn|pul biber|sumach|kräuter der provence|piment|baharat|ras el|beifuß|gelatine|mirin|doubanjiang|gochujang|kecap|salsa|samen|getrocknete minze/],
+  ['Getränke', /(?<!zitronen|limetten)saft|mineralwasser|sodawasser|bier|(?<!sch)wein|espresso|kaffee|schwarztee|amaretto|kirschwasser/],
+  ['Vorrat & Konserven', /gehackte tomaten|geschälte tomaten|stückige tomaten|passierte tomaten|kokosmilch|kondensmilch|kichererbsen|kidneybohnen|weiße bohnen|schwarze bohnen|thunfisch|oliven|kapern|cornichons|glas |nudel|spaghetti|penne|lasagne|(^|[\s-])reis|reis($|\s)|linsen|haferflocken|mehl(?!igkochend)|nori|schokoraspel|bulgur|couscous|grieß|nüsse|mandeln|erdnuss|cashew|pistazien|kerne|sesam|rosinen|tahin|semmelbrösel|panko|whey|protein|kakao|schokolade|kuvertüre|kekse|biskuit|tortilla|chips|konfitüre|marmelade|tapioka|orangeat|kokosraspeln|mais\b|mais$/],
+  ['Fleisch & Fisch', /hähnchen|huhn|rind|schwein|lamm|kalb|hack|speck|schinken|wurst|chorizo|mettenden|ente|gans|gänse|lachs|fisch|kabeljau|seelachs|garnele|guanciale|pancetta|schnitzel|roulade|gulasch|braten/],
+  ['Kühlregal', /milch|käse|quark|joghurt|skyr|sahne|schmand|butter|(^|\s)ei(er)?(\s|$)|eigelb|eiweiß|feta|mozzarella|parmesan|pecorino|gouda|cheddar|mascarpone|paneer|tofu|crème|clotted|teig|ghee|kaşar|raclette|kefalotyri|gruyère|emmentaler/],
+  ['Brot & Backwaren', /brot|brötchen|baguette|ciabatta|toast|brioche|pide|pita|fladen|lavash|printen|lebkuchen/],
+  ['Obst & Gemüse', /apfel|äpfel|banane|birne|zitrone|limette|orange|mango|ananas|beere|kirsch|pfirsich|avocado|tomate|gurke|paprika|zwiebel|knoblauch|ingwer|kartoffel|möhre|karotte|zucchini|aubergine|kürbis|spinat|salat|kohl|brokkoli|champignon|kräuterseitling|pilz|lauch|sellerie|spargel|bohnen|erbsen|zuckerschoten|petersilie|koriander|basilikum|minze|dill|schnittlauch|rosmarin|thymian|chili|jalape|schalotte|rote bete|sprossen|salbei|zitronengras|rucola|fenchel|scotch bonnet/]
+];
+const KATEGORIE_SONST = 'Sonstiges';
+/** Passende Supermarkt-Kategorie für einen Eintrag der Einkaufsliste */
+function einkaufKategorie(e) {
+  const name = (Array.isArray(e.name) ? e.name[0] : String(e.name)).toLowerCase();
+  return (EINKAUF_KATEGORIEN.find(([, muster]) => muster.test(name)) || [KATEGORIE_SONST])[0];
+}
+/** Einträge nach Kategorien gruppieren (Reihenfolge wie ein Gang durch den Laden) */
+function einkaufGruppen(liste) {
+  const reihenfolge = ['Obst & Gemüse', 'Brot & Backwaren', 'Kühlregal', 'Fleisch & Fisch', 'Vorrat & Konserven', 'Gewürze, Saucen & Backzutaten', 'Getränke', 'Tiefkühl', KATEGORIE_SONST];
+  const gruppen = {};
+  for (const e of liste) (gruppen[einkaufKategorie(e)] = gruppen[einkaufKategorie(e)] || []).push(e);
+  return reihenfolge.filter((k) => gruppen[k]).map((k) => [k, gruppen[k].sort((a, b) => a.erledigt - b.erledigt)]);
+}
+/** Leitungswasser gehört nicht auf die Einkaufsliste */
+const istLeitungswasser = (name) => /^(heißes |kaltes |lauwarmes |kochendes |warmes )?wasser$|^eiswasser$/i.test(name.trim());
+
+/* ---------- Satzpause mit dem vorhandenen Timer ---------- */
+function satzpause(sekunden) {
+  Z.timer = Z.timer.filter((t) => t.name !== 'Satzpause');   // nur eine Satzpause gleichzeitig
+  timerStarten(sekunden / 60, 'Satzpause');
+}
+
+/* ---------- Bestwerte pro Übung ---------- */
+function uebungVerlauf(uid) { return (Z.gym.verlauf && Z.gym.verlauf[uid]) || []; }
+function uebungBest(uid) { return uebungVerlauf(uid).reduce((m, x) => Math.max(m, x.kg), 0); }
+/** Beim Abschließen die eingetragenen Gewichte in den Verlauf schreiben, neue Bestwerte zurückgeben */
+function gewichteMerken(tag, datum) {
+  const neu = [];
+  for (const u of uebungenVon(tag)) {
+    const kg = Number(Z.gym.kg[u.id]);
+    if (u.ohneKg || !(kg > 0)) continue;
+    const ok = Z.gym.haken.ids.includes(`${tag.id}:${u.id}`);   // abgehakt = alle Sätze geschafft
+    const vorher = uebungBest(u.id);
+    const liste = Z.gym.verlauf[u.id] = uebungVerlauf(u.id).filter((x) => x.datum !== datum);
+    liste.push({ datum, kg, ok });
+    if (liste.length > 60) liste.splice(0, liste.length - 60);
+    if (vorher > 0 && kg > vorher) neu.push(`${u.name} ${zahlDeutsch(kg)} kg`);
+  }
+  return neu;
+}
+
+/* ---------- Kleine Diagramme (SVG-Linie) ---------- */
+function linieSVG(werte, breite = 300, hoehe = 90, mitPunkten = true) {
+  if (werte.length < 2) return '';
+  const min = Math.min(...werte), max = Math.max(...werte), spanne = max - min || 1, rand = 8;
+  const punkte = werte.map((w, i) => [rand + i * (breite - 2 * rand) / (werte.length - 1), rand + (1 - (w - min) / spanne) * (hoehe - 2 * rand)]);
+  const pfad = punkte.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  return `<svg class="g-chart" viewBox="0 0 ${breite} ${hoehe}" preserveAspectRatio="none" aria-hidden="true"><path d="${pfad}"/>${mitPunkten ? punkte.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`).join('') : ''}</svg>`;
+}
+
+/* ---------- Reiter 5: Fortschritt ---------- */
+/** Wie viele Wochen in Folge wurde trainiert (diese oder letzte Woche zählt als Start)? */
+function trainingsSerie() {
+  const wochen = new Set(Z.gym.log.map((l) => wochenStart(l.datum)));
+  const d = new Date(wochenStart(datumHeute()) + 'T12:00:00');
+  if (!wochen.has(datumHeute(d))) d.setDate(d.getDate() - 7);
+  let serie = 0;
+  while (wochen.has(datumHeute(d))) { serie++; d.setDate(d.getDate() - 7); }
+  return serie;
+}
+function monatsKalenderHTML() {
+  const jetzt = new Date(), jahr = jetzt.getFullYear(), monat = jetzt.getMonth();
+  const erster = new Date(jahr, monat, 1), tage = new Date(jahr, monat + 1, 0).getDate();
+  const versatz = (erster.getDay() + 6) % 7;
+  const trainiert = new Set(Z.gym.log.map((l) => l.datum));
+  const heute = datumHeute();
+  let zellen = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((t) => `<span class="kopf">${t}</span>`).join('');
+  zellen += '<span></span>'.repeat(versatz);
+  for (let t = 1; t <= tage; t++) {
+    const datum = datumHeute(new Date(jahr, monat, t));
+    zellen += `<span class="${trainiert.has(datum) ? 'an' : ''}${datum === heute ? ' heute' : ''}" title="${datumKurz(datum)}${trainiert.has(datum) ? ': Training' : ''}">${t}</span>`;
+  }
+  return `<div class="g-kalender" aria-label="Trainingskalender ${erster.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}">${zellen}</div>`;
+}
+function fortschrittHTML() {
+  const g = Z.gym;
+  const heute = datumHeute(), monatKey = heute.slice(0, 7);
+  const imMonat = g.log.filter((l) => l.datum.startsWith(monatKey)).length;
+  const koerper = g.koerper.slice(-20);
+  const kraft = alleUebungen().filter((u) => uebungVerlauf(u.id).length);
+  const monatName = new Date().toLocaleDateString('de-DE', { month: 'long' });
+  return `<div class="g-zahlen">
+      <div><b>${trainingsSerie()}</b><span>Wochen in Folge trainiert</span></div>
+      <div><b>${imMonat}</b><span>Trainings im ${monatName}</span></div>
+      <div><b>${g.log.length}</b><span>Trainings insgesamt</span></div>
+      <div><b>${kraft.filter((u) => uebungVerlauf(u.id).length > 1 && uebungBest(u.id) > uebungVerlauf(u.id)[0].kg).length}</b><span>Übungen mit mehr Gewicht als am Anfang</span></div>
+    </div>
+    <h3 class="h-klein">Dein ${monatName}</h3>
+    ${monatsKalenderHTML()}
+    <h3 class="h-klein">Körpergewicht</h3>
+    <div class="g-karte">
+      <div class="g-eigen"><input id="g-koerper" type="text" inputmode="decimal" placeholder="z. B. 70,5" aria-label="Körpergewicht heute in kg"><span>kg</span><button class="knopf" data-gkoerper>${ico('plus')}Heute eintragen</button></div>
+      ${koerper.length > 1 ? linieSVG(koerper.map((x) => x.kg)) + `<p class="hinweiszeile">${datumKurz(koerper[0].datum)}: ${zahlDeutsch(koerper[0].kg)} kg → ${datumKurz(koerper[koerper.length - 1].datum)}: ${zahlDeutsch(koerper[koerper.length - 1].kg)} kg (${koerper[koerper.length - 1].kg - koerper[0].kg >= 0 ? '+' : ''}${zahlDeutsch(koerper[koerper.length - 1].kg - koerper[0].kg)} kg)</p>`
+        : `<p class="leer">${koerper.length ? `Erster Wert: ${zahlDeutsch(koerper[0].kg)} kg. Ab dem zweiten Eintrag siehst du eine Kurve.` : 'Am besten 1× pro Woche morgens wiegen, immer zur gleichen Zeit.'}</p>`}
+      <p class="hinweiszeile">Das Gewicht schwankt von Tag zu Tag um 1–2 kg (Wasser, Essen). Achte auf den Trend über Wochen.</p>
+    </div>
+    <h3 class="h-klein">Kraft: deine Bestwerte</h3>
+    ${kraft.length ? `<ul class="g-kraft">${kraft.map((u) => { const v = uebungVerlauf(u.id); return `<li><span class="g-prod"><b>${escapeHTML(u.name)}</b><small>Start ${zahlDeutsch(v[0].kg)} kg · zuletzt ${zahlDeutsch(v[v.length - 1].kg)} kg · ${v.length}× eingetragen</small></span>${linieSVG(v.map((x) => x.kg), 120, 36, false)}<span class="g-preis">${zahlDeutsch(uebungBest(u.id))} kg</span></li>`; }).join('')}</ul>`
+      : '<p class="leer">Trag im Training dein Gewicht ein und tippe auf „Training fertig“. Dann erscheinen hier deine Bestwerte.</p>'}
+    <h3 class="h-klein">Maximalkraft-Rechner</h3>
+    <div class="g-karte">
+      <div class="g-eigen"><input id="g-1rm-kg" type="text" inputmode="decimal" placeholder="kg" aria-label="Gewicht in kg"><span>kg ×</span><input id="g-1rm-wdh" type="text" inputmode="numeric" placeholder="Wdh." aria-label="Wiederholungen"><span>Wdh.</span></div>
+      <p class="g-gross" id="g-1rm-ergebnis">Trag ein Gewicht und deine Wiederholungen ein.</p>
+      <p class="hinweiszeile">Schätzt, wie viel du 1× schaffen würdest (Formel nach Epley). Nur als Richtwert. Als Anfänger nicht wirklich testen, Verletzungsgefahr.</p>
+    </div>
+    <h3 class="h-klein">Deine Daten</h3>
+    <div class="g-tipp">In Claude gleicht die App deine Daten automatisch zwischen deinen Geräten ab. Eine zusätzliche Sicherung als Text schadet trotzdem nicht.
+      <div style="margin-top:8px"><button class="knopf" data-gsichern>${ico('wolke')}Sync &amp; Daten</button></div></div>`;
+}
+function koerperEintragen(f) {
+  const feld = $('#g-koerper', f);
+  const kg = Number(String(feld.value).replace(',', '.'));
+  if (!(kg >= 30 && kg <= 250)) { feld.focus(); toast('Bitte ein Gewicht zwischen 30 und 250 kg eingeben.'); return; }
+  const heute = datumHeute();
+  Z.gym.koerper = Z.gym.koerper.filter((x) => x.datum !== heute);
+  Z.gym.koerper.push({ datum: heute, kg });
+  Z.gym.koerper.sort((a, b) => a.datum.localeCompare(b.datum));
+  if (Z.gym.koerper.length > 200) Z.gym.koerper = Z.gym.koerper.slice(-200);
+  Z.gym.gewicht = kg;                 // Eiweiß-Ziel passt sich automatisch an
+  gymSpeichern(); gymZeichnen(f);
+  toast(`${zahlDeutsch(kg)} kg eingetragen. Dein Eiweiß-Ziel ist angepasst.`);
+}
+function einsRmRechnen(f) {
+  const kg = Number(String($('#g-1rm-kg', f).value).replace(',', '.'));
+  const wdh = Math.round(Number($('#g-1rm-wdh', f).value));
+  const aus = $('#g-1rm-ergebnis', f);
+  if (!(kg > 0 && wdh >= 1 && wdh <= 15)) { aus.textContent = 'Trag ein Gewicht und 1 bis 15 Wiederholungen ein.'; return; }
+  const max = wdh === 1 ? kg : kg * (1 + wdh / 30);
+  aus.innerHTML = `ca. <b>${zahlDeutsch(Math.round(max * 2) / 2)} kg</b> Maximalkraft`;
+}
+
+/* ---------- Wasser-Zähler (Eiweiß-Reiter) ---------- */
+function wasserHTML() {
+  const n = Z.gym.wasser.glaeser, ziel = 8;
+  return `<div class="g-karte"><div class="g-fortschritt"><span><b>Wasser heute: ${zahlDeutsch(n * 0.25, 2)} l</b> (${n} von ${ziel} Gläsern à 250 ml)</span>
+    <div class="g-balken${n >= ziel ? ' voll' : ''}"><i style="width:${Math.min(100, Math.round(n / ziel * 100))}%"></i></div></div>
+    <div class="g-glaeser">${Array.from({ length: ziel }, (_, i) => `<button class="g-glas${i < n ? ' an' : ''}" data-gglas="${i + 1}" aria-label="${i + 1} ${i ? 'Gläser' : 'Glas'}" aria-pressed="${i < n}"></button>`).join('')}<button class="rund" data-gglas="${n + 1}" aria-label="Noch ein Glas">${ico('plus')}</button></div>
+    <p class="hinweiszeile">Richtwert: ca. 1,5 bis 2 Liter am Tag, an Trainingstagen etwas mehr.</p></div>`;
+}
+
+/* ---------- Meal-Prep: so kochst du den Plan vor ---------- */
+const MEAL_PREP = {
+  billig: ['Sonntag und Mittwoch je ca. 45 Min. einplanen.', 'Hähnchen für 3 Tage in Streifen schneiden und anbraten, Reis für 3 Tage kochen, TK-Brokkoli kurz dämpfen. In Boxen aufteilen.', 'Rote-Linsen-Curry als großen Topf kochen und in Portionen einfrieren. Die Spiegeleier frisch machen.', 'Quark mit Erdnüssen erst am Tag selbst mischen, sonst werden die Nüsse weich.'],
+  normal: ['Sonntag und Mittwoch je ca. 45 Min. einplanen.', 'Hähnchen und Basmati für 3 Tage vorkochen, Brokkoli dämpfen, in Boxen aufteilen.', 'Lachs-Portionen bleiben im Tiefkühler und werden am Abend frisch gebraten (ca. 12 Min.). Rinderhack kann man als Pfanne für 2 Tage vorkochen.', 'Skyr-Bowl am Abend vorher in ein Glas schichten (Overnight-Bowl).'],
+  teuer: ['Sonntag und Mittwoch je ca. 45 Min. einplanen.', 'Bio-Hähnchen und Basmati für 3 Tage vorkochen, Brokkoli dämpfen.', 'Linsen-Dal im großen Topf kochen und portionsweise einfrieren. Die Lachsseite in 125-g-Stücke schneiden und einfrieren, am Abend frisch braten.', 'Porridge mit Whey erst nach dem Kochen einrühren, sonst klumpt das Pulver.']
+};
+function mealPrepHTML(stufe) {
+  return `<h3 class="h-klein">Meal-Prep: so sparst du Zeit</h3><div class="g-tipp"><ol class="g-prep">${MEAL_PREP[stufe].map((s) => `<li>${escapeHTML(s)}</li>`).join('')}</ol>
+    <small>Gekochtes Fleisch im Kühlschrank höchstens 3 Tage aufheben. Gekochten Reis schnell abkühlen und am besten innerhalb von 1 Tag essen oder einfrieren.</small></div>`;
+}
+
+/* ---------- Daten sichern und wiederherstellen (alle Bereiche der App) ---------- */
+function datenExport() {
+  const daten = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(SPEICHER_PRAEFIX) && k[SPEICHER_PRAEFIX.length] !== '_') daten[k.slice(SPEICHER_PRAEFIX.length)] = localStorage.getItem(k);   // interne _-Schlüssel nicht
+    }
+  } catch (e) { /* Speicher gesperrt */ }
+  return JSON.stringify({ app: 'loeffelweise', version: 1, datum: datumHeute(), daten });
+}
+function datenOeffnen() {
+  const f = fensterOeffnen({ titel: 'Sync & Daten', id: 'daten' });
+  const text = datenExport();
+  const anzahl = Object.keys(JSON.parse(text).daten).length;
+  const vorSync = rohLesen('_sicherungVorSync');
+  $('.fenster-inhalt', f).innerHTML = `<p class="s-zeile" id="sync-zeile">${syncZeileHTML()}</p>
+    <p class="fenster-text">${SYNC.status === 'lokal' ? 'Diese Version (Handy-App über GitHub) speichert deine Daten auf diesem Gerät. So bringst du sie auf ein anderes Gerät: unten „Text kopieren“, an dich selbst schicken, auf dem anderen Gerät hier unter „Wiederherstellen“ einfügen.' : 'Deine Daten werden automatisch zwischen allen Geräten abgeglichen, auf denen du Löffelweise in Claude öffnest. Sie liegen privat in deinem Konto, nur du siehst sie.'}</p>
+    ${vorSync ? '<button class="knopf" data-dvorsync>Sicherung vom ersten Abgleich laden</button>' : ''}
+    <h3 class="h-klein">Zusätzlich sichern</h3>
+    <p class="fenster-text">Hier stehen alle deine Daten: Einkaufsliste, Favoriten, Notizen, Wochenplan, Training und Eiweiß-Zähler (${anzahl} Bereiche). Kopiere den Text und speichere ihn z. B. als Notiz in Obsidian oder schick ihn dir selbst.</p>
+    <textarea class="linien g-daten" readonly aria-label="Gesicherte Daten">${escapeHTML(text)}</textarea>
+    <button class="knopf voll" data-dkopieren>${ico('kopieren')}Text kopieren</button>
+    <h3 class="h-klein">Wiederherstellen</h3>
+    <p class="fenster-text">Gesicherten Text hier einfügen. <b>Achtung:</b> Deine aktuellen Daten in diesem Browser werden dabei überschrieben.</p>
+    <textarea class="linien g-daten" id="d-einfuegen" placeholder="Gesicherten Text hier einfügen" aria-label="Gesicherte Daten einfügen"></textarea>
+    <div id="d-aktion"><button class="knopf" data-dpruefen>Wiederherstellen</button></div>`;
+  $('.fenster-fuss', f).hidden = true;
+  let geprueft = null;
+  f.addEventListener('click', (e) => {
+    if (e.target.closest('[data-dvorsync]')) { $('#d-einfuegen', f).value = rohLesen('_sicherungVorSync') || ''; $('#d-einfuegen', f).focus(); toast('Sicherung eingefügt. Unten auf „Wiederherstellen“ tippen.'); return; }
+    if (e.target.closest('[data-dkopieren]')) { kopieren(text, 'Daten kopiert. Gut aufheben!'); $('.g-daten', f).select(); return; }
+    if (e.target.closest('[data-dpruefen]')) {
+      try {
+        geprueft = JSON.parse($('#d-einfuegen', f).value.trim());
+        if (!geprueft || geprueft.app !== 'loeffelweise' || typeof geprueft.daten !== 'object') throw new Error('falsch');
+      } catch (err) { geprueft = null; toast('Das ist kein gültiger Löffelweise-Text. Bitte komplett einfügen.'); return; }
+      $('#d-aktion', f).innerHTML = `<div class="bestaetigen"><span style="flex:1">Daten vom ${escapeHTML(String(geprueft.datum || '?'))} laden und aktuelle Daten überschreiben?</span><button class="knopf voll" data-dja>Ja, überschreiben</button><button class="knopf" data-dnein>Abbrechen</button></div>`;
+      $('[data-dnein]', f).focus();
+      return;
+    }
+    if (e.target.closest('[data-dnein]')) { $('#d-aktion', f).innerHTML = '<button class="knopf" data-dpruefen>Wiederherstellen</button>'; return; }
+    if (e.target.closest('[data-dja]') && geprueft) {
+      try {
+        const warVerbunden = rohLesen('_syncVerbunden');
+        Object.keys(localStorage).filter((k) => k.startsWith(SPEICHER_PRAEFIX)).forEach((k) => localStorage.removeItem(k));
+        for (const [k, v] of Object.entries(geprueft.daten)) if (typeof v === 'string' && k[0] !== '_') localStorage.setItem(SPEICHER_PRAEFIX + k, v);
+        // Wiederhergestellte Daten gelten als neueste Änderung und gehen an die anderen Geräte
+        const jetzt = Date.now(), zeiten = {};
+        SYNC_SCHLUESSEL.forEach((k) => { zeiten[k] = jetzt; });
+        rohSchreiben('_syncZeiten', JSON.stringify(zeiten));
+        if (warVerbunden) rohSchreiben('_syncVerbunden', '1');
+        toast('Daten wiederhergestellt. Die Seite lädt neu …');
+        setTimeout(() => location.reload(), 900);
+      } catch (err) { toast('Wiederherstellen ging hier nicht, der Speicher ist gesperrt.'); }
+    }
+  });
+}
+
+/* =====================================================================
+   KOSTEN PRO PORTION (geschätzt, Discounter-Preise, Herbst 2026)
+   Regel: [Muster, € pro kg bzw. Liter, g pro Stück, g pro EL, € pro Stück (direkt)]
+   Gerechnet wird nur die verbrauchte Menge, nicht die ganze Packung.
+   ===================================================================== */
+const PREIS_REGELN = [
+  // Was man nicht kauft oder was fast nichts kostet
+  [/^(heißes |kaltes |lauwarmes |kochendes |warmes )?wasser$|eiswasser|eiswürfel/, 0],
+  [/lorbeer|nelke|wacholder/, 0, null, null, 0.03],
+  [/kardamom/, 0, null, null, 0.05],
+  [/sternanis/, 0, null, null, 0.1],
+  [/zimtstange/, 0, null, null, 0.3],
+  [/vanilleschote/, 0, null, null, 2],
+  [/beutel schwarztee/, 0, null, null, 0.05],
+  [/tortenguss/, 0, null, null, 0.3],
+  [/^glas /, 0, null, null, 1.6],
+  [/salzzitrone/, 0, null, null, 0.5],
+  [/brühe|fond/, 0.4],
+  [/olivenöl/, 9],
+  [/sesamöl|chiliöl/, 12],
+  [/öl$|öl\s|^öl/, 2.2],
+  [/essig/, 2],
+  [/sojasauce|fischsauce|hoisin|kecap|worcester|teriyaki|mirin/, 5],
+  [/tomatenmark|paprikamark/, 4],
+  [/senf|ketchup|mayonnaise|salsa|barbecue|chilisauce|chilisoße/, 3],
+  [/currypaste|gochujang|doubanjiang|tamarinde|achiote|ingwer-knoblauch/, 12],
+  [/honig|ahornsirup/, 9],
+  [/sirup/, 3],
+  [/puderzucker|hagelzucker|palmzucker|brauner zucker/, 2],
+  [/zucker(?!schoten)/, 1],
+  [/backpulver|natron|hefe|sahnesteif|stärke|vanillezucker|puddingpulver/, 5],
+  [/salz|pfeffer/, 2],
+  // Gemüse und Obst
+  [/süßkartoffel/, 3, 300],
+  [/große kartoffel/, 1, 250],
+  [/kartoffel/, 1, 150],
+  [/schalotte/, 4, 30],
+  [/frühlingszwiebel/, 5, 15],
+  [/zwiebel/, 1.5, 100],
+  [/knoblauch/, 6],
+  [/ingwer/, 6, 30],
+  [/möhre|karotte/, 1.2, 80],
+  [/spitzpaprika|paprika(?!pulver)/, 4, 160],
+  [/gehackte tomaten|passierte tomaten|geschälte tomaten|stückige tomaten/, 1.5],
+  [/kirschtomate/, 6],
+  [/tomate/, 3, 100],
+  [/zucchini/, 2.5, 250],
+  [/aubergine/, 3, 300],
+  [/salatgurke|gurke(?!n)/, 2, 400],
+  [/champignon|kräuterseitling|pilz/, 5],
+  [/spinat/, 6],
+  [/blumenkohl/, 2.5, 800],
+  [/brokkoli/, 3, 450],
+  [/kohl/, 1.5, 1000],
+  [/kürbis/, 2.5],
+  [/sellerie/, 2, 60],
+  [/spargel/, 10],
+  [/rote bete/, 2.5, 150],
+  [/avocado/, 5, 200],
+  [/zitrone|limette/, 4, 90],
+  [/orange/, 2.5, 200],
+  [/äpfel|apfel(?!saft|essig|mus)/, 2.5, 180],
+  [/apfelmus/, 2],
+  [/banane/, 1.2, 120],
+  [/mango/, 0, null, null, 1.5],
+  [/ananas/, 2.5],
+  [/pfirsich/, 4, 150],
+  [/erdbeer(?!konf|marm)|blaubeer|beeren/, 8],
+  [/chili|jalape|scotch bonnet/, 15, 10],
+  [/sprossen/, 6],
+  [/grüne bohnen|zuckerschoten/, 5],
+  [/(?<!kicher)erbsen/, 2.5],
+  [/salat/, 0, null, null, 1],
+  [/petersilie|koriander|basilikum|minze|dill|schnittlauch|rosmarin|thymian|salbei|zitronengras/, 20, 25],
+  // Kühlregal
+  [/(^|\s)ei(er)?$|ganzes ei|frisches ei|gekochtes ei/, 0, null, null, 0.25],
+  [/eigelb|eiweiß/, 0, null, null, 0.25],
+  [/kondensmilch/, 4],
+  [/kokosmilch/, 4],
+  [/milch/, 1],
+  [/sahne(?!steif)|schmand|crème|clotted/, 4.5],
+  [/butterschmalz|ghee/, 10],
+  [/butter(?!keks)/, 7],
+  [/magerquark|quark/, 2.4],
+  [/skyr/, 2.4],
+  [/griechischer|türkischer joghurt/, 4],
+  [/joghurt/, 2],
+  [/feta|schafskäse/, 8],
+  [/mozzarella/, 6, 125],
+  [/parmesan|pecorino|kefalotyri/, 20],
+  [/gruyère/, 20],
+  [/raclette/, 14],
+  [/mascarpone|frischkäse/, 6],
+  [/gouda|cheddar|emmentaler|bergkäse|kaşar|käse/, 10, null, null, null],
+  [/paneer/, 12],
+  [/seidentofu|tofu/, 6],
+  [/blätterteig/, 0, null, null, 1.29],
+  [/pizzateig/, 0, null, null, 1.49],
+  [/strudelteig/, 0, null, null, 2.5],
+  [/yufka|filo/, 6, 100],
+  [/gyoza/, 0, null, null, 0.08],
+  // Fleisch und Fisch
+  [/^hähnchen$/, 4, 1500],
+  [/hähnchenflügel/, 5],
+  [/hähnchenschenkel(?!filet)/, 4, 220],
+  [/hähnchenschenkelfilet/, 10],
+  [/hähnchen|huhn/, 10],
+  [/entenbrust/, 0, null, null, 5],
+  [/gänsekeule/, 0, null, null, 8],
+  [/lachs/, 19],
+  [/kabeljau|seelachs/, 15],
+  [/fischfilet/, 20],
+  [/garnele/, 20, 15],
+  [/thunfisch/, 8.6],
+  [/dünnes kalbsschnitzel/, 0, null, null, 2],
+  [/kalbsschnitzel/, 0, null, null, 4],
+  [/schweineschnitzel|schnitzel/, 0, null, null, 1.2],
+  [/roulade/, 0, null, null, 3],
+  [/frühstücksspeck|speck|guanciale|pancetta/, 14, null, null, null],
+  [/parmaschinken|schinken/, 30],
+  [/chorizo|mettenden/, 15],
+  [/bratwurst/, 0, null, null, 0.7],
+  [/schweinehack/, 4.7],
+  [/gemischtes hack|hackfleisch$|schweine- oder rinderhack/, 9.6],
+  [/(?<!ge)hack/, 12.4],
+  [/sardelle/, 0, null, null, 0.3],            // Sardellenfilet aus dem Glas, pro Stück
+  [/filet|steak|entrecôte|hüfte/, 30, 250],
+  [/blutwurst|würstchen|wiener/, 9, 50],
+  [/gulasch/, 15],
+  [/schmorbraten|rindfleisch/, 16],
+  [/lamm/, 18],
+  [/schwein/, 8],
+  // Vorrat
+  [/reisessig/, 2],
+  [/gekochter reis/, 0.6],
+  [/risotto|sushi|paella|rundkorn|jasmin/, 4],
+  [/basmati/, 2.5],
+  [/reisbandnudeln|reisnudeln|ramen/, 5],
+  [/glasnudeln|tapioka/, 8],
+  [/nudel|spaghetti|penne|lasagne/, 1.6],
+  [/(^|[\s-])reis|reis$/, 1.4],
+  [/linsen/, 3],
+  [/getrocknete kichererbsen|getrocknete schwarze bohnen/, 3],
+  [/kichererbsen|kidneybohnen|weiße bohnen|schwarze bohnen/, 2, 400],
+  [/maistortilla/, 0, null, null, 0.15],
+  [/tortillachips/, 4],
+  [/tortilla/, 0, null, null, 0.25],
+  [/mais/, 2.5, 280],
+  [/haferflocken/, 1.4, null, 8],
+  [/bulgur|couscous/, 3],
+  [/oliven/, 10],
+  [/kapern|cornichons/, 15],
+  [/erdnüsse|erdnuss/, 4],
+  [/mandeln/, 15],
+  [/cashew/, 13],
+  [/pinienkerne/, 40],
+  [/pistazien/, 25],
+  [/walnüsse|haselnüsse|nüsse/, 12, null, 8],
+  [/kürbiskerne/, 12, null, 10],
+  [/sesam/, 8, null, 9],
+  [/tahin/, 10],
+  [/rosinen|orangeat|kokosraspeln/, 7],
+  [/kuvertüre|schokolade|schokoraspel|schokostück/, 8],
+  [/kakao|instantkaffee/, 12, null, 7],
+  [/semmelbrösel/, 2, null, 8],
+  [/panko/, 6, null, 8],
+  [/löffelbiskuit|butterkekse|kekse|printen|lebkuchen|graham/, 5],
+  [/konfitüre|marmelade|preiselbeeren/, 4, null, 20],
+  [/mehl(?!igkochend)/, 0.6, null, 10],
+  // Brot
+  [/burgerbrötchen/, 0, null, null, 0.4],
+  [/brötchen/, 0, null, null, 0.3],
+  [/baguette/, 2.4, 250],
+  [/pide|fladenbrot|lavash/, 0, null, null, 1.5],
+  [/pitabrot/, 0, null, null, 0.4],
+  [/toastbrot|brioche|weißbrot|ciabatta/, 3],
+  // Getränke
+  [/amaretto|kirschwasser/, 15],
+  [/wein/, 5],
+  [/bier/, 2],
+  [/saft/, 1.5],
+  [/espresso/, 5],
+  [/mineralwasser|sodawasser/, 0.3],
+  [/vanilleeis/, 4, 50],
+  [/tk-beeren/, 5]
+];
+// Ausweichwerte pro Supermarkt-Kategorie, wenn keine Regel passt (€ pro kg)
+const PREIS_KATEGORIE = { 'Obst & Gemüse': 3, 'Brot & Backwaren': 3, 'Kühlregal': 6, 'Fleisch & Fisch': 12, 'Vorrat & Konserven': 3, 'Gewürze, Saucen & Backzutaten': 20, 'Getränke': 2, 'Tiefkühl': 4, 'Sonstiges': 20 };
+
+/** Geschätzte Kosten einer Zutat in Euro (für die Grundmenge des Rezepts) */
+function kostenZutat(z) {
+  if (z.menge === null || ['Prise', 'Blatt', 'Zweig'].includes(z.einheit)) return 0;
+  const name = (Array.isArray(z.name) ? z.name[0] : z.name).toLowerCase();
+  const regel = PREIS_REGELN.find(([m]) => m.test(name));
+  const [, proKg = PREIS_KATEGORIE[einkaufKategorie(z)] || 3, stueckG, elG, proStueck] = regel || [];
+  const e = z.einheit;
+  if (e === 'Bund') return z.menge * 0.99;
+  if (proStueck != null && ['Stk', 'Kugel', 'Dose', 'Scheibe', null, undefined].includes(e)) return z.menge * proStueck;
+  let gramm = 0;
+  if (e === 'g' || e === 'ml') gramm = z.menge;
+  else if (e === 'EL') gramm = z.menge * (elG || 12);
+  else if (e === 'TL') gramm = z.menge * 4;
+  else if (e === 'Zehe') gramm = z.menge * 5;
+  else if (e === 'cm') gramm = z.menge * 10;
+  else if (e === 'Scheibe') gramm = z.menge * 30;
+  else if (e === 'Stange') gramm = z.menge * (stueckG || 60);
+  else if (e === 'Kugel') gramm = z.menge * (stueckG || 125);
+  else if (e === 'Dose') gramm = z.menge * (stueckG || 400);
+  else gramm = z.menge * (stueckG || 150);                 // Stk und Unbekanntes
+  return gramm / 1000 * proKg;
+}
+const kostenCache = {};
+/** Geschätzte Kosten pro Portion in Euro (auf 10 Cent gerundet) */
+function kostenProPortion(r) {
+  if (kostenCache[r.id] === undefined) {
+    const summe = r.zutaten.reduce((s, z) => s + kostenZutat(z), 0);
+    kostenCache[r.id] = Math.max(0.1, Math.round(summe / r.portionen * 10) / 10);
+  }
+  return kostenCache[r.id];
+}
+
+/* =====================================================================
+   VERSION 3: Kühlschrank-Modus, Gewichtsvorschlag, Übung tauschen
+   ===================================================================== */
+
+/* ---------- Kühlschrank-Modus: Was habe ich da? ---------- */
+const VORRAT_GRUPPEN = [
+  ['Gemüse & Obst', [
+    ['Zwiebeln', /zwiebel|schalotte/], ['Knoblauch', /knoblauch/], ['Kartoffeln', /kartoffel(?!stärke)/],
+    ['Tomaten', /(^|kirsch|roma-|reife )tomate/], ['Paprika', /paprika(?!pulver|mark)/], ['Möhren', /möhre|karotte/],
+    ['Zucchini', /zucchini/], ['Pilze', /champignon|pilz|kräuterseitling/], ['Spinat', /spinat/], ['Brokkoli', /brokkoli/],
+    ['Ingwer', /ingwer/], ['Chili', /chili(?!flocken|pulver|öl|sauce|soße)|jalape/], ['Zitrone/Limette', /zitrone(?!ngras)|limette/],
+    ['Frische Kräuter', /petersilie|koriander(?!samen)|basilikum|minze(?!.*getrocknet)|dill|schnittlauch|rosmarin|thymian|salbei/]
+  ]],
+  ['Kühlschrank', [
+    ['Eier', /(^|\s)ei(er)?$|ganzes ei|frisches ei|gekochtes ei|eigelb|eiweiß/], ['Milch', /(?<!kokos|kondens)milch/],
+    ['Sahne/Schmand', /sahne(?!steif)|schmand|crème/], ['Butter', /butter(?!keks|schmalz)/],
+    ['Käse', /käse|gouda|cheddar|emmentaler|gruyère|parmesan|pecorino|raclette|kefalotyri|kaşar/], ['Feta', /feta|schafskäse/],
+    ['Mozzarella', /mozzarella/], ['Joghurt/Quark', /joghurt|quark|skyr/], ['Speck/Schinken', /speck|guanciale|pancetta|schinken/], ['Tofu', /tofu/]
+  ]],
+  ['Fleisch & Fisch', [
+    ['Hähnchen', /hähnchen|huhn/], ['Hackfleisch', /(?<!ge)hack/], ['Rindfleisch', /rind(?!erbrühe)|rumpsteak|entrecôte/],
+    ['Schwein', /schwein/], ['Lachs/Fisch', /lachs|fischfilet|kabeljau|seelachs|thunfisch/], ['Garnelen', /garnele/]
+  ]],
+  ['Vorrat', [
+    ['Nudeln', /nudel|spaghetti|penne|lasagne|ramen/], ['Reis', /(^|[\s-])reis(?!essig)|reis$/], ['Linsen', /linsen/],
+    ['Kichererbsen', /kichererbsen/], ['Bohnen (Dose)', /kidneybohnen|weiße bohnen|schwarze bohnen/],
+    ['Dosentomaten', /(gehackte|passierte|geschälte|stückige) tomaten/], ['Kokosmilch', /kokosmilch/],
+    ['Mehl', /mehl(?!igkochend)/], ['Haferflocken', /haferflocken/], ['Brot/Wraps', /brot|brötchen|baguette|toast|tortilla(?!chips)|pita|fladen|pide/]
+  ]]
+];
+const VORRAT_MUSTER = Object.fromEntries(VORRAT_GRUPPEN.flatMap(([, liste]) => liste));
+/** Gespeicherten Vorrat laden */
+function vorratZustand() {
+  const v = Z.vorrat && typeof Z.vorrat === 'object' ? Z.vorrat : {};
+  v.items = Array.isArray(v.items) ? v.items.filter((t) => VORRAT_MUSTER[t]) : [];
+  v.eigene = Array.isArray(v.eigene) ? v.eigene : [];
+  v.grund = v.grund !== false;          // Salz, Öl, Gewürze & Co. zählen standardmäßig als vorhanden
+  v.max = [0, 1, 3].includes(v.max) ? v.max : 3;
+  Z.vorrat = v;
+  return v;
+}
+const vorratSpeichern = () => speicher.schreiben('vorrat', Z.vorrat);
+/** Ist die Zutat optional (Deko, „nach Wunsch“)? */
+const zutatOptional = (z) => /nach wunsch|optional|zum servieren|nach geschmack|zum bestreuen|zum garnieren/i.test(z.hinweis || '');
+/** Prüft ein Rezept gegen den Vorrat: was ist da, was fehlt? */
+function rezeptGegenVorrat(r, v) {
+  const da = [], fehlt = [];
+  r.zutaten.forEach((z, i) => {
+    const name = (Array.isArray(z.name) ? z.name[0] : z.name).toLowerCase();
+    if (z.menge === null || istLeitungswasser(name) || zutatOptional(z)) return;
+    if (v.grund && einkaufKategorie(z) === 'Gewürze, Saucen & Backzutaten') return;
+    const passt = v.items.some((t) => VORRAT_MUSTER[t].test(name))
+      || v.eigene.some((w) => wortStaemme(normalisieren(w).trim()).some((s) => s.length > 2 && normalisieren(name).includes(s)));
+    (passt ? da : fehlt).push({ i, name: zutatName(z, z.menge) });
+  });
+  return { da, fehlt };
+}
+function kuehlschrankOeffnen() {
+  const v = vorratZustand();
+  const f = fensterOeffnen({ titel: 'Was habe ich da?', id: 'kuehlschrank' });
+  f.classList.add('breit');
+  $('.fenster-fuss', f).hidden = true;
+  const zeichnen = () => {
+    const anzahl = v.items.length + v.eigene.length;
+    let treffer = [];
+    if (anzahl) {
+      treffer = REZEPTE.filter((r) => !r.nebenbei).map((r) => ({ r, ...rezeptGegenVorrat(r, v) }))
+        .filter((x) => x.da.length && x.fehlt.length <= v.max)
+        .sort((a, b) => a.fehlt.length - b.fehlt.length || b.da.length - a.da.length).slice(0, 40);
+    }
+    $('.fenster-inhalt', f).innerHTML = `<p class="fenster-text">Tippe an, was du zu Hause hast. Löffelweise zeigt dir Rezepte, für die du (fast) alles da hast.</p>
+      <form class="einkauf-neu" data-keigen><input id="k-eigen" type="text" placeholder="Andere Zutat, z. B. Aubergine" aria-label="Eigene Zutat hinzufügen" autocomplete="off"><button class="knopf" type="submit">${ico('plus')}Dazu</button></form>
+      ${v.eigene.length ? `<div class="chips">${v.eigene.map((w, i) => `<button class="chip" aria-pressed="true" data-kweg="${i}" aria-label="${escapeHTML(w)} entfernen">${escapeHTML(w)} ✕</button>`).join('')}</div>` : ''}
+      ${VORRAT_GRUPPEN.map(([gruppe, liste]) => `<h3 class="h-klein k-gruppe">${gruppe}</h3><div class="chips">${liste.map(([t]) => `<button class="chip" data-kitem="${escapeHTML(t)}" aria-pressed="${v.items.includes(t)}">${escapeHTML(t)}</button>`).join('')}</div>`).join('')}
+      <label class="k-grund"><input type="checkbox" data-kgrund${v.grund ? ' checked' : ''}> Salz, Öl, Zucker, Gewürze und Saucen habe ich immer da</label>
+      <div class="k-kopf"><h3 class="h-klein">Passende Rezepte${anzahl ? ` (${treffer.length})` : ''}</h3>
+        <div class="chips" role="group" aria-label="Wie viel darf fehlen?">${[[0, 'Alles da'], [1, 'max. 1 fehlt'], [3, 'max. 3 fehlen']].map(([n, t]) => `<button class="chip" data-kmax="${n}" aria-pressed="${v.max === n}">${t}</button>`).join('')}</div>
+        ${anzahl ? `<button class="knopf k-leeren" data-kleeren>${ico('muell')}Auswahl leeren</button>` : ''}</div>
+      ${!anzahl ? '<p class="leer">Wähle oben mindestens eine Zutat aus.</p>'
+        : !treffer.length ? '<p class="leer">Nichts gefunden. Erlaube „max. 3 fehlen“ oder wähle mehr Zutaten aus.</p>'
+        : `<ul class="k-treffer">${treffer.map(({ r, da, fehlt }) => `<li style="--k:${kapitelVon(r.kapitel).farbe}">
+            <button class="k-rezept" data-kziel="${rezeptSeite[r.id]}"><span class="punkt"></span><b>${escapeHTML(r.titel)}</b>
+              <small>${fehlt.length ? `<span class="k-fehlt">Fehlt: ${fehlt.map((x) => escapeHTML(x.name)).join(', ')}</span>` : '<span class="k-ok">✓ Alles da</span>'} · ${zeitText(r.zeit.gesamt)} · ca. ${euro(kostenProPortion(r))} / ${escapeHTML(r.portionsWort[0])}</small></button>
+            ${fehlt.length ? `<button class="rund" data-kfehlt="${r.id}" aria-label="Fehlende Zutaten für ${escapeHTML(r.titel)} auf die Einkaufsliste" title="Fehlendes auf die Einkaufsliste">${ico('korb')}</button>` : ''}</li>`).join('')}</ul>`}`;
+  };
+  zeichnen();
+  f.addEventListener('click', (e) => {
+    const el = (sel) => e.target.closest(sel);
+    if (el('[data-kitem]')) {
+      const t = el('[data-kitem]').dataset.kitem, i = v.items.indexOf(t);
+      if (i >= 0) v.items.splice(i, 1); else v.items.push(t);
+      vorratSpeichern(); const y = $('.fenster-inhalt', f).scrollTop; zeichnen(); $('.fenster-inhalt', f).scrollTop = y; return;
+    }
+    if (el('[data-kweg]')) { v.eigene.splice(Number(el('[data-kweg]').dataset.kweg), 1); vorratSpeichern(); zeichnen(); return; }
+    if (el('[data-kmax]')) { v.max = Number(el('[data-kmax]').dataset.kmax); vorratSpeichern(); const y = $('.fenster-inhalt', f).scrollTop; zeichnen(); $('.fenster-inhalt', f).scrollTop = y; return; }
+    if (el('[data-kleeren]')) { v.items = []; v.eigene = []; vorratSpeichern(); zeichnen(); return; }
+    if (el('[data-kziel]')) { const ziel = Number(el('[data-kziel]').dataset.kziel); fensterSchliessen(); geheZu(ziel); return; }
+    if (el('[data-kfehlt]')) {
+      const rid = el('[data-kfehlt]').dataset.kfehlt;
+      const { fehlt } = rezeptGegenVorrat(rezeptVon(rid), v);
+      einkaufHinzufuegen(rid, true, new Set(fehlt.map((x) => x.i)));
+    }
+  });
+  f.addEventListener('change', (e) => { if (e.target.matches('[data-kgrund]')) { v.grund = e.target.checked; vorratSpeichern(); zeichnen(); } });
+  f.addEventListener('submit', (e) => {
+    if (!e.target.closest('[data-keigen]')) return;
+    e.preventDefault();
+    const w = $('#k-eigen', f).value.trim().slice(0, 40);
+    if (w && !v.eigene.some((x) => x.toLowerCase() === w.toLowerCase())) { v.eigene.push(w); vorratSpeichern(); }
+    zeichnen(); $('#k-eigen', f).focus();
+  });
+}
+
+/* ---------- Gym: Übung tauschen und Gewichtsvorschlag ---------- */
+/** Welche Variante einer Übung ist gerade gewählt (Original oder Alternative)? */
+function uebungAktiv(t, u) {
+  const n = (Z.gym.tausch || {})[`${t.id}:${u.id}`] || 0;
+  return n && u.alt && u.alt[n - 1] ? { ...u.alt[n - 1], schritt: u.alt[n - 1].schritt ?? u.schritt, basis: u } : { ...u, basis: u };
+}
+const uebungenVon = (t) => t.uebungen.map((u) => uebungAktiv(t, u));
+/** Alle Übungen inkl. Alternativen (für den Fortschritt) */
+const alleUebungen = () => GYM_TAGE.flatMap((t) => t.uebungen.flatMap((u) => [u, ...(u.alt || [])]));
+/** Vorschlag fürs nächste Gewicht (doppelte Progression, vereinfacht) */
+function gewichtVorschlag(u) {
+  const v = uebungVerlauf(u.id);
+  if (!v.length || u.ohneKg) return null;
+  const letzte = v[v.length - 1], davor = v[v.length - 2];
+  if (letzte.ok === true) return { kg: letzte.kg + (u.schritt || 2.5), grund: `letztes Mal mit ${zahlDeutsch(letzte.kg)} kg alles geschafft` };
+  if (letzte.ok === false && davor && davor.ok === false && davor.kg === letzte.kg) return { kg: Math.max(0, letzte.kg - (u.schritt || 2.5)), grund: '2× nicht ganz geschafft, etwas leichter' };
+  if (letzte.ok === false) return { kg: letzte.kg, grund: 'letztes Mal nicht ganz geschafft, gleiches Gewicht' };
+  return { kg: letzte.kg, grund: 'wie letztes Mal' };
+}
+/** Eine Übungszeile im Training (mit Gewicht, Vorschlag und Tausch-Knopf) */
+function uebungZeile(t, u) {
+  const id = `${t.id}:${u.id}`;
+  const an = Z.gym.haken.ids.includes(id);
+  const kg = Z.gym.kg[u.id];
+  const best = uebungBest(u.id);
+  const vs = gewichtVorschlag(u);
+  const anzahlVarianten = 1 + (u.basis.alt || []).length;
+  return `<li class="g-uebung"><label class="zutat"><input type="checkbox" data-ghaken="${id}"${an ? ' checked' : ''}><span class="box" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="name"><b>${escapeHTML(u.name)}</b> <span class="g-saetze">${escapeHTML(u.saetze)}</span>${u.basis !== u && u.id !== u.basis.id ? `<small class="g-statt">statt ${escapeHTML(u.basis.name)}</small>` : ''}<br><small>${escapeHTML(u.tipp)}</small>${best ? `<small class="g-best">Bestwert ${zahlDeutsch(best)} kg</small>` : ''}</span></label>
+    <span class="g-rechts">
+      ${u.ohneKg ? '' : `<label class="g-kg"><input type="text" inputmode="decimal" data-gkg="${u.id}" value="${kg ?? ''}" placeholder="–" aria-label="Gewicht für ${escapeHTML(u.name)} in kg"><span>kg</span></label>`}
+      ${vs ? `<button class="g-vorschlag" data-gvorschlag="${u.id}" data-kg="${vs.kg}" title="${escapeHTML(vs.grund)}">Heute: ${zahlDeutsch(vs.kg)} kg</button>` : ''}
+      ${anzahlVarianten > 1 ? `<button class="g-tausch" data-gtausch="${t.id}:${u.basis.id}" title="Gerät besetzt? Andere Übung" aria-label="Andere Übung statt ${escapeHTML(u.name)}">⇄ Andere Übung</button>` : ''}
+    </span></li>`;
+}
+
+/* =====================================================================
+   VERSION 4: Ziel-Rechner (wie viel essen, um mein Zielgewicht zu erreichen?)
+   Grundumsatz: Mifflin-St-Jeor · Gesamtumsatz: × Aktivitätsfaktor (PAL)
+   Zunehmen: ca. 220 kcal Überschuss pro Tag je 1 kg pro Monat (Faustregel)
+   Abnehmen: ca. 7.700 kcal je kg Fett
+   Gutes Tempo beim Zunehmen (Anfänger): Männer 1–1,5 %, Frauen 0,5–0,75 % des Gewichts pro Monat
+   ===================================================================== */
+const AKTIVITAET = [
+  [1.2, 'Kaum Bewegung', 'Sitzen, kein Sport'],
+  [1.375, 'Leicht aktiv', '1–2× Sport pro Woche'],
+  [1.55, 'Aktiv', '3–5× Sport pro Woche'],
+  [1.725, 'Sehr aktiv', '6–7× Sport oder Arbeit auf den Beinen']
+];
+const ZIEL_MONATE = [3, 6, 9, 12, 18, 24];
+// Extra-Kalorien, die man leicht dazu essen kann (Werte gerundet)
+const KALORIEN_BOOSTER = [
+  { t: '80 g Reis (roh) mehr zum Mittag', kcal: 280, g: 6 },
+  { t: '300 ml Vollmilch', kcal: 190, g: 10 },
+  { t: '50 g Haferflocken', kcal: 185, g: 7 },
+  { t: '30 g Erdnüsse', kcal: 180, g: 7 },
+  { t: '2 EL Olivenöl ins Essen', kcal: 175, g: 0 },
+  { t: '1 Banane', kcal: 110, g: 1 }
+];
+
+/** Ziel-Einstellungen laden (Standard: Größe 180 cm, Ziel +10 kg, 6 Monate) */
+function zielZustand() {
+  const g = Z.gym;
+  const z = g.ziel && typeof g.ziel === 'object' ? g.ziel : {};
+  z.geschlecht = z.geschlecht === 'w' ? 'w' : 'm';
+  z.alter = Number(z.alter) >= 14 && Number(z.alter) <= 100 ? Number(z.alter) : null;
+  z.groesse = Number(z.groesse) >= 120 && Number(z.groesse) <= 230 ? Number(z.groesse) : 180;
+  z.zielkg = Number(z.zielkg) >= 30 && Number(z.zielkg) <= 250 ? Number(z.zielkg) : g.gewicht + 10;
+  z.monate = Number(z.monate) > 0 ? Number(z.monate) : 6;
+  z.aktiv = AKTIVITAET.some(([f]) => f === z.aktiv) ? z.aktiv : 1.55;
+  g.ziel = z;
+  return z;
+}
+/** Bewertung des Tempos: gut / schnell / zu schnell */
+function tempoBewertung(kgProMonat, gewicht, geschlecht) {
+  const prozent = kgProMonat / gewicht * 100;
+  if (kgProMonat >= 0) {
+    const gut = geschlecht === 'w' ? 0.75 : 1.5;
+    if (prozent <= gut) return { stufe: 'gut', text: 'Gutes Tempo: viel Muskel, wenig Fett' };
+    if (prozent <= gut * 1.7) return { stufe: 'mittel', text: 'Etwas schnell: mehr Fett als nötig' };
+    return { stufe: 'schlecht', text: 'Zu schnell: Ein großer Teil wird Fett' };
+  }
+  const proWoche = -prozent / 4.35;
+  if (proWoche <= 0.75) return { stufe: 'gut', text: 'Gutes Tempo: Muskeln bleiben erhalten' };
+  if (proWoche <= 1) return { stufe: 'mittel', text: 'Ziemlich schnell: auf genug Eiweiß achten' };
+  return { stufe: 'schlecht', text: 'Zu schnell: Du verlierst auch Muskeln' };
+}
+/** Alles ausrechnen für ein Ziel in x Monaten */
+function zielRechnen(z, gewicht, monate) {
+  const grund = Math.round(10 * gewicht + 6.25 * z.groesse - 5 * z.alter + (z.geschlecht === 'w' ? -161 : 5));
+  const erhaltung = Math.round(grund * z.aktiv);
+  const diff = z.zielkg - gewicht;
+  const kgProMonat = diff / monate;
+  const anpassung = diff >= 0 ? kgProMonat * 220 : kgProMonat * 7700 / 30.4;
+  let kcal = Math.round((erhaltung + anpassung) / 10) * 10;
+  const unterGrund = kcal < grund;
+  if (unterGrund) kcal = Math.round(grund / 10) * 10;      // nie unter den Grundumsatz
+  return { grund, erhaltung, diff, kgProMonat, kcal, unterGrund, tempo: tempoBewertung(kgProMonat, gewicht, z.geschlecht) };
+}
+/** Empfohlene Dauer in Monaten (bei gutem Tempo) */
+function zielEmpfehlung(z, gewicht) {
+  const diff = Math.abs(z.zielkg - gewicht);
+  if (diff < 0.5) return null;
+  if (z.zielkg > gewicht) {
+    const [langsam, schnell] = z.geschlecht === 'w' ? [0.005, 0.0075] : [0.01, 0.015];
+    return [Math.ceil(diff / (gewicht * schnell)), Math.ceil(diff / (gewicht * langsam))];
+  }
+  return [Math.ceil(diff / (gewicht * 0.0075 * 4.35)), Math.ceil(diff / (gewicht * 0.005 * 4.35))];
+}
+/** Tatsächliches Tempo aus den Körpergewicht-Einträgen (mind. 14 Tage Abstand) */
+function istTempo() {
+  const k = Z.gym.koerper;
+  if (k.length < 2) return null;
+  const erster = k[0], letzter = k[k.length - 1];
+  const tage = (new Date(letzter.datum) - new Date(erster.datum)) / 86400000;
+  if (tage < 14) return null;
+  return { kgProMonat: (letzter.kg - erster.kg) / tage * 30.4, tage: Math.round(tage) };
+}
+
+function zielHTML() {
+  const g = Z.gym, z = zielZustand();
+  const gewicht = g.gewicht;
+  const eingabe = (feld, wert, label, einheit) => `<label class="z-feld"><span>${label}</span><span class="z-wert"><input type="text" inputmode="decimal" data-zfeld="${feld}" value="${wert ?? ''}" placeholder="${feld === 'alter' ? 'Jahre' : ''}" aria-label="${label}">${einheit}</span></label>`;
+  const formular = `<div class="g-karte z-form">
+      <div class="chips" role="group" aria-label="Geschlecht"><button class="chip" data-zgeschl="m" aria-pressed="${z.geschlecht === 'm'}">Männlich</button><button class="chip" data-zgeschl="w" aria-pressed="${z.geschlecht === 'w'}">Weiblich</button></div>
+      <div class="z-felder">${eingabe('alter', z.alter, 'Alter', 'Jahre')}${eingabe('groesse', z.groesse, 'Größe', 'cm')}${eingabe('gewicht', zahlDeutsch(gewicht), 'Gewicht jetzt', 'kg')}${eingabe('zielkg', zahlDeutsch(z.zielkg), 'Zielgewicht', 'kg')}</div>
+      <h3 class="h-klein">Wie aktiv bist du?</h3>
+      <div class="chips" role="group" aria-label="Aktivität">${AKTIVITAET.map(([f, t, u]) => `<button class="chip" data-zaktiv="${f}" aria-pressed="${z.aktiv === f}" title="${u}">${t}<small> · ${u}</small></button>`).join('')}</div>
+      <h3 class="h-klein">In welcher Zeit?</h3>
+      <div class="chips" role="group" aria-label="Zeitraum">${ZIEL_MONATE.map((m) => `<button class="chip" data-zmonate="${m}" aria-pressed="${z.monate === m}">${m} Monate</button>`).join('')}</div>
+    </div>`;
+  if (!z.alter) return formular + '<p class="leer">Trag oben dein Alter ein, dann rechne ich aus, wie viel du essen solltest.</p>';
+  const r = zielRechnen(z, gewicht, z.monate);
+  const empf = zielEmpfehlung(z, gewicht);
+  const zielDatum = new Date(); zielDatum.setMonth(zielDatum.getMonth() + z.monate);
+  const zunehmen = r.diff >= 0;
+  const fett = Math.round(gewicht * 1);                        // ca. 1 g Fett pro kg
+  const eiweiss = Math.round(gewicht * 2);                     // 2 g Eiweiß pro kg
+  const kh = Math.max(0, Math.round((r.kcal - eiweiss * 4 - fett * 9) / 4));
+  // Vergleich mit dem gewählten Essensplan
+  const plan = planRechnen(g.plan);
+  const luecke = r.kcal - plan.kcalTag;
+  const booster = []; let summe = 0;
+  for (const b of KALORIEN_BOOSTER) { if (summe >= luecke - 50) break; booster.push(b); summe += b.kcal; }
+  const ist = istTempo();
+  return formular + `
+    <div class="z-ergebnis z-${r.tempo.stufe}">
+      <span class="z-label">So viel solltest du essen</span>
+      <b class="z-kcal">ca. ${r.kcal.toLocaleString('de-DE')} kcal</b><span>pro Tag, um in ${z.monate} Monaten (bis ${zielDatum.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}) auf ${zahlDeutsch(z.zielkg)} kg zu kommen</span>
+      <span class="z-tempo">${zunehmen ? '+' : ''}${zahlDeutsch(r.kgProMonat, 1)} kg pro Monat · ${escapeHTML(r.tempo.text)}</span>
+    </div>
+    ${r.unterGrund ? '<div class="g-tipp"><b>Achtung:</b> Für dieses Tempo müsstest du weniger als deinen Grundumsatz essen. Das ist ungesund. Ich habe auf den Grundumsatz begrenzt, nimm dir lieber mehr Zeit.</div>' : ''}
+    ${empf && r.tempo.stufe !== 'gut' ? `<div class="g-tipp"><b>Mein Tipp:</b> Für ${Math.abs(r.diff).toLocaleString('de-DE', { maximumFractionDigits: 1 })} kg sind <b>${empf[0]}–${empf[1]} Monate</b> realistisch. ${zunehmen ? 'Schneller geht auf der Waage, aber dann ist es zum großen Teil Fett und keine Muskeln.' : 'Langsamer abnehmen schützt deine Muskeln.'}</div>` : ''}
+    <div class="g-zahlen">
+      <div><b>${r.grund.toLocaleString('de-DE')}</b><span>kcal Grundumsatz (in Ruhe)</span></div>
+      <div><b>${r.erhaltung.toLocaleString('de-DE')}</b><span>kcal zum Gewicht halten</span></div>
+      <div><b>${r.kcal - r.erhaltung >= 0 ? '+' : ''}${(r.kcal - r.erhaltung).toLocaleString('de-DE')}</b><span>kcal ${zunehmen ? 'Überschuss' : 'Defizit'} pro Tag</span></div>
+      <div><b>${zahlDeutsch(Math.abs(r.diff))} kg</b><span>${zunehmen ? 'zunehmen' : 'abnehmen'}</span></div>
+    </div>
+    <h3 class="h-klein">Aufteilung pro Tag (Makros)</h3>
+    <ul class="z-makros">
+      <li><b>${eiweiss} g</b><span>Eiweiß (2 g pro kg)</span><i style="--w:${Math.round(eiweiss * 4 / r.kcal * 100)}%"></i></li>
+      <li><b>${kh} g</b><span>Kohlenhydrate (Reis, Nudeln, Hafer, Brot)</span><i style="--w:${Math.round(kh * 4 / r.kcal * 100)}%"></i></li>
+      <li><b>${fett} g</b><span>Fett (Nüsse, Öl, Käse)</span><i style="--w:${Math.round(fett * 9 / r.kcal * 100)}%"></i></li>
+    </ul>
+    <h3 class="h-klein">Zeitraum vergleichen</h3>
+    <ul class="z-vergleich">${ZIEL_MONATE.map((m) => { const x = zielRechnen(z, gewicht, m); return `<li><button data-zmonate="${m}" class="${m === z.monate ? 'an' : ''}"><b>${m} Monate</b><span>ca. ${x.kcal.toLocaleString('de-DE')} kcal</span><span>${x.kgProMonat >= 0 ? '+' : ''}${zahlDeutsch(x.kgProMonat, 1)} kg/Monat</span><span class="z-punkt z-${x.tempo.stufe}" title="${escapeHTML(x.tempo.text)}"></span></button></li>`; }).join('')}</ul>
+    <p class="hinweiszeile"><span class="z-punkt z-gut"></span> gutes Tempo · <span class="z-punkt z-mittel"></span> etwas schnell · <span class="z-punkt z-schlecht"></span> zu schnell</p>
+    <h3 class="h-klein">Passt dein Essensplan?</h3>
+    <div class="g-karte">
+      <div class="chips" role="group" aria-label="Essensplan">${Object.entries(ESSENSPLAENE).map(([id, p]) => `<button class="chip" data-gplan="${id}" aria-pressed="${g.plan === id}">${p.titel}</button>`).join('')}</div>
+      <p>Der Plan „${escapeHTML(plan.plan.titel)}“ hat ca. <b>${plan.kcalTag.toLocaleString('de-DE')} kcal</b> (ohne Öl und Soßen). ${luecke > 50 ? `Dir fehlen noch ca. <b>${luecke.toLocaleString('de-DE')} kcal</b> am Tag. Zum Beispiel:` : luecke < -50 ? `Das sind ca. <b>${(-luecke).toLocaleString('de-DE')} kcal</b> mehr als dein Ziel. Iss die Beilagen etwas kleiner.` : 'Das passt ziemlich genau.'}</p>
+      ${luecke > 50 ? `<ul class="z-booster">${booster.map((b) => `<li><span>+ ${escapeHTML(b.t)}</span><b>${b.kcal} kcal</b></li>`).join('')}</ul>${summe < luecke - 50 ? `<p class="hinweiszeile">Und dazu noch etwas größere Portionen bei den Mahlzeiten (es fehlen dann noch ca. ${(luecke - summe).toLocaleString('de-DE')} kcal).</p>` : ''}` : ''}
+    </div>
+    ${ist ? `<div class="g-tipp"><b>Dein echtes Tempo:</b> Laut deinen Gewichts-Einträgen (${ist.tage} Tage) ${ist.kgProMonat >= 0 ? 'nimmst du zu' : 'nimmst du ab'}: ${ist.kgProMonat >= 0 ? '+' : ''}${zahlDeutsch(ist.kgProMonat, 1)} kg pro Monat. ${Math.abs(ist.kgProMonat - r.kgProMonat) < 0.3 ? 'Das passt zu deinem Ziel.' : ist.kgProMonat < r.kgProMonat ? 'Das ist langsamer als geplant: iss ca. 150–200 kcal mehr am Tag.' : 'Das ist schneller als geplant: iss ca. 150–200 kcal weniger am Tag.'}</div>`
+      : '<div class="g-tipp"><b>So prüfst du es:</b> Wiege dich 1× pro Woche morgens (Reiter „Fortschritt“). Nach 2–3 Wochen zeigt dir die App hier dein echtes Tempo und ob du mehr oder weniger essen solltest. Die Rechnung ist nur ein Startwert.</div>'}`;
+}
+
+/* =====================================================================
+   VERSION 5: 20 Designs zum Auswählen
+   Jedes Design setzt die Farb-Variablen (und Schriften) neu.
+   Die Zeichnungen (Metall, Holz …) kommen aus der hellen bzw. dunklen Grundfarbe.
+   ===================================================================== */
+const BASIS_HELL = {
+  gut: '#2F6B3E', 'gut-bg': '#E5EFE3', warn: '#93361F', 'warn-bg': '#F6E5DF', fokus: '#2F6FD6',
+  metall: '#474C52', 'metall-rand': '#8D959C', stahl: '#B3BBC1', 'stahl-innen': '#9AA3AA', holz: '#D7B48A', 'holz-2': '#B88F62',
+  keramik: '#F4F3EE', backpapier: '#EFE7D6', dampf: 'rgba(255, 255, 255, .85)', schatten: 'rgba(20, 30, 40, .22)', overlay: 'rgba(18, 26, 32, .45)'
+};
+const BASIS_DUNKEL = {
+  gut: '#8DC79A', 'gut-bg': '#1E3125', warn: '#F0A28C', 'warn-bg': '#3A231E', fokus: '#8AB8FF',
+  metall: '#2D3237', 'metall-rand': '#5A6269', stahl: '#6B747B', 'stahl-innen': '#565E65', holz: '#A5835C', 'holz-2': '#86663F',
+  keramik: '#D6D8D3', backpapier: '#CCC3B1', dampf: 'rgba(255, 255, 255, .6)', schatten: 'rgba(0, 0, 0, .55)', overlay: 'rgba(0, 0, 0, .6)'
+};
+/* Schriften von Google Fonts (werden erst geladen, wenn das Design gewählt wird) */
+const SCHRIFTEN = {
+  'Space Grotesk': 'Space+Grotesk:wght@400;500;700', Oswald: 'Oswald:wght@500;700', Orbitron: 'Orbitron:wght@600;800',
+  Nunito: 'Nunito:wght@400;600;800', 'Playfair Display': 'Playfair+Display:ital,wght@0,600;0,800;1,600', 'Source Serif 4': 'Source+Serif+4:wght@400;600',
+  Caveat: 'Caveat:wght@600;700', Quicksand: 'Quicksand:wght@400;600;700', Lora: 'Lora:ital,wght@0,500;0,700;1,500', Inter: 'Inter:wght@400;600;800',
+  'JetBrains Mono': 'JetBrains+Mono:wght@400;700', Righteous: 'Righteous', 'DM Serif Display': 'DM+Serif+Display:ital@0;1',
+  'Cormorant Garamond': 'Cormorant+Garamond:ital,wght@0,600;0,700;1,600', Roboto: 'Roboto:wght@400;500;700', 'Atkinson Hyperlegible': 'Atkinson+Hyperlegible:wght@400;700'
+};
+/* Die 20 Designs. f = [Überschrift-Schrift, Text-Schrift], fx = Sondereffekt */
+const STILE = [
+  { id: 'mitternacht', name: 'Mitternacht', idee: 'Tiefschwarz mit Elektroblau, wie Gym-Tracker', dunkel: true, f: ['Space Grotesk', 'Inter'],
+    c: { tisch: '#000000', 'tisch-2': '#050608', papier: '#0E1116', 'papier-2': '#171B22', tinte: '#ECEFF4', 'tinte-2': '#A3ACB9', linie: '#2A303A', emaille: '#1B2A4A', 'emaille-2': '#26406E', akzent: '#5B97FF', 'akzent-text': '#06122B', 'akzent-zart': '#12213D' } },
+  { id: 'glut', name: 'Glut', idee: 'Anthrazit mit Orange, sportlich wie Lauf-Apps', dunkel: true, f: ['Oswald', 'Inter'],
+    c: { tisch: '#121212', 'tisch-2': '#0C0C0C', papier: '#1C1C1E', 'papier-2': '#26262A', tinte: '#F2F2F2', 'tinte-2': '#B0B0B5', linie: '#38383D', emaille: '#3A1D0E', 'emaille-2': '#5A2C12', akzent: '#FC6A2C', 'akzent-text': '#1A0A02', 'akzent-zart': '#3A2216' } },
+  { id: 'neon', name: 'Neon', idee: 'Gaming-Look mit leuchtendem Grün', dunkel: true, f: ['Orbitron', 'Inter'], fx: 'leuchten',
+    c: { tisch: '#0B0B12', 'tisch-2': '#07070D', papier: '#12121C', 'papier-2': '#1B1B2A', tinte: '#F0EEFF', 'tinte-2': '#A9A6C9', linie: '#2E2B45', emaille: '#1E1240', 'emaille-2': '#2E1C63', akzent: '#39FF88', 'akzent-text': '#04140A', 'akzent-zart': '#13301F' } },
+  { id: 'minze', name: 'Minze', idee: 'Frisch und hell wie Ernährungs-Apps', dunkel: false, f: ['Nunito', 'Nunito'],
+    c: { tisch: '#DDEFE6', 'tisch-2': '#CFE6DA', papier: '#FBFEFC', 'papier-2': '#EEF7F2', tinte: '#12332A', 'tinte-2': '#44665B', linie: '#CFE3D8', emaille: '#145C45', 'emaille-2': '#1C7A5C', akzent: '#0F7353', 'akzent-text': '#FFFFFF', 'akzent-zart': '#DDF1E8' } },
+  { id: 'zeitung', name: 'Zeitung', idee: 'Editorial wie Koch-Magazine: Serifen, Rot', dunkel: false, f: ['Playfair Display', 'Source Serif 4'],
+    c: { tisch: '#E9E6DF', 'tisch-2': '#DEDAD1', papier: '#FFFFFF', 'papier-2': '#F4F2EE', tinte: '#111111', 'tinte-2': '#555555', linie: '#DDDDDD', emaille: '#121212', 'emaille-2': '#2A2A2A', akzent: '#B3122E', 'akzent-text': '#FFFFFF', 'akzent-zart': '#F8E3E6' } },
+  { id: 'notizbuch', name: 'Notizbuch', idee: 'Handschrift auf Papier, wie ein echtes Rezeptheft', dunkel: false, f: ['Caveat', 'Nunito'],
+    c: { tisch: '#C9B79C', 'tisch-2': '#BBA889', papier: '#FFFDF5', 'papier-2': '#F6F0DF', tinte: '#232262', 'tinte-2': '#4F4E78', linie: '#E3D9BE', emaille: '#7A3B2E', 'emaille-2': '#964A3A', akzent: '#2B4FA8', 'akzent-text': '#FFFFFF', 'akzent-zart': '#E3E9F7' } },
+  { id: 'pastell', name: 'Pastell', idee: 'Weiches Lavendel, ruhig und freundlich', dunkel: false, f: ['Quicksand', 'Quicksand'],
+    c: { tisch: '#EDE7F6', 'tisch-2': '#E3DAF2', papier: '#FFFCFF', 'papier-2': '#F6F0FB', tinte: '#2E2440', 'tinte-2': '#62567A', linie: '#E4DAEE', emaille: '#6A4C93', 'emaille-2': '#8461B3', akzent: '#7343BE', 'akzent-text': '#FFFFFF', 'akzent-zart': '#EFE6FA' } },
+  { id: 'tiefsee', name: 'Tiefsee', idee: 'Dunkles Petrol, entspannt wie Meditations-Apps', dunkel: true, f: ['Nunito', 'Nunito'],
+    c: { tisch: '#061A1F', 'tisch-2': '#04141A', papier: '#0C252C', 'papier-2': '#12313A', tinte: '#E2F4F4', 'tinte-2': '#9CC3C4', linie: '#1F434C', emaille: '#0B3D4A', 'emaille-2': '#135B6C', akzent: '#3FD0C9', 'akzent-text': '#04201F', 'akzent-zart': '#123E44' } },
+  { id: 'wald', name: 'Wald', idee: 'Naturtöne, Grün und Creme', dunkel: false, f: ['Lora', 'Nunito'],
+    c: { tisch: '#D9DCC8', 'tisch-2': '#CBD0B8', papier: '#FBFAF3', 'papier-2': '#F0EEE1', tinte: '#22301F', 'tinte-2': '#56624F', linie: '#DAD8C6', emaille: '#2F4A2A', 'emaille-2': '#3F6338', akzent: '#3B6531', 'akzent-text': '#FFFFFF', 'akzent-zart': '#E4ECDD' } },
+  { id: 'espresso', name: 'Espresso', idee: 'Dunkles Braun mit Karamell, wie ein Café', dunkel: true, f: ['Playfair Display', 'Inter'],
+    c: { tisch: '#1A1210', 'tisch-2': '#140E0C', papier: '#241A16', 'papier-2': '#2F231D', tinte: '#F3E9DF', 'tinte-2': '#C2AE9C', linie: '#45352C', emaille: '#4A2C1D', 'emaille-2': '#643C27', akzent: '#D9A066', 'akzent-text': '#241304', 'akzent-zart': '#3D2B1E' } },
+  { id: 'nordisch', name: 'Nordisch', idee: 'Minimal und hell wie Notiz- und To-do-Apps', dunkel: false, f: ['Inter', 'Inter'],
+    c: { tisch: '#ECEDEF', 'tisch-2': '#E2E4E7', papier: '#FFFFFF', 'papier-2': '#F5F6F7', tinte: '#1D1F23', 'tinte-2': '#5F646C', linie: '#E3E5E8', emaille: '#2E3440', 'emaille-2': '#434C5E', akzent: '#2F5BD3', 'akzent-text': '#FFFFFF', 'akzent-zart': '#E7EDFB' } },
+  { id: 'brutal', name: 'Brutal', idee: 'Neo-Brutalism: Gelb, dicke Ränder, harte Schatten', dunkel: false, f: ['Space Grotesk', 'Space Grotesk'], fx: 'brutal',
+    c: { tisch: '#FFE14D', 'tisch-2': '#F5D530', papier: '#FFFDF0', 'papier-2': '#FFF3B8', tinte: '#000000', 'tinte-2': '#333333', linie: '#000000', emaille: '#111111', 'emaille-2': '#2B2B2B', akzent: '#D6005A', 'akzent-text': '#FFFFFF', 'akzent-zart': '#FFD6E5' } },
+  { id: 'glas', name: 'Glas', idee: 'Milchglas über bunten Farbverläufen', dunkel: true, f: ['Inter', 'Inter'], fx: 'glas',
+    c: { tisch: '#0D0F1F', 'tisch-2': '#0A0C18', papier: '#161A2E', 'papier-2': '#1F2440', tinte: '#F1F3FF', 'tinte-2': '#AEB4D6', linie: '#343A5E', emaille: '#2B2A6B', 'emaille-2': '#43369A', akzent: '#A78BFA', 'akzent-text': '#140B33', 'akzent-zart': '#2A2550' } },
+  { id: 'terminal', name: 'Terminal', idee: 'Schwarz und Grün in Code-Schrift, für IT-Leute', dunkel: true, f: ['JetBrains Mono', 'JetBrains Mono'], fx: 'eckig',
+    c: { tisch: '#000000', 'tisch-2': '#050505', papier: '#0A0F0A', 'papier-2': '#101A10', tinte: '#B8FFB8', 'tinte-2': '#7CC97C', linie: '#1E3A1E', emaille: '#0F2A0F', 'emaille-2': '#1A401A', akzent: '#33FF66', 'akzent-text': '#001A06', 'akzent-zart': '#0F2D16' } },
+  { id: 'synthwave', name: 'Retro 80er', idee: 'Synthwave: Lila, Pink und Leuchten', dunkel: true, f: ['Righteous', 'Inter'], fx: 'leuchten',
+    c: { tisch: '#14061F', 'tisch-2': '#0E0416', papier: '#1E0B2E', 'papier-2': '#2A1140', tinte: '#FCE8FF', 'tinte-2': '#C8A2D8', linie: '#42205E', emaille: '#3B0F5C', 'emaille-2': '#5A1A86', akzent: '#FF4FAE', 'akzent-text': '#22001A', 'akzent-zart': '#3D1446' } },
+  { id: 'sakura', name: 'Sakura', idee: 'Kirschblüten-Rosa, leicht und hell', dunkel: false, f: ['Nunito', 'Nunito'],
+    c: { tisch: '#F7E1E6', 'tisch-2': '#F0D2D9', papier: '#FFFBFC', 'papier-2': '#FBEFF2', tinte: '#3A2328', 'tinte-2': '#73535A', linie: '#F0DCE1', emaille: '#8E3B54', 'emaille-2': '#A84D69', akzent: '#B33A61', 'akzent-text': '#FFFFFF', 'akzent-zart': '#F9E0E8' } },
+  { id: 'terrakotta', name: 'Terrakotta', idee: 'Warme Erdtöne wie Reise- und Wohn-Apps', dunkel: false, f: ['DM Serif Display', 'Nunito'],
+    c: { tisch: '#E8D9C7', 'tisch-2': '#DDCAB4', papier: '#FFFAF3', 'papier-2': '#F5EBDD', tinte: '#3B2A1F', 'tinte-2': '#6A5646', linie: '#E7D6C1', emaille: '#8A3F23', 'emaille-2': '#A4512F', akzent: '#A84B28', 'akzent-text': '#FFFFFF', 'akzent-zart': '#F6E1D5' } },
+  { id: 'gold', name: 'Gold', idee: 'Schwarz und Gold, edel wie Premium-Apps', dunkel: true, f: ['Cormorant Garamond', 'Inter'],
+    c: { tisch: '#0B0B0B', 'tisch-2': '#070707', papier: '#141414', 'papier-2': '#1D1D1D', tinte: '#F5F0E6', 'tinte-2': '#BDB3A0', linie: '#332E25', emaille: '#1A1610', 'emaille-2': '#2A231A', akzent: '#D4AF37', 'akzent-text': '#1A1405', 'akzent-zart': '#2D2715' } },
+  { id: 'kontrast', name: 'Hoher Kontrast', idee: 'Schwarz, Weiß, Gelb: am besten lesbar', dunkel: true, f: ['Atkinson Hyperlegible', 'Atkinson Hyperlegible'], fx: 'kontrast',
+    c: { tisch: '#000000', 'tisch-2': '#000000', papier: '#000000', 'papier-2': '#141414', tinte: '#FFFFFF', 'tinte-2': '#E6E6E6', linie: '#FFFFFF', emaille: '#1A1A1A', 'emaille-2': '#333333', akzent: '#FFE500', 'akzent-text': '#000000', 'akzent-zart': '#2E2A00', fokus: '#00E5FF', warn: '#FF9B85', gut: '#7CFF9B' } },
+  { id: 'material', name: 'Material', idee: 'Weiche Lila-Töne wie bei Android', dunkel: false, f: ['Roboto', 'Roboto'],
+    c: { tisch: '#F3EDF7', 'tisch-2': '#ECE6F0', papier: '#FFFBFE', 'papier-2': '#F3EDF7', tinte: '#1D1B20', 'tinte-2': '#49454F', linie: '#E7E0EC', emaille: '#4F378B', 'emaille-2': '#6750A4', akzent: '#6750A4', 'akzent-text': '#FFFFFF', 'akzent-zart': '#EADDFF' } }
+];
+const stilVon = (id) => STILE.find((s) => s.id === id);
+
+/** CSS für alle Designs einmal erzeugen und in den Kopf der Seite hängen */
+function stilCSSErzeugen() {
+  const schrift = (n, ersatz) => `'${n}', ${ersatz}`;
+  let css = STILE.map((s) => {
+    const basis = s.dunkel ? BASIS_DUNKEL : BASIS_HELL;
+    const werte = { ...basis, ...s.c,
+      falz: s.dunkel ? 'rgba(0, 0, 0, .5)' : `color-mix(in srgb, ${s.c.tinte} 16%, transparent)`,
+      'emaille-licht': s.dunkel ? 'rgba(255, 255, 255, .14)' : 'rgba(255, 255, 255, .22)',
+      'szene-bg': s.c['papier-2'],
+      'f-display': schrift(s.f[0], 'Georgia, serif'), 'f-text': schrift(s.f[1], 'system-ui, sans-serif') };
+    return `:root[data-stil="${s.id}"][data-stil] { ${Object.entries(werte).map(([k, v]) => `--${k}: ${v};`).join(' ')} color-scheme: ${s.dunkel ? 'dark' : 'light'}; }`;
+  }).join('\n');
+  // Sondereffekte
+  css += `
+  /* Brutal: dicke schwarze Ränder, harte Schatten */
+  :root[data-stil="brutal"] :is(.knopf, .chip, .rund, .wp-rezept, .k-rezept, .g-karte, .g-zahlen div, .suchfeld, .z-vergleich button) { border: 2.5px solid #000 !important; box-shadow: 3px 3px 0 #000; }
+  :root[data-stil="brutal"] .fenster { border: 3px solid #000; box-shadow: 8px 8px 0 #000; }
+  :root[data-stil="brutal"] body::after { opacity: 0; }
+  /* Glas: bunte Farbflecken hinter Milchglas */
+  :root[data-stil="glas"] body { background: radial-gradient(circle at 12% 18%, rgba(124, 58, 237, .55), transparent 42%), radial-gradient(circle at 88% 26%, rgba(59, 130, 246, .45), transparent 45%), radial-gradient(circle at 55% 95%, rgba(236, 72, 153, .38), transparent 48%), #0D0F1F; }
+  :root[data-stil="glas"] .fenster { background: color-mix(in srgb, var(--papier) 80%, transparent); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%); border: 1px solid rgba(255, 255, 255, .14); }
+  :root[data-stil="glas"] .schleier { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  :root[data-stil="glas"] body::after { opacity: 0; }
+  /* Leuchten: Neon-Glühen an aktiven Knöpfen */
+  :root:is([data-stil="neon"], [data-stil="synthwave"]) :is(.knopf.voll, .chip[aria-pressed="true"], .reiter button[aria-selected="true"]) { box-shadow: 0 0 16px color-mix(in srgb, var(--akzent) 65%, transparent); }
+  :root:is([data-stil="neon"], [data-stil="synthwave"]) .fenster-kopf h2 { text-shadow: 0 0 12px color-mix(in srgb, var(--akzent) 70%, transparent); }
+  /* Eckig: Terminal-Look ohne runde Ecken */
+  :root[data-stil="terminal"] :is(.knopf, .chip, .rund, .ib, .fenster, .g-karte, .wp-rezept, .k-rezept, .reiter, .reiter button, .g-zahlen div, .suchfeld, .toast, .menue, .z-vergleich button, .z-ergebnis) { border-radius: 3px !important; }
+  /* Hoher Kontrast: dicke Ränder, Unterstreichungen */
+  :root[data-stil="kontrast"] :is(.knopf, .chip, .rund, .wp-rezept, .k-rezept, .suchfeld) { border: 2px solid var(--tinte) !important; }
+  :root[data-stil="kontrast"] :is(.g-tausch, a) { text-decoration: underline; }
+  :root[data-stil="kontrast"] :focus-visible { outline-width: 4px; }
+  :root[data-stil="kontrast"] body::after { opacity: 0; }
+  /* Handschrift ist kleiner: Überschriften etwas größer */
+  :root[data-stil="notizbuch"] :is(.h-seite, .fenster-kopf h2, .h-klein) { font-size: 1.25em; }`;
+  const el = document.createElement('style');
+  el.id = 'stil-css';
+  el.textContent = css;
+  document.head.appendChild(el);
+}
+/** Schriften eines Designs (oder aller) von Google Fonts laden */
+const geladeneSchriften = new Set();
+function schriftenLaden(namen) {
+  const neu = namen.filter((n) => SCHRIFTEN[n] && !geladeneSchriften.has(n));
+  if (!neu.length) return;
+  neu.forEach((n) => geladeneSchriften.add(n));
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?${neu.map((n) => 'family=' + SCHRIFTEN[n]).join('&')}&display=swap`;
+  document.head.appendChild(link);
+}
+
+/** Auswahl-Fenster mit Vorschau-Karten */
+function designOeffnen() {
+  schriftenLaden(Object.keys(SCHRIFTEN));          // damit die Vorschau die echten Schriften zeigt
+  const f = fensterOeffnen({ titel: 'Design wählen', id: 'design' });
+  f.classList.add('breit');
+  $('.fenster-fuss', f).hidden = true;
+  const karte = (id, name, idee, c, schriften, aktiv) => `<button class="d-karte" data-dstil="${id}" aria-pressed="${aktiv}" style="--dp:${c.papier};--dp2:${c['papier-2']};--dt:${c.tinte};--dt2:${c['tinte-2']};--da:${c.akzent};--dat:${c['akzent-text']};--dtisch:${c.tisch};--de:${c.emaille};--df:'${schriften[0]}', Georgia, serif;--dft:'${schriften[1]}', system-ui, sans-serif">
+      <span class="d-vorschau"><span class="d-buch"></span><span class="d-seite"><b>Aa</b><i></i><i class="kurz"></i><span class="d-pille">Kochen</span></span></span>
+      <span class="d-name">${aktiv ? '✓ ' : ''}${escapeHTML(name)}</span><small>${escapeHTML(idee)}</small></button>`;
+  const zeichnen = () => {
+    const hell = { papier: '#FAFAF6', 'papier-2': '#EFF0E9', tinte: '#1E2A33', 'tinte-2': '#4A5762', akzent: '#24507E', 'akzent-text': '#FFFFFF', tisch: '#D3D9D1', emaille: '#1E3A5C' };
+    const dunkel = { papier: '#22272B', 'papier-2': '#2A3035', tinte: '#E6E8E3', 'tinte-2': '#AEB5B1', akzent: '#8FB4DD', 'akzent-text': '#0E1A26', tisch: '#12171A', emaille: '#18304D' };
+    const klassisch = Z.stil === 'klassisch';
+    $('.fenster-inhalt', f).innerHTML = `<p class="fenster-text">Tippe ein Design an, es wird sofort übernommen und gespeichert. Die Farben gelten für das ganze Buch, den Gym-Bereich und alle Fenster.</p>
+      <h3 class="h-klein">Klassisch (Original)</h3>
+      <div class="d-raster">
+        ${karte('klassisch:system', 'Automatisch', 'Hell oder dunkel wie dein Handy', { ...hell, papier: `linear-gradient(135deg, ${hell.papier} 50%, ${dunkel.papier} 50%)` }, ['Fraunces', 'DM Sans'], klassisch && Z.design === 'system')}
+        ${karte('klassisch:hell', 'Klassisch hell', 'Emaille-Blau auf Papier', hell, ['Fraunces', 'DM Sans'], klassisch && Z.design === 'hell')}
+        ${karte('klassisch:dunkel', 'Klassisch dunkel', 'Das Original für abends', dunkel, ['Fraunces', 'DM Sans'], klassisch && Z.design === 'dunkel')}
+      </div>
+      <h3 class="h-klein">Dunkle Designs</h3>
+      <div class="d-raster">${STILE.filter((s) => s.dunkel).map((s) => karte(s.id, s.name, s.idee, s.c, s.f, Z.stil === s.id)).join('')}</div>
+      <h3 class="h-klein">Helle Designs</h3>
+      <div class="d-raster">${STILE.filter((s) => !s.dunkel).map((s) => karte(s.id, s.name, s.idee, s.c, s.f, Z.stil === s.id)).join('')}</div>`;
+  };
+  zeichnen();
+  f.addEventListener('click', (e) => {
+    const k = e.target.closest('[data-dstil]');
+    if (!k) return;
+    const [id, modus] = k.dataset.dstil.split(':');
+    Z.stil = id;
+    if (modus) Z.design = modus;
+    speicher.schreiben('stil', Z.stil); speicher.schreiben('design', Z.design);
+    designAnwenden();
+    const y = $('.fenster-inhalt', f).scrollTop; zeichnen(); $('.fenster-inhalt', f).scrollTop = y;
+    $(`[data-dstil="${k.dataset.dstil}"]`, f)?.focus();
+    toast(`Design: ${id === 'klassisch' ? 'Klassisch' : stilVon(id).name}`);
+  });
+}
+
 /* ---------- 10. Start ---------- */
 function starten() {
   document.body.insertAdjacentHTML('afterbegin', spriteSVG());
@@ -11913,7 +13873,10 @@ function starten() {
   const farben = document.createElement('style');
   farben.textContent = KAPITEL.map((k) => `.k-${k.id}{--k:${k.farbe};--kt:${k.textFarbe}}`).join('');
   document.head.appendChild(farben);
+  stilCSSErzeugen();   // CSS der 20 Designs
   designAnwenden(); zaehlerAktualisieren();
+  syncStatus(SYNC.status);
+  setTimeout(syncStarten, 0);   // Abgleich mit anderen Geräten im Hintergrund starten
 
   // Gespeicherte Timer prüfen (abgelaufene still als fertig markieren)
   for (const t of Z.timer) if (!t.fertig && t.rest === null && t.ende <= Date.now()) t.fertig = true;
@@ -11937,10 +13900,13 @@ function starten() {
   $('#b-favoriten').addEventListener('click', () => geheZu(SEITE.favoriten));
   $('#b-zufall').addEventListener('click', zufallsRezept);
   $('#b-wochenplan').addEventListener('click', wochenplanOeffnen);
+  $('#b-gym').addEventListener('click', () => gymOeffnen());
+  $('#b-kuehl').addEventListener('click', kuehlschrankOeffnen);
   $('#b-einkauf').addEventListener('click', einkaufOeffnen);
   $('#b-timer').addEventListener('click', timerOeffnen);
   $('#b-koch').addEventListener('click', () => kochmodusOeffnen(aktuellesRezept()));
-  $('#b-design').addEventListener('click', designWechseln);
+  $('#b-design').addEventListener('click', designOeffnen);
+  $('#b-sync').addEventListener('click', datenOeffnen);
   $('#b-vollbild').addEventListener('click', vollbild);
   $('#b-vollbild-aus').addEventListener('click', vollbild);
   $('#b-mehr').addEventListener('click', mehrMenue);
@@ -11969,6 +13935,8 @@ function starten() {
     else if (e.key === 'k' || e.key === 'K') kochmodusOeffnen(aktuellesRezept());
     else if (e.key === 'z' || e.key === 'Z') zufallsRezept();
     else if (e.key === 'w' || e.key === 'W') wochenplanOeffnen();
+    else if (e.key === 'g' || e.key === 'G') gymOeffnen();
+    else if (e.key === 'h' || e.key === 'H') kuehlschrankOeffnen();
     else if (e.key === '/') { e.preventDefault(); sucheOeffnen(); }
   });
 
